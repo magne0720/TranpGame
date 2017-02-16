@@ -18,9 +18,19 @@ void Player::update(float delta)
 
 void Player::cardDispHand() 
 {
-	for (int i = 0; i < hand.size(); i++) 
+	for (int i = 0; i < hand.size(); i++)
 	{
-		hand.at(i)->setMyPosition(Vec2(150 * i+getPositionX()/3, getPositionY()));
+		for (int j = hand.size(); j > i; j--) {
+			if (hand.at(j) < hand.at(i)) {
+			//	tmp = hand.at(j);
+			//	hand.at(i) == hand.at(j);
+			//	hand.at(i) = tmp;
+
+			}
+		}
+	}
+	for (int i = 0; i < hand.size(); i++) {
+		hand.at(i)->setMyPosition(Vec2(150 * i + getPositionX() / 3, getPositionY()));
 	}
 };
 
