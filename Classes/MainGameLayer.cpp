@@ -170,6 +170,7 @@ bool MainGameLayer::onTouchBegan(const Touch * touch, Event *unused_event)
 
 			player_one->handDeath();
 			player_two->handDeath();
+			dealer->cardDispGrave();
 			dealer->setDeck(true);
 			dealer->cardShuffle();
 			cardDivision();

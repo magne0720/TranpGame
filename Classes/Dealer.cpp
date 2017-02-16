@@ -25,6 +25,8 @@ bool Dealer::init(Vec2 deckPos)
 		return false;
 	}
 
+	graveCount = 0;
+
 	deckSp = Sprite::create("Card/reverse.png");
 	deckSp->setScale(0.5f);
 	setDeckPosition(deckPos);
@@ -201,7 +203,15 @@ void Dealer::checkDeckZero()
 //ŽÌ‚ÄŽD‚Ì•\Ž¦
 void Dealer::cardDispGrave() 
 {
-
+	if (grave.size() > 0) 
+	{
+		Card* card = Card::create(grave.at(graveCount)->myMark, grave.at(graveCount)->myNumber);
+		addChild(card);
+		if (graveCount < grave.size())
+		{
+			graveCount++;
+		}
+	}
 };
 
 bool Dealer::onTouchBegan(const Touch * touch, Event *unused_event) 

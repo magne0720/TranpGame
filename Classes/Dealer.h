@@ -19,6 +19,7 @@ public :
 	Sprite* deckSp,graveSp;
 	Vector<Card*> deck,grave;
 	Vec2 deckPostion;
+	int graveCount;
 
 	bool init(Vec2 deckPos);
 
