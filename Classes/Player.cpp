@@ -18,18 +18,21 @@ void Player::update(float delta)
 
 void Player::cardDispHand() 
 {
+	//手札の数だけ
 	for (int i = 0; i < hand.size(); i++)
 	{
-		for (int j = hand.size(); j > i; j--) {
-			if (hand.at(j) < hand.at(i)) {
-			//	tmp = hand.at(j);
-			//	hand.at(i) == hand.at(j);
-			//	hand.at(i) = tmp;
-
-			}
+		//一番右のカードを見るまで
+		for (int j = 0; j+1<hand.size(); j++)
+		{
+			if ((int)hand.at(j)->myNumber > (int)hand.at(j + 1)->myNumber)
+				{
+					hand.swap(j, j + 1);
+				}
 		}
 	}
-	for (int i = 0; i < hand.size(); i++) {
+	log("%d", hand.size());
+	for (int i = 0; i < hand.size(); i++)
+	{
 		hand.at(i)->setMyPosition(Vec2(150 * i + getPositionX() / 3, getPositionY()));
 	}
 };
@@ -61,18 +64,18 @@ void Player::checkFame(int x)
 			//マークが一緒か
 			if (hand.at(x)->myMark == hand.at(x+i)->myMark)
 			{
-				log("[x,i]=[%d,%d]", x, i);
+				//log("[x,i]=[%d,%d]", x, i);
 				//一つ上の番号か
 				if ((int)hand.at(x)->myNumber + 1 == (int)hand.at(x + i)->myNumber)
 				{
-					log("check[%d]_[%d]<[%d]_[%d]", x,(int)hand.at(x)->myNumber, i, (int)hand.at(x + i)->myNumber);
+					//log("check[%d]_[%d]<[%d]_[%d]", x,(int)hand.at(x)->myNumber, i, (int)hand.at(x + i)->myNumber);
 					checkFame(i);
 					hand.at(x+i)->setColor(Color3B::GREEN);
 					hand.at(x)->setColor(Color3B::GREEN);
 				}
 				else
 				{
-					log("none");
+					//log("none");
 				}
 			}
 		}
