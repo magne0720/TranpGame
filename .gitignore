@@ -1,0 +1,14 @@
+cocos2d/
+proj.win32/
+proj.win8.1-universal/
+proj.win10/
+proj.android/res/values/strings.xml
+proj.android-studio/
+proj.ios_mac/
+proj.android/project.properties
+proj.android/proguard-project.txt
+proj.android/.externalToolBuilders/org.eclipse.cdt.managedbuilder.core.genmakebuilder.launch
+proj.android/
+CMakeLists.txt
+.cocos-project.json
+proj.linux/main.cpp
