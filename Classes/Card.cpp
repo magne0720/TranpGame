@@ -54,23 +54,27 @@ void Card::setKind(MARK mark, NUMBER num)
 	setDesign();
 };
 
-void Card::setDesign() 
+void Card::setDesign(int num) 
 {
 	String* name = String::createWithFormat("");
 
 	switch (myMark)
 	{
 	case SPADE:
-		name = String::createWithFormat("Card/spade_%02d.png", (int)myNumber);
+		if(num==0)name = String::createWithFormat("Card/spade_num_%02d.png", (int)myNumber);
+		else name = String::createWithFormat("Card/spade_%02d.png", (int)myNumber);
 		break;
 	case CLOVER:
-		name = String::createWithFormat("Card/clover_%02d.png", (int)myNumber);
+		if (num == 0)name = String::createWithFormat("Card/clover_num_%02d.png", (int)myNumber);
+		else name = String::createWithFormat("Card/clover_%02d.png", (int)myNumber);
 		break;
 	case HEART:
-		name = String::createWithFormat("Card/heart_%02d.png", (int)myNumber);
+		if (num == 0)name = String::createWithFormat("Card/heart_num_%02d.png", (int)myNumber);
+		else name = String::createWithFormat("Card/heart_%02d.png", (int)myNumber);
 		break;
 	case DIAMOND:
-		name = String::createWithFormat("Card/diamond_%02d.png", (int)myNumber);
+		if (num == 0)name = String::createWithFormat("Card/diamond_num_%02d.png", (int)myNumber);
+		else name = String::createWithFormat("Card/diamond_%02d.png", (int)myNumber);
 		break;
 	case JOKER_MARK:
 		name = String::createWithFormat("Card/joker.png", (int)myNumber);

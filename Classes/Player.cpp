@@ -54,35 +54,45 @@ void Player::handDeath()
 //役を見る
 void Player::checkFame(int x)
 {
-	hand.at(x)->isFamed = true;
+	static int count = 0;
+	MoveBy* move = MoveBy::create(1.0, Vec2(0, 100));
+
 	//10回
-	for (int i=0; i < hand.size(); i++)
+	for (int i = 0; i < hand.size(); i++)
 	{
 		//最後のカードかどうか
-		if ( x + i  < hand.size()) 
+		if (x < hand.size())
 		{
-			//マークが一緒か
-			if (hand.at(x)->myMark == hand.at(x+i)->myMark)
+			//自身でないかかどうか
+			if (i != x)
 			{
-				//log("[x,i]=[%d,%d]", x, i);
-				//一つ上の番号か
-				if ((int)hand.at(x)->myNumber + 1 == (int)hand.at(x + i)->myNumber)
+				//マークが一緒か
+				if (hand.at(x)->myMark == hand.at(i)->myMark)
 				{
-					//log("check[%d]_[%d]<[%d]_[%d]", x,(int)hand.at(x)->myNumber, i, (int)hand.at(x + i)->myNumber);
-					checkFame(i);
-					hand.at(x+i)->setColor(Color3B::GREEN);
-					hand.at(x)->setColor(Color3B::GREEN);
-				}
-				else
-				{
-					//log("none");
+					if (count >= 3)
+					{
+						log("SUPER");
+					}
+					//番号が1だけ差がある
+					if (hand.at(x)->myNumber + 1 == hand.at(i)->myNumber)
+					{
+						hand.at(i)->runAction(move);
+						hand.at(i)->setColor(Color3B::YELLOW);
+						hand.at(x)->setColor(Color3B::GREEN);
+						log("getRed%d", i);
+						count++;
+					}
 				}
 			}
 		}
 	}
-	//刻子(同じ番号)を見る
-
-
+	count = 0;
+	//最後のカードかどうか
+	if (x < hand.size())
+	{
+		log("%d", x);
+		checkFame(x + 1);
+	}//刻子(同じ番号)を見る
 
 };
 

@@ -55,7 +55,7 @@ public:
 	void setMyPosition(Vec2 pos);
 	//ƒJ[ƒh‚Ìİ’è
 	void setKind(MARK mark,NUMBER number);
-	void setDesign();
+	void setDesign(int num=0);
 	void setState(STATE state);
 	//— •Ô‚·
 	void reverse();
