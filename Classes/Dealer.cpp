@@ -145,6 +145,7 @@ void Dealer::cardDrow(Vector<Card*>&hand)
 		return; 
 	}
 	hand.pushBack(deck.at(0));
+	log("hand.size=%d", hand.size());
 	deck.at(0)->setState(STATE::HAND);
 	deck.erase(0);
 	checkDeckZero();

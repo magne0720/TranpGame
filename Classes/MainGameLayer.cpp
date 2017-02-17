@@ -42,10 +42,11 @@ bool MainGameLayer::init(int level)
 	player_two->setPosition(Vec2(designResolutionSize.width*0.5f, designResolutionSize.height*0.8f));
 	addChild(player_two);
 
-	//カードを配る
-	dealer->cardShuffle();
-	cardDivision();
-	startPlayer();
+	label = Label::create("gameSTART", "fonts/arial.ttf", 30);
+	label->setPosition(designResolutionSize.width*0.7f, designResolutionSize.height*0.5f);
+	addChild(label);
+
+	//ゲームの準備
 	gameStart();
 	scheduleUpdate();
 
@@ -83,8 +84,16 @@ void MainGameLayer::cardDivision()
 };
 
 //スタート
-void MainGameLayer::gameStart() 
+void MainGameLayer::gameStart()
 {
+	player_one->handDeath();
+	player_two->handDeath();
+	dealer->cardDispGrave();
+	dealer->setDeck(true);
+	dealer->cardShuffle();
+	cardDivision();
+	phase = PHASE::START;
+	NextPhase();
 
 };
 
@@ -96,10 +105,10 @@ void MainGameLayer::NextPlayerTurn()
 	{
 		turn = TURN::PLAY_TWO;
 	}
-	else if(turn==TURN::PLAY_TWO)
+	/*else if(turn==TURN::PLAY_TWO)
 	{
 		turn = TURN::PLAY_ONE;
-	}
+	}*/
 };
 
 //フェイズチェンジ
@@ -109,24 +118,46 @@ void MainGameLayer::NextPhase()
 	{
 	case MainGameLayer::START:
 		phase = PHASE::DROW;
+		label->setString("DROW");
 		break;
 	case MainGameLayer::DROW:
-		if (turn == TURN::PLAY_ONE)dealer->cardDrow(player_one->hand);
-		else if (turn == TURN::PLAY_TWO)dealer->cardDrow(player_two->hand);
+		if (turn == TURN::PLAY_ONE)
+		{
+			dealer->cardDrow(player_one->hand);
+			player_one->cardDispHand();
+		}
+		else if (turn == TURN::PLAY_TWO)
+		{
+			dealer->cardDrow(player_two->hand);
+			player_two->cardDispHand();
+		}
 		phase = PHASE::THROW;
-		break;
+
+		label->setString("THROW"); break;
 	case MainGameLayer::THROW:
-		if (isKnock)phase == PHASE::KNOCK;
-		else phase == PHASE::END;
+		if (isKnock)
+		{
+			phase = PHASE::KNOCK;
+		}
+		else 
+		{
+			phase = PHASE::END;	
+
+			label->setString("END");
+		}
 		break;
 	case MainGameLayer::KNOCK:
 		callKnock();
 		break;
 	case MainGameLayer::END:
-		phase == PHASE::START;
+		label->setString("START");
+		phase = PHASE::START;
 		NextPlayerTurn();
+
 		break;
 	default:
+
+		label->setString("DROW"); 
 		break;
 	}
 };
@@ -135,14 +166,10 @@ void MainGameLayer::NextPhase()
 void MainGameLayer::callKnock() 
 {
 	turn = TURN::WAIT;
-	for (int i = 0; i < player_one->hand.size(); i++) 
-	{
 
-	}
-	for (int i = 0; i < player_two->hand.size(); i++) 
-	{
+	player_one->checkRole();
+	player_two->checkRole();
 
-	}
 };
 
 //ノック時に行われる役の計算
@@ -165,25 +192,8 @@ bool MainGameLayer::onTouchBegan(const Touch * touch, Event *unused_event)
 
 	if (dealer->deckSp->getBoundingBox().containsPoint(touch->getLocation()))
 	{
-//		if (dealer->deck.size() <= 0)
-		{
+		NextPhase();
 
-			player_one->handDeath();
-			player_two->handDeath();
-			dealer->cardDispGrave();
-			dealer->setDeck(true);
-			dealer->cardShuffle();
-			cardDivision();
-			player_one->checkRole();
-		}
-		//else
-		//{
-		//	dealer->cardDrow(player_one->hand);
-		//	dealer->cardDrow(player_two->hand);
-		//	player_one->cardDispHand();
-		//	player_two->cardDispHand();
-
-		//}
 
 	}
 

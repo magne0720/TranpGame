@@ -59,6 +59,7 @@ public:
 
 	Player* player_one, *player_two;
 	Dealer* dealer;
+	Label* label;
 
 };
 
