@@ -137,20 +137,6 @@ void Dealer::cardSplitShuffle(int num)
 
 }
 
-//ドロー
-void Dealer::cardDrow(Vector<Card*>&hand)
-{
-	if (deck.size() <= 0) 
-	{
-		return; 
-	}
-	hand.pushBack(deck.at(0));
-	log("hand.size=%d", hand.size());
-	deck.at(0)->setState(STATE::HAND);
-	deck.erase(0);
-	checkDeckZero();
-};
-
 //デッキから直接捨て札に送る
 void Dealer::cardDeckThrow() 
 {

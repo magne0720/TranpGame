@@ -42,12 +42,21 @@ bool MainGameLayer::init(int level)
 	player_two->setPosition(Vec2(designResolutionSize.width*0.5f, designResolutionSize.height*0.8f));
 	addChild(player_two);
 
-	label = Label::create("gameSTART", "fonts/arial.ttf", 30);
-	label->setPosition(designResolutionSize.width*0.7f, designResolutionSize.height*0.5f);
-	addChild(label);
+	turnLabel = Label::create("gameSTART", "fonts/arial.ttf", 30);
+	turnLabel->setPosition(designResolutionSize.width*0.5f, designResolutionSize.height*0.5f);
+	addChild(turnLabel);
+
+	phaseLabel = Label::create("gameSTART", "fonts/arial.ttf", 30);
+	phaseLabel->setPosition(designResolutionSize.width*0.7f, designResolutionSize.height*0.5f);
+	addChild(phaseLabel);
+
+	effectManager = EffectManager::create();
+	addChild(effectManager);
 
 	//ゲームの準備
 	gameStart();
+
+	effectManager->phaseChange(PHASE::START);
 	scheduleUpdate();
 
 	return true;
@@ -68,6 +77,8 @@ void MainGameLayer::startPlayer()
 {
 	int iRand = rand() % 2 + 1;
 	turn = (TURN)iRand;
+	String* name = String::createWithFormat("Player_%d_start", iRand);
+	turnLabel->setString(name->getCString());
 };
 
 //カードを配る(初期カードの配置)
@@ -76,11 +87,11 @@ void MainGameLayer::cardDivision()
 	//10回
 	for (int i = 0; i < HAND_START_MAX; i++)
 	{
-		dealer->cardDrow(player_one->hand);
-		dealer->cardDrow(player_two->hand);
-		player_one->cardDispHand();
-		player_two->cardDispHand();
+		player_one->cardDrow(dealer->deck);
+		player_two->cardDrow(dealer->deck);
 	}
+	player_one->cardDispHand();
+	player_two->cardDispHand();
 };
 
 //スタート
@@ -92,49 +103,87 @@ void MainGameLayer::gameStart()
 	dealer->setDeck(true);
 	dealer->cardShuffle();
 	cardDivision();
+	startPlayer();
 	phase = PHASE::START;
-	NextPhase();
+	NextPhase(true);
 
 };
 
 //ーーーーーーーーーーゲーム中に行う関数ーーーーーーーー
+//タッチが離された時にプレイヤーが行う行動
+bool MainGameLayer::actionPhase() 
+{
+	switch (phase)
+	{
+	case PHASE::START:
+		return false;
+	case PHASE::DROW:
+		if (turn == TURN::PLAY_ONE)
+		{
+			player_one->cardDrow(dealer->deck);
+			return true;
+		}
+		else if (turn == TURN::PLAY_TWO)
+		{
+			player_two->cardDrow(dealer->deck);
+			return true;
+		}
+		return false;
+	case PHASE::THROW:
+		if (turn == TURN::PLAY_ONE)
+		{
+			player_one->cardThrow(0);
+			return true;
+		}
+		else if (turn == TURN::PLAY_TWO)
+		{
+			player_two->cardThrow(0);
+			return true;
+		}
+		return false;
+	case PHASE::KNOCK:
+		return false;
+	case PHASE::END:
+		return false;
+	default:
+		return false;
+	}
+	return false;
+};
+
 //ターンチェンジ
 void MainGameLayer::NextPlayerTurn() 
 {
 	if (turn == TURN::PLAY_ONE) 
 	{
 		turn = TURN::PLAY_TWO;
+		turnLabel->setString("PLAYER_TWO");
 	}
-	/*else if(turn==TURN::PLAY_TWO)
+	else if(turn==TURN::PLAY_TWO)
 	{
 		turn = TURN::PLAY_ONE;
-	}*/
+		turnLabel->setString("PLAYER_ONE");
+	}
 };
 
 //フェイズチェンジ
-void MainGameLayer::NextPhase() 
+void MainGameLayer::NextPhase(bool isAction) 
 {
+	if (!isAction) 
+	{
+		return;
+	}
 	switch (phase)
 	{
-	case MainGameLayer::START:
+	case PHASE::START:
 		phase = PHASE::DROW;
-		label->setString("DROW");
+		phaseLabel->setString("DROW");
 		break;
-	case MainGameLayer::DROW:
-		if (turn == TURN::PLAY_ONE)
-		{
-			dealer->cardDrow(player_one->hand);
-			player_one->cardDispHand();
-		}
-		else if (turn == TURN::PLAY_TWO)
-		{
-			dealer->cardDrow(player_two->hand);
-			player_two->cardDispHand();
-		}
+	case PHASE::DROW:
 		phase = PHASE::THROW;
 
-		label->setString("THROW"); break;
-	case MainGameLayer::THROW:
+		phaseLabel->setString("THROW"); break;
+	case PHASE::THROW:
 		if (isKnock)
 		{
 			phase = PHASE::KNOCK;
@@ -142,24 +191,24 @@ void MainGameLayer::NextPhase()
 		else 
 		{
 			phase = PHASE::END;	
-
-			label->setString("END");
 		}
 		break;
-	case MainGameLayer::KNOCK:
+	case PHASE::KNOCK:
 		callKnock();
 		break;
-	case MainGameLayer::END:
-		label->setString("START");
+	case PHASE::END:
+		phaseLabel->setString("START");
 		phase = PHASE::START;
 		NextPlayerTurn();
 
 		break;
 	default:
 
-		label->setString("DROW"); 
+		phaseLabel->setString("DROW"); 
 		break;
 	}
+	player_one->cardDispHand();
+	player_two->cardDispHand();
 };
 
 //ノック
@@ -192,10 +241,9 @@ bool MainGameLayer::onTouchBegan(const Touch * touch, Event *unused_event)
 
 	if (dealer->deckSp->getBoundingBox().containsPoint(touch->getLocation()))
 	{
-		NextPhase();
-
 
 	}
+	NextPhase(actionPhase());
 
 
 

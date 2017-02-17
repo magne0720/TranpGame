@@ -36,8 +36,6 @@ public :
 	void cardSplitShuffle(int num);
 	//パーフェクトシャッフル
 	void cardPerfectShuffle();
-	//ドローさせる
-	void cardDrow(Vector<Card*>&hand);
 	//デッキから直接捨て札に送る
 	void cardDeckThrow();
 	//デッキに加える

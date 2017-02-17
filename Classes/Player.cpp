@@ -68,6 +68,18 @@ void Player::cardSort(int num)
 	
 };
 
+//ƒhƒ[
+void Player::cardDrow(Vector<Card*>&deck)
+{
+	if (deck.size() <= 0)
+	{
+		return;
+	}
+	hand.pushBack(deck.at(0));
+	deck.at(0)->setState(STATE::HAND);
+	deck.erase(0);
+};
+
 Card* Player::cardThrow(int num) 
 {
 	Card* card = Card::create(hand.at(num)->myMark, hand.at(num)->myNumber);

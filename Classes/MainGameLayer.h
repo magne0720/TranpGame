@@ -4,6 +4,7 @@
 #include "cocos2d.h"
 #include "Player.h"
 #include "Dealer.h"
+#include "EffectManager.h"
 
 USING_NS_CC;
 
@@ -13,14 +14,6 @@ USING_NS_CC;
 class MainGameLayer:public Layer
 {
 public:
-	enum TURN
-	{
-		NONE=-1,WAIT=0,PLAY_ONE=1,PLAY_TWO=2,NUM
-	};
-	enum PHASE 
-	{
-		START, DROW, THROW, KNOCK, END, 
-	};
 	TURN turn;
 	PHASE phase;
 
@@ -37,10 +30,12 @@ public:
 	//スタート
 	void gameStart();
 	//ーーーーーーーーーーゲーム中に行う関数ーーーーーーーー
+	//プレイヤーが行う行動
+	bool actionPhase();	
 	//ターンチェンジ
 	void NextPlayerTurn();
 	//フェイズチェンジ
-	void NextPhase();
+	void NextPhase(bool isAction);
 	//ノック
 	void callKnock();
 	//ノック時に行われる役の計算
@@ -59,7 +54,8 @@ public:
 
 	Player* player_one, *player_two;
 	Dealer* dealer;
-	Label* label;
+	Label* phaseLabel,*turnLabel;
+	EffectManager* effectManager;
 
 };
 
