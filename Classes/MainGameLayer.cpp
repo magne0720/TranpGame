@@ -31,7 +31,10 @@ bool MainGameLayer::init(int level)
 	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, this);
 
 
-	dealer = Dealer::create(Vec2(designResolutionSize.width*0.3f, designResolutionSize.height*0.5f));
+	dealer = Dealer::create(
+		Vec2(designResolutionSize.width*0.4f, designResolutionSize.height*0.5f),
+		Vec2(designResolutionSize.width*0.6f, designResolutionSize.height*0.5f));
+
 	addChild(dealer);
 
 	player_one = Player::create();
@@ -116,7 +119,7 @@ bool MainGameLayer::actionPhase()
 	switch (phase)
 	{
 	case PHASE::START:
-		return false;
+		return true;
 	case PHASE::DROW:
 		if (turn == TURN::PLAY_ONE)
 		{
@@ -132,19 +135,25 @@ bool MainGameLayer::actionPhase()
 	case PHASE::THROW:
 		if (turn == TURN::PLAY_ONE)
 		{
-			player_one->cardThrow(0);
-			return true;
+			if (player_one->pickNumber >= 0) 
+			{
+				player_one->cardThrow(player_one->pickNumber);
+				return true;
+			}
 		}
 		else if (turn == TURN::PLAY_TWO)
 		{
-			player_two->cardThrow(0);
-			return true;
+			if (player_two->pickNumber >= 0) 
+			{
+				player_two->cardThrow(player_two->pickNumber);
+				return true;
+			}
 		}
 		return false;
 	case PHASE::KNOCK:
-		return false;
+		return true;
 	case PHASE::END:
-		return false;
+		return true;
 	default:
 		return false;
 	}
@@ -182,15 +191,18 @@ void MainGameLayer::NextPhase(bool isAction)
 	case PHASE::DROW:
 		phase = PHASE::THROW;
 
-		phaseLabel->setString("THROW"); break;
+		phaseLabel->setString("THROW"); 
+		break;
 	case PHASE::THROW:
 		if (isKnock)
 		{
 			phase = PHASE::KNOCK;
+			phaseLabel->setString("KNOCK");
 		}
 		else 
 		{
 			phase = PHASE::END;	
+			phaseLabel->setString("END");
 		}
 		break;
 	case PHASE::KNOCK:
@@ -243,7 +255,6 @@ bool MainGameLayer::onTouchBegan(const Touch * touch, Event *unused_event)
 	{
 
 	}
-	NextPhase(actionPhase());
 
 
 
@@ -258,6 +269,18 @@ void MainGameLayer::onTouchMoved(const Touch * touch, Event *unused_event)
 
 void MainGameLayer::onTouchEnded(const Touch * touch, Event *unused_event) 
 {
-
+	for (int i = 0; i < player_one->hand.size();i++)
+	{
+		if (player_one->hand.at(i)->getBoundingBox().intersectsRect(dealer->graveSp->getBoundingBox()))
+		{
+			player_one->pickNumber = i;
+			break;
+		}
+		else
+		{
+			player_one->pickNumber = -1;
+		}
+	}
+	NextPhase(actionPhase());
 };
 

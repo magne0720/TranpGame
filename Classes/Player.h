@@ -34,6 +34,7 @@ public:
 	Vector<Card*> hand,brain;
 	int brainHandCount;
 	int point;
+	int pickNumber;
 
 };
 

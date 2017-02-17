@@ -85,9 +85,7 @@ bool HelloWorld::init()
     this->addChild(sprite, 0);
     
 
-	
-	dealer = Dealer::create(Vec2(visibleSize.width*0.5f, visibleSize.height*0.5f));
-	addChild(dealer);
+
 
 	p1 = Player::create();
 	p1->setPosition(Vec2(visibleSize.width*0.2f, visibleSize.height*0.3f));
@@ -131,8 +129,6 @@ bool HelloWorld::onTouchBegan(const Touch * touch, Event *unused_event)
 			p2->cardDispHand();
 		}*/
 
-
-		dealer->cardDeckThrow();
 	}
 
 

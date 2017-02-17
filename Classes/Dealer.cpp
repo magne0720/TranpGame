@@ -2,10 +2,10 @@
 
 
 
-Dealer* Dealer::create(Vec2 deckPos)
+Dealer* Dealer::create(Vec2 deckPos, Vec2 gravePos)
 {
 	Dealer *pRet = new Dealer();
-	if (pRet && pRet->init(deckPos))
+	if (pRet && pRet->init(deckPos, gravePos))
 	{
 		pRet->autorelease();
 		return pRet;
@@ -18,7 +18,7 @@ Dealer* Dealer::create(Vec2 deckPos)
 	}
 };
 
-bool Dealer::init(Vec2 deckPos) 
+bool Dealer::init(Vec2 deckPos,Vec2 gravePos) 
 {
 	if(!Node::init())
 	{
@@ -29,8 +29,13 @@ bool Dealer::init(Vec2 deckPos)
 
 	deckSp = Sprite::create("Card/reverse.png");
 	deckSp->setScale(0.5f);
-	setDeckPosition(deckPos);
 	addChild(deckSp,1);
+
+	graveSp = Sprite::create("Card/grave.png");
+	graveSp->setScale(0.5f);
+	addChild(graveSp, 1);
+
+	setDeckPosition(deckPos,gravePos);
 
 	setDeck(true);
 
@@ -47,15 +52,22 @@ bool Dealer::init(Vec2 deckPos)
 };
 
 //デッキの位置設定
-void Dealer::setDeckPosition(Vec2 pos) 
+void Dealer::setDeckPosition(Vec2 deckPos,Vec2 gravePos) 
 {
-	deckPostion = pos;
+	deckPostion = deckPos;
 	deckSp->setPosition(deckPostion);
+	gravePosition = gravePos;
+	graveSp->setPosition(gravePosition);
 };
 
-Vec2 Dealer::getDeckPosition() 
+Vec2 Dealer::getDeckPosition()
 {
 	return deckPostion;
+}
+
+Vec2 Dealer::getGravePosition()
+{
+	return gravePosition;
 }
 
 void Dealer::cardClear() 

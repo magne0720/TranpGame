@@ -14,20 +14,21 @@ class Dealer :public Player
 {
 public :
 
-	static Dealer* create(Vec2 deckPos);
+	static Dealer* create(Vec2 deckPos,Vec2 gravePos);
 
-	Sprite* deckSp,graveSp;
+	Sprite* deckSp,*graveSp;
 	Vector<Card*> deck,grave;
-	Vec2 deckPostion;
+	Vec2 deckPostion, gravePosition;
 	int graveCount;
 
-	bool init(Vec2 deckPos);
+	bool init(Vec2 deckPos,Vec2 gravePos);
 
 	//デッキのセット
 	void setDeck(bool isJoker=false, int number=2);
 	//デッキの位置設定
-	void setDeckPosition(Vec2 pos);
+	void setDeckPosition(Vec2 deck,Vec2 grave);
 	Vec2 getDeckPosition();
+	Vec2 getGravePosition();
 	//デッキのクリア
 	void cardClear();
 	//シャッフル
