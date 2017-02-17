@@ -13,10 +13,12 @@ public:
 	CREATE_FUNC(Player);
 	bool init();
 	void update(float delta);
-	//カードの表示
+	//カードの並び替え
 	void cardDispHand();
+	//カードの表示
+	void cardSort(int num);
 	//カードを捨てる
-	void cardThrow(Card* &card);
+	Card* cardThrow(int num);
 	//カードすべて捨てる
 	void handDeath();
 	//役の調査

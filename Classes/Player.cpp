@@ -19,27 +19,61 @@ void Player::update(float delta)
 
 void Player::cardDispHand() 
 {
-	//手札の数だけ
-	for (int i = 0; i < hand.size(); i++)
-	{
-		//一番右のカードを見るまで
-		for (int j = 0; j+1<hand.size(); j++)
-		{
-			if ((int)hand.at(j)->myNumber > (int)hand.at(j + 1)->myNumber)
-				{
-					hand.swap(j, j + 1);
-				}
-		}
-	}
 	for (int i = 0; i < hand.size(); i++)
 	{
 		hand.at(i)->setMyPosition(Vec2(150 * i + getPositionX() / 3, getPositionY()));
 	}
 };
-
-void Player::cardThrow(Card* &card) 
+void Player::cardSort(int num)
 {
+	switch (num)
+	{
+	//番号順
+	case 0:
+		//手札の数だけ
+		for (int i = 0; i < hand.size(); i++)
+		{
+			//一番右のカードを見るまで
+			for (int j = 0; j + 1<hand.size(); j++)
+			{
+				if ((int)hand.at(j)->myNumber > (int)hand.at(j + 1)->myNumber)
+				{
+					hand.swap(j, j + 1);
+				}
+			}
+		}
+	//マーク順
+	case 1:
+		//手札の数だけ
+		for (int i = 0; i < hand.size(); i++)
+		{
+			//一番右のカードを見るまで
+			for (int j = 0; j + 1<hand.size(); j++)
+			{
+				//マーク順に並び替え
+				if ((int)hand.at(j)->myMark > (int)hand.at(j + 1)->myMark)
+				{
+					hand.swap(j, j + 1);
+				}
+				//同じマークで数字をそろえる
+				if ((int)hand.at(j)->myMark == (int)hand.at(j + 1)->myMark && (int)hand.at(j)->myNumber >(int)hand.at(j + 1)->myNumber)
+				{
+					hand.swap(j, j + 1);
+				}
+			}
+		}
+	default:
+		break;
+	}
+	
+};
 
+Card* Player::cardThrow(int num) 
+{
+	Card* card = Card::create(hand.at(num)->myMark, hand.at(num)->myNumber);
+	hand.at(num)->removeFromParentAndCleanup(true);
+	hand.erase(num);
+	return card;
 };
 
 void Player::handDeath() 
