@@ -25,26 +25,24 @@ bool Button::init(Vec2 buttonPos)
 		return false;
 	}
 	buttonSp = Sprite::create("button.png");
-	buttonSp->setScale(2);
-	buttonSp->setPosition(Vec2(designResolutionSize / 3,designResolutionSize / 2));
+	buttonSp->setScale(1);
 	setButtonPosition(buttonPos);
-	addChild(buttonSp, 2);
 }
 
 void Button::setButtonPosition(Vec2 pos)
 {
-	//ButtonPosition = pos;
-	//buttonSp->setPosition(ButtonPosition);
+	ButtonPosition = pos;
+	buttonSp->setPosition(ButtonPosition);
 };
 
-//Vec2 Button::getButtonPosition()
-//{
-	//return ButtonPosition;
-//}
-//void update(float delta)
-//{
-//
-//}
+Vec2 Button::getButtonPosition()
+{
+	return ButtonPosition;
+}
+void update(float delta)
+{
+
+}
 bool Button::onTouchBegan(const Touch * touch, Event *unused_event)
 {
 	return true;
