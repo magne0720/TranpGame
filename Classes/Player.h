@@ -24,11 +24,15 @@ public:
 	//カードすべて捨てる
 	void handDeath();
 	//役の調査
-	void checkRole(int i=0);
+	void checkRole();
 	//役の発見
 	void chanceRole(Card* card,ROLE role,bool isAllCheck=false);
+	//役の得点を計算する
+	int calcRole();
 	//順子
 	void checkOrder(int num);
+	//刻子
+	void checkEqual(int num);
 
 
 	Vector<Card*> hand,brain;

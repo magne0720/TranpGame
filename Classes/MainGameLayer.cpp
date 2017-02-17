@@ -232,7 +232,6 @@ void MainGameLayer::callKnock()
 	turn = TURN::WAIT;
 
 	player_one->checkRole();
-	player_two->checkRole();
 
 };
 
