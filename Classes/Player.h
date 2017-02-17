@@ -20,7 +20,7 @@ public:
 	//ドローする
 	void cardDrow(Vector<Card*>&deck);
 	//カードを捨てる
-	Card* cardThrow(int num);
+	Card* cardThrow(int num,Vector<Card*>&grave);
 	//カードすべて捨てる
 	void handDeath();
 	//役の調査

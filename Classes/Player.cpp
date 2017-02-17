@@ -6,7 +6,7 @@ bool Player::init()
 	{
 		return false;
 	}
-
+	pickNumber = 0;
 	
 
 	return true;
@@ -42,6 +42,7 @@ void Player::cardSort(int num)
 				}
 			}
 		}
+		break;
 	//ƒ}[ƒN‡
 	case 1:
 		//èD‚Ì”‚¾‚¯
@@ -62,6 +63,7 @@ void Player::cardSort(int num)
 				}
 			}
 		}
+		break;
 	default:
 		break;
 	}
@@ -76,13 +78,15 @@ void Player::cardDrow(Vector<Card*>&deck)
 		return;
 	}
 	hand.pushBack(deck.at(0));
+	deck.at(0)->setGlobalZOrder(3);
 	deck.at(0)->setState(STATE::HAND);
 	deck.erase(0);
 };
 
-Card* Player::cardThrow(int num) 
+Card* Player::cardThrow(int num,Vector<Card*>&grave) 
 {
 	Card* card = Card::create(hand.at(num)->myMark, hand.at(num)->myNumber);
+	grave.pushBack(hand.at(num));
 	hand.at(num)->removeFromParentAndCleanup(true);
 	hand.erase(num);
 	return card;
@@ -137,7 +141,7 @@ void Player::chanceRole(Card* card ,ROLE role,bool isAllCheck)
 	if (card != nullptr) 
 	{
 		brain.pushBack(card);
-		log("size=%d", brain.size());
+	
 	}
 	//‚Ü‚¾‚·‚×‚Ä‚ğŒ©‚Ä‚¢‚È‚¢‚È‚ç
 	if (!isAllCheck)

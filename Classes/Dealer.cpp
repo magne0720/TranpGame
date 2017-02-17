@@ -29,11 +29,11 @@ bool Dealer::init(Vec2 deckPos,Vec2 gravePos)
 
 	deckSp = Sprite::create("Card/reverse.png");
 	deckSp->setScale(0.5f);
-	addChild(deckSp,1);
+	addChild(deckSp,2);
 
 	graveSp = Sprite::create("Card/grave.png");
 	graveSp->setScale(0.5f);
-	addChild(graveSp, 1);
+	addChild(graveSp, 0);
 
 	setDeckPosition(deckPos,gravePos);
 
@@ -91,7 +91,6 @@ void Dealer::setDeck(bool isJoker,int num)
 			card->setScale(0.5);
 			card ->setPosition(getDeckPosition());
 			card->setState(STATE::DECK);
-			addChild(card,-1);
 			deck.pushBack(card);
 		}
 	}
@@ -103,7 +102,6 @@ void Dealer::setDeck(bool isJoker,int num)
 			joker->setScale(0.5);
 			joker->setPosition(getDeckPosition());	
 			joker->setState(STATE::DECK);
-			addChild(joker,-1);
 			deck.pushBack(joker);
 		}
 	}
@@ -125,7 +123,7 @@ void Dealer::cardShuffle()
 		deck.at(iRand)->removeFromParentAndCleanup(true);
 		deck.erase(iRand);
 		temp.pushBack(card);
-		addChild(card, -1);
+		addChild(card, 1);
 	}
 	deck = temp;
 };
@@ -155,29 +153,24 @@ void Dealer::cardDeckThrow()
 	if (deck.size() > 0) 
 	{
 		grave.pushBack(deck.at(0));
-		Card* card = Card::create(deck.at(0)->myMark, deck.at(0)->myNumber);
-		card->setMyPosition(Vec2(designResolutionSize.width*0.6f+random(-30,30), designResolutionSize.height*0.5f+random(-30,30)));
-		card->setScale(0.5f);
-		addChild(card);
 		deck.erase(0);
 	}
 };
 
 //デッキに加える
-void Dealer::cardAdd(MARK mark, NUMBER num)
+void Dealer::cardAdd(Card* card)
 {
-	Card* card = Card::create(mark, num);
 	card->setState(STATE::DECK);
 	deck.pushBack(card);
 	checkDeckZero();
 };
 
 //デッキから特定のものを取り除く
-void Dealer::cardLose(MARK mark, NUMBER num)
+void Dealer::cardLose(Card* card)
 {
 	for (int i = 0; i < deck.size();i++)
 	{
-		if (deck.at(i)->myMark == mark&&deck.at(i)->myNumber == num)
+		if (deck.at(i)==card)
 		{
 			deck.at(i)->setState(STATE::GRAVE);
 			deck.erase(i);
@@ -202,14 +195,9 @@ void Dealer::checkDeckZero()
 //捨て札の表示
 void Dealer::cardDispGrave() 
 {
-	if (grave.size() > 0) 
+	for (int i = 0; i < grave.size(); i++) 
 	{
-		Card* card = Card::create(grave.at(graveCount)->myMark, grave.at(graveCount)->myNumber);
-		addChild(card);
-		if (graveCount < grave.size())
-		{
-			graveCount++;
-		}
+		graveSp->setTexture(grave.at(i)->getTexture()->getPath());
 	}
 };
 

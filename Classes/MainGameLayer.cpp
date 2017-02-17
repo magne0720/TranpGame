@@ -35,15 +35,15 @@ bool MainGameLayer::init(int level)
 		Vec2(designResolutionSize.width*0.4f, designResolutionSize.height*0.5f),
 		Vec2(designResolutionSize.width*0.6f, designResolutionSize.height*0.5f));
 
-	addChild(dealer);
+	addChild(dealer,0);
 
 	player_one = Player::create();
 	player_one->setPosition(Vec2(designResolutionSize.width*0.5f, designResolutionSize.height*0.2f));
-	addChild(player_one);
+	addChild(player_one,1);
 
 	player_two = Player::create();
 	player_two->setPosition(Vec2(designResolutionSize.width*0.5f, designResolutionSize.height*0.8f));
-	addChild(player_two);
+	addChild(player_two,1);
 
 	turnLabel = Label::create("gameSTART", "fonts/arial.ttf", 30);
 	turnLabel->setPosition(designResolutionSize.width*0.5f, designResolutionSize.height*0.5f);
@@ -109,7 +109,6 @@ void MainGameLayer::gameStart()
 	startPlayer();
 	phase = PHASE::START;
 	NextPhase(true);
-
 };
 
 //ーーーーーーーーーーゲーム中に行う関数ーーーーーーーー
@@ -124,28 +123,32 @@ bool MainGameLayer::actionPhase()
 		if (turn == TURN::PLAY_ONE)
 		{
 			player_one->cardDrow(dealer->deck);
+			player_one->cardSort(0);
 			return true;
 		}
 		else if (turn == TURN::PLAY_TWO)
 		{
 			player_two->cardDrow(dealer->deck);
+			player_two->cardSort(0);
 			return true;
 		}
 		return false;
 	case PHASE::THROW:
 		if (turn == TURN::PLAY_ONE)
 		{
-			if (player_one->pickNumber >= 0) 
+			if (player_one->pickNumber >= 0)
 			{
-				player_one->cardThrow(player_one->pickNumber);
+				player_one->cardThrow(player_one->pickNumber, dealer->grave);
+				dealer->cardDispGrave();
 				return true;
 			}
 		}
 		else if (turn == TURN::PLAY_TWO)
 		{
-			if (player_two->pickNumber >= 0) 
+			if (player_two->pickNumber >= 0)
 			{
-				player_two->cardThrow(player_two->pickNumber);
+				player_two->cardThrow(player_two->pickNumber, dealer->grave);
+				dealer->cardDispGrave();
 				return true;
 			}
 		}
@@ -190,20 +193,20 @@ void MainGameLayer::NextPhase(bool isAction)
 		break;
 	case PHASE::DROW:
 		phase = PHASE::THROW;
-
+		dealer->checkDeckZero();
 		phaseLabel->setString("THROW"); 
 		break;
 	case PHASE::THROW:
-		if (isKnock)
-		{
-			phase = PHASE::KNOCK;
-			phaseLabel->setString("KNOCK");
-		}
-		else 
-		{
-			phase = PHASE::END;	
-			phaseLabel->setString("END");
-		}
+			if (isKnock||dealer->deck.size()<=0)
+			{
+				phase = PHASE::KNOCK;
+				phaseLabel->setString("KNOCK");
+			}
+			else
+			{
+				phase = PHASE::END;
+				phaseLabel->setString("END");
+			}
 		break;
 	case PHASE::KNOCK:
 		callKnock();

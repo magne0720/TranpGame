@@ -40,9 +40,9 @@ public :
 	//デッキから直接捨て札に送る
 	void cardDeckThrow();
 	//デッキに加える
-	void cardAdd(MARK mark, NUMBER number);
+	void cardAdd(Card* card);
 	//デッキから特定のものを取り除く
-	void cardLose(MARK mark,NUMBER num);
+	void cardLose(Card* card);
 	//デッキの枚数がゼロかどうか
 	void checkDeckZero();
 	//捨て札の表示
