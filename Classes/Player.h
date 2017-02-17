@@ -19,13 +19,16 @@ public:
 	void cardThrow(Card* &card);
 	//カードすべて捨てる
 	void handDeath();
-	//役を見る
-	void checkFame(int x);
+	//役の調査
+	void checkRole(int i=0);
+	//役の発見
+	void chanceRole(Card* card,ROLE role,bool isAllCheck=false);
 	//順子
 	void checkOrder(int num);
 
 
-	Vector<Card*> hand;
+	Vector<Card*> hand,brain;
+	int brainHandCount;
 	int point;
 
 };

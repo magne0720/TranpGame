@@ -174,7 +174,7 @@ bool MainGameLayer::onTouchBegan(const Touch * touch, Event *unused_event)
 			dealer->setDeck(true);
 			dealer->cardShuffle();
 			cardDivision();
-			player_one->checkFame(0);
+			player_one->checkRole();
 		}
 		//else
 		//{

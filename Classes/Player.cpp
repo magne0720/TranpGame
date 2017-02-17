@@ -7,6 +7,7 @@ bool Player::init()
 		return false;
 	}
 
+	
 
 	return true;
 };
@@ -30,7 +31,6 @@ void Player::cardDispHand()
 				}
 		}
 	}
-	log("%d", hand.size());
 	for (int i = 0; i < hand.size(); i++)
 	{
 		hand.at(i)->setMyPosition(Vec2(150 * i + getPositionX() / 3, getPositionY()));
@@ -52,48 +52,81 @@ void Player::handDeath()
 };
 
 //役を見る
-void Player::checkFame(int x)
-{
-	static int count = 0;
-	MoveBy* move = MoveBy::create(1.0, Vec2(0, 100));
+//一つずつカードを見る
+//連番(同じマーク、次の数)を見つけるまで検査
+//発見出来たらそこからもう一つ見つける
+//もう一つあったらもう一度見つける(終わるまで繰り返す)
+//最後まで見たら見つけたカードを役付きで設定する
+//
 
-	//10回
-	for (int i = 0; i < hand.size(); i++)
+void Player::checkRole(int i)
+{
+	chanceRole(hand.at(i), ROLE::ORDER);
+	for (int j = i; j < hand.size(); j++)//0から始めるのが基本なのでその前のカードは調べない
 	{
-		//最後のカードかどうか
-		if (x < hand.size())
+		if (i != j&&														//自身でないかかどうか
+			hand.at(i)->myMark == hand.at(j)->myMark &&						//マークが一緒か
+			(int)hand.at(i)->myNumber + 1 == (int)hand.at(j)->myNumber)		//番号が1だけ差がある
 		{
-			//自身でないかかどうか
-			if (i != x)
+			checkRole(j);
+		chanceRole(nullptr, ROLE::ORDER, true);
+		}
+	
+	}
+	if (i == hand.size() - 1) 
+	{
+		//log("get%d", i);
+	}
+	else
+	{
+		checkRole(i+1);
+	}
+};
+
+void Player::chanceRole(Card* card ,ROLE role,bool isAllCheck) 
+{//デバッグ用
+	//MoveBy* move = MoveBy::create(1.0, Vec2(0, 100));
+
+	//役ができそうなものを入れておく
+	if (card != nullptr) 
+	{
+		brain.pushBack(card);
+		log("size=%d", brain.size());
+	}
+	//まだすべてを見ていないなら
+	if (!isAllCheck)
+	{
+		//抜ける
+		return;
+	}
+	if (brain.size() >= 3)//三枚から役ができる 
+	{
+		switch (role)
+		{
+		case WITHOUT:
+			break;
+		case ORDER:
+			for (int i = 0; i < hand.size(); i++) 
 			{
-				//マークが一緒か
-				if (hand.at(x)->myMark == hand.at(i)->myMark)
+				for (int j = 0; j < brain.size(); j++)
 				{
-					if (count >= 3)
+					if (hand.at(i)->myMark == brain.at(j)->myMark&&hand.at(i)->myNumber == brain.at(j)->myNumber)
 					{
-						log("SUPER");
-					}
-					//番号が1だけ差がある
-					if (hand.at(x)->myNumber + 1 == hand.at(i)->myNumber)
-					{
-						hand.at(i)->runAction(move);
-						hand.at(i)->setColor(Color3B::YELLOW);
-						hand.at(x)->setColor(Color3B::GREEN);
-						log("getRed%d", i);
-						count++;
+						hand.at(i)->setRole(ROLE::ORDER);
+						hand.at(i)->setColor(Color3B::MAGENTA);
+						//hand.at(i)->runAction(move);
 					}
 				}
 			}
+			break;
+		case EQUAL:
+			break;
+		default:
+			break;
 		}
+		//頭を空っぽに
 	}
-	count = 0;
-	//最後のカードかどうか
-	if (x < hand.size())
-	{
-		log("%d", x);
-		checkFame(x + 1);
-	}//刻子(同じ番号)を見る
-
+	brain.clear();
 };
 
 void Player::checkOrder(int num) 

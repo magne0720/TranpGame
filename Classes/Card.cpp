@@ -97,6 +97,11 @@ void Card::setState(STATE state)
 	myState = state;
 };
 
+void Card::setRole(ROLE role) 
+{
+	myRole = role;
+};
+
 void Card::reverse()
 {
 	if (myState != STATE::DECK)

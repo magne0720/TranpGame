@@ -17,6 +17,10 @@ USING_NS_CC;
 	{
 		DECK=0, HAND, GRAVE
 	};
+	static enum ROLE 
+	{
+		WITHOUT=0,ORDER, EQUAL 
+	};
 
 	static cocos2d::Size designResolutionSize = cocos2d::Size(1920, 1080);
 	static cocos2d::Size smallResolutionSize = cocos2d::Size(480, 320);
@@ -45,6 +49,8 @@ public:
 	MARK myMark;
 	//©•ª‚ª¡‚Ç‚±‚ÉŠ‘®‚µ‚Ä‚¢‚é‚©
 	STATE myState;
+	//©•ª‚ª‚Ç‚Ì–ğ‚©
+	ROLE myRole;
 	//•\‚©‚Ç‚¤‚©
 	bool isReversed;
 	//G‚ç‚ê‚Ä‚¢‚é‚©‚Ç‚¤‚©
@@ -57,6 +63,7 @@ public:
 	void setKind(MARK mark,NUMBER number);
 	void setDesign(int num=0);
 	void setState(STATE state);
+	void setRole(ROLE role);
 	//— •Ô‚·
 	void reverse();
 
