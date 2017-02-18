@@ -95,6 +95,20 @@ void Card::setDesign(int num)
 void Card::setState(STATE state) 
 {
 	myState = state;
+	switch (state)
+	{
+	case DECK:
+		setZOrder(0);
+		break;
+	case HAND:
+		setZOrder(2);
+		break;
+	case GRAVE:
+		setZOrder(1);
+		break;
+	default:
+		break;
+	}
 };
 
 void Card::setRole(ROLE role) 

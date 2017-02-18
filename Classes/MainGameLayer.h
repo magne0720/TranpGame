@@ -33,9 +33,9 @@ public:
 	//プレイヤーが行う行動
 	bool actionPhase();	
 	//ターンチェンジ
-	void NextPlayerTurn();
+	void nextPlayerTurn();
 	//フェイズチェンジ
-	void NextPhase(bool isAction);
+	void nextPhase(bool isAction);
 	//ノック
 	void callKnock();
 	//ノック時に行われる役の計算

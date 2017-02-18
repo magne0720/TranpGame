@@ -7,6 +7,7 @@ bool Player::init()
 		return false;
 	}
 	pickNumber = 0;
+	pickState = STATE::HAND;
 	
 
 	return true;
@@ -19,9 +20,11 @@ void Player::update(float delta)
 
 void Player::cardDispHand() 
 {
+	cardSort(0);
 	for (int i = 0; i < hand.size(); i++)
 	{
 		hand.at(i)->setMyPosition(Vec2(150 * i + getPositionX() / 3, getPositionY()));
+		hand.at(i)->setState(STATE::HAND);
 	}
 };
 void Player::cardSort(int num)
@@ -40,6 +43,7 @@ void Player::cardSort(int num)
 				{
 					hand.swap(j, j + 1);
 				}
+				
 			}
 		}
 		break;
@@ -77,19 +81,17 @@ void Player::cardDrow(Vector<Card*>&deck)
 	{
 		return;
 	}
-	hand.pushBack(deck.at(0));
-	deck.at(0)->setGlobalZOrder(3);
-	deck.at(0)->setState(STATE::HAND);
-	deck.erase(0);
+	hand.pushBack(deck.at(DECK_TOP));
+	deck.at(DECK_TOP)->setState(STATE::HAND);
+	deck.erase(DECK_TOP);
 };
 
-Card* Player::cardThrow(int num,Vector<Card*>&grave) 
+//ÉJÅ[ÉhÇéÃÇƒÇÈ
+void Player::cardThrow(int num,Vector<Card*>&grave) 
 {
-	Card* card = Card::create(hand.at(num)->myMark, hand.at(num)->myNumber);
 	grave.pushBack(hand.at(num));
-	hand.at(num)->removeFromParentAndCleanup(true);
+	grave.at(GRAVE_TOP)->setState(STATE::GRAVE);
 	hand.erase(num);
-	return card;
 };
 
 void Player::handDeath() 
@@ -163,7 +165,7 @@ void Player::chanceRole(Card* card ,ROLE role,bool isAllCheck)
 				}
 			}
 			break;
-		case EQUAL:
+		case EQUAL://ê‚ëŒÇSñáÇ‹Ç≈
 			for (int i = 0; i < hand.size(); i++)
 			{
 				for (int j = 0; j < brain.size(); j++)
@@ -216,7 +218,7 @@ void Player::checkOrder(int num)
 		}
 	}
 	chanceRole(nullptr, ROLE::ORDER, true);
-	if (num != hand.size() - 1)
+	if (num != HAND_SIZE)
 	{
 		checkOrder(num + 1);
 	}
@@ -239,7 +241,7 @@ void Player::checkEqual(int num)
 		}
 	}
 	chanceRole(nullptr, ROLE::EQUAL, true);
-	if (num != hand.size() - 1)
+	if (num != HAND_SIZE)
 	{
 		checkEqual(num + 1);
 	}

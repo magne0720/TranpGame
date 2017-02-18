@@ -92,6 +92,7 @@ void Dealer::setDeck(bool isJoker,int num)
 			card ->setPosition(getDeckPosition());
 			card->setState(STATE::DECK);
 			deck.pushBack(card);
+			addChild(card);
 		}
 	}
 	if (isJoker)
@@ -103,6 +104,7 @@ void Dealer::setDeck(bool isJoker,int num)
 			joker->setPosition(getDeckPosition());	
 			joker->setState(STATE::DECK);
 			deck.pushBack(joker);
+			addChild(joker);
 		}
 	}
 	checkDeckZero();
@@ -115,15 +117,9 @@ void Dealer::cardShuffle()
 	Vector<Card*> temp;
 	for (int i = 0; deck.size();i++)
 	{
-		int iRand = random(0, (int)deck.size()-1);
-		Card* card = Card::create(deck.at(iRand)->myMark,deck.at(iRand)->myNumber);
-		card->setScale(0.5);
-		card->setPosition(getDeckPosition());
-		card->setState(STATE::DECK);
-		deck.at(iRand)->removeFromParentAndCleanup(true);
+		int iRand = random(0, (int)DECK_TOP);
+		temp.pushBack(deck.at(iRand));
 		deck.erase(iRand);
-		temp.pushBack(card);
-		addChild(card, 1);
 	}
 	deck = temp;
 };
@@ -153,6 +149,7 @@ void Dealer::cardDeckThrow()
 	if (deck.size() > 0) 
 	{
 		grave.pushBack(deck.at(0));
+		deck.at(0)->setState(STATE::GRAVE);
 		deck.erase(0);
 	}
 };
@@ -193,11 +190,15 @@ void Dealer::checkDeckZero()
 	}
 };
 //ŽÌ‚ÄŽD‚Ì•\Ž¦
-void Dealer::cardDispGrave() 
+void Dealer::cardDispGrave()
 {
-	for (int i = 0; i < grave.size(); i++) 
+	for (int i = 0; i < grave.size(); i++)
 	{
-		graveSp->setTexture(grave.at(i)->getTexture()->getPath());
+		grave.at(i)->setMyPosition(graveSp->getPosition());
+		grave.at(i)->setZOrder(1);
+	}
+	{
+		graveSp->setTexture("Card/grave.png");
 	}
 };
 

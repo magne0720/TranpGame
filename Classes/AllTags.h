@@ -1,6 +1,14 @@
 #ifndef __ALL_TAGS_H__
 #define __ALL_TAGS_H__
 
+#include "cocos2d.h"
+
+#define DECK_TOP deck.size()-1
+#define DECK_BOTTOM 0
+#define GRAVE_TOP grave.size()-1
+#define GRAVE_BOTTOM 0
+#define HAND_SIZE hand.size()-1
+
 //ゲームのターン制御
 static enum TURN
 {
@@ -26,12 +34,11 @@ static enum STATE
 {
 	DECK = 0, HAND, GRAVE
 };
-//カードの役状態
+
 static enum ROLE
 {
 	WITHOUT = 0, ORDER, EQUAL
 };
-
 
 static cocos2d::Size designResolutionSize = cocos2d::Size(1920, 1080);
 static cocos2d::Size smallResolutionSize = cocos2d::Size(480, 320);

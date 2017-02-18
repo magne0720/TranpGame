@@ -20,7 +20,7 @@ public:
 	//ドローする
 	void cardDrow(Vector<Card*>&deck);
 	//カードを捨てる
-	Card* cardThrow(int num,Vector<Card*>&grave);
+	void cardThrow(int num,Vector<Card*>&grave);
 	//カードすべて捨てる
 	void handDeath();
 	//役の調査
@@ -36,9 +36,14 @@ public:
 
 
 	Vector<Card*> hand,brain;
+	//頭の中の計算
 	int brainHandCount;
+	//得点
 	int point;
+	//選んだ番号
 	int pickNumber;
+	//選んだパイル
+	STATE pickState;
 
 };
 

@@ -60,16 +60,19 @@ bool MainGameLayer::init(int level)
 	gameStart();
 
 	effectManager->phaseChange(PHASE::START);
+
+	
 	scheduleUpdate();
 
 	return true;
 };
 
-void MainGameLayer::update(float delta) 
+void MainGameLayer::update(float delta)
 {
-
-
-
+	if (turn != TURN::WAIT)
+	{
+		nextPhase(actionPhase());
+	}
 };
 
 //ーーーーーーーーーーゲームの準備関数ーーーーーーーーー
@@ -108,11 +111,13 @@ void MainGameLayer::gameStart()
 	cardDivision();
 	startPlayer();
 	phase = PHASE::START;
-	NextPhase(true);
+	nextPhase(true);
 };
 
 //ーーーーーーーーーーゲーム中に行う関数ーーーーーーーー
 //タッチが離された時にプレイヤーが行う行動
+//trueを返すとき：その処理を行うと自動的に次のフェイズに行くとき
+//falseを返すとき：行う処理が同じフェイズ内で何度行ってもよいとき
 bool MainGameLayer::actionPhase() 
 {
 	switch (phase)
@@ -122,14 +127,20 @@ bool MainGameLayer::actionPhase()
 	case PHASE::DROW:
 		if (turn == TURN::PLAY_ONE)
 		{
-			player_one->cardDrow(dealer->deck);
-			player_one->cardSort(0);
-			return true;
+			if (player_one->pickState == STATE::DECK)
+			{
+				player_one->cardDrow(dealer->deck);
+				return true;
+			}
+			else if (player_one->pickState == STATE::GRAVE)
+			{
+				player_one->cardDrow(dealer->grave);
+				return true;
+			}
 		}
 		else if (turn == TURN::PLAY_TWO)
 		{
 			player_two->cardDrow(dealer->deck);
-			player_two->cardSort(0);
 			return true;
 		}
 		return false;
@@ -139,7 +150,7 @@ bool MainGameLayer::actionPhase()
 			if (player_one->pickNumber >= 0)
 			{
 				player_one->cardThrow(player_one->pickNumber, dealer->grave);
-				dealer->cardDispGrave();
+				player_one->pickNumber = -1;
 				return true;
 			}
 		}
@@ -148,7 +159,6 @@ bool MainGameLayer::actionPhase()
 			if (player_two->pickNumber >= 0)
 			{
 				player_two->cardThrow(player_two->pickNumber, dealer->grave);
-				dealer->cardDispGrave();
 				return true;
 			}
 		}
@@ -160,11 +170,13 @@ bool MainGameLayer::actionPhase()
 	default:
 		return false;
 	}
+	player_one->cardDispHand();
+	player_two->cardDispHand();
 	return false;
 };
 
 //ターンチェンジ
-void MainGameLayer::NextPlayerTurn() 
+void MainGameLayer::nextPlayerTurn() 
 {
 	if (turn == TURN::PLAY_ONE) 
 	{
@@ -178,8 +190,8 @@ void MainGameLayer::NextPlayerTurn()
 	}
 };
 
-//フェイズチェンジ
-void MainGameLayer::NextPhase(bool isAction) 
+//フェイズチェンジ(プレイヤーが選択したらtrue)
+void MainGameLayer::nextPhase(bool isAction) 
 {
 	if (!isAction) 
 	{
@@ -214,7 +226,7 @@ void MainGameLayer::NextPhase(bool isAction)
 	case PHASE::END:
 		phaseLabel->setString("START");
 		phase = PHASE::START;
-		NextPlayerTurn();
+		nextPlayerTurn();
 
 		break;
 	default:
@@ -222,8 +234,11 @@ void MainGameLayer::NextPhase(bool isAction)
 		phaseLabel->setString("DROW"); 
 		break;
 	}
+	player_one->pickState = STATE::HAND;
 	player_one->cardDispHand();
-	player_two->cardDispHand();
+	player_two->cardDispHand();	
+	dealer->cardDispGrave();
+
 };
 
 //ノック
@@ -271,11 +286,26 @@ void MainGameLayer::onTouchMoved(const Touch * touch, Event *unused_event)
 
 void MainGameLayer::onTouchEnded(const Touch * touch, Event *unused_event) 
 {
+	bool isNext = false;
+	//次にドローするカードをデッキからにする
+	if (dealer->deckSp->getBoundingBox().containsPoint(touch->getLocation())) 
+	{
+		player_one->pickState = STATE::DECK;
+		isNext = true;
+	}
+	//次にドローするカードを捨て札からにする
+	else if (dealer->graveSp->getBoundingBox().containsPoint(touch->getLocation()))
+	{
+		player_one->pickState = STATE::GRAVE;
+		isNext = true;
+	}
+
 	for (int i = 0; i < player_one->hand.size();i++)
 	{
 		if (player_one->hand.at(i)->getBoundingBox().intersectsRect(dealer->graveSp->getBoundingBox()))
 		{
 			player_one->pickNumber = i;
+			isNext = true;
 			break;
 		}
 		else
@@ -283,6 +313,5 @@ void MainGameLayer::onTouchEnded(const Touch * touch, Event *unused_event)
 			player_one->pickNumber = -1;
 		}
 	}
-	NextPhase(actionPhase());
 };
 
