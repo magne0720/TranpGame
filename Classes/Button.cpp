@@ -24,13 +24,9 @@ bool Button::init(Vec2 buttonPos)
 	{
 		return false;
 	}
-<<<<<<< HEAD
 	initWithFile("button.png");
 	setButtonPosition(buttonPos);
 }
-=======
->>>>>>> c324d71defda2c98d13567fdb7cec3603a78b28d
-
 
 	//ƒ^ƒbƒ`”»’è
 	EventListenerTouchOneByOne *listener = EventListenerTouchOneByOne::create();
