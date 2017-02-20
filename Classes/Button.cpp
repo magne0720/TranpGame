@@ -25,9 +25,7 @@ bool Button::init(Vec2 buttonPos)
 		return false;
 	}
 	initWithFile("button.png");
-	setButtonPosition(buttonPos);
-}
-
+	
 	//ƒ^ƒbƒ`”»’è
 	EventListenerTouchOneByOne *listener = EventListenerTouchOneByOne::create();
 	listener->onTouchBegan = CC_CALLBACK_2(Button::onTouchBegan, this);
@@ -36,18 +34,13 @@ bool Button::init(Vec2 buttonPos)
 	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, this);
 
 	initWithFile("button.png");
-	setPosition(buttonPos);
-	ButtonPosition = buttonPos;
-	
+	setMyPosition(buttonPos);
 	return true;
 }
 void Button::setMyPosition(Vec2 pos)
 {
-<<<<<<< HEAD
 	ButtonPosition = pos;
-=======
 	MyPosition = pos;
->>>>>>> c324d71defda2c98d13567fdb7cec3603a78b28d
 	setPosition(pos);
 };
 
