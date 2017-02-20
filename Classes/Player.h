@@ -15,7 +15,7 @@ public:
 	//カードの表示
 	void cardDispHand();
 	//カードの並び替え
-	void cardSort(int num);
+	void cardSort(ROLE kind);
 	//ドローする
 	void cardDrow(Vector<Card*>&deck);
 	//カードを捨てる
