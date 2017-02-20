@@ -11,8 +11,6 @@ class Button :public Sprite
 public:
 	static Button* create(Vec2 buttonPos);
 
-	Sprite* buttonSp;
-
 	Vec2 ButtonPosition;
 	bool init(Vec2 buttonPos);
 

@@ -19,7 +19,6 @@ public:
 	
 	static Card* create(MARK mark,NUMBER number);
 	virtual bool init(MARK mark, NUMBER number);
-	void update(float delta);
 
 	//Ž©•ª‚ÌˆÊ’u
 	Vec2 myPoisition;

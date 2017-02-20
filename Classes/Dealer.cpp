@@ -25,14 +25,12 @@ bool Dealer::init(Vec2 deckPos,Vec2 gravePos)
 		return false;
 	}
 
-	graveCount = 0;
-
 	deckSp = Sprite::create("Card/reverse.png");
-	deckSp->setScale(0.5f);
+	//deckSp->setScale(0.5f);
 	addChild(deckSp,2);
 
 	graveSp = Sprite::create("Card/grave.png");
-	graveSp->setScale(0.5f);
+	//graveSp->setScale(0.5f);
 	addChild(graveSp, 0);
 
 	setDeckPosition(deckPos,gravePos);
@@ -77,6 +75,11 @@ void Dealer::cardClear()
 		deck.at(i)->removeFromParentAndCleanup(true);
 		deck.erase(i);
 	}
+	for (int i = 0; i < grave.size();i=0)
+	{
+		grave.at(i)->removeFromParentAndCleanup(true);
+		grave.erase(i);
+	}
 }
 
 //デッキのセット
@@ -88,7 +91,7 @@ void Dealer::setDeck(bool isJoker,int num)
 		for (int j = NUMBER::ONE; j <= NUMBER_MAX; j++) 
 		{
 			Card* card=Card::create((MARK)i, (NUMBER)j);
-			card->setScale(0.5);
+			//card->setScale(0.5);
 			card ->setPosition(getDeckPosition());
 			card->setState(STATE::DECK);
 			deck.pushBack(card);
@@ -100,7 +103,7 @@ void Dealer::setDeck(bool isJoker,int num)
 		for (int i = 0; i < num; i++)
 		{
 			Card* joker = Card::create(MARK::JOKER_MARK,NUMBER::JOKER_NUMBER);
-			joker->setScale(0.5);
+			//joker->setScale(0.5);
 			joker->setPosition(getDeckPosition());	
 			joker->setState(STATE::DECK);
 			deck.pushBack(joker);
@@ -148,9 +151,9 @@ void Dealer::cardDeckThrow()
 {
 	if (deck.size() > 0) 
 	{
-		grave.pushBack(deck.at(0));
-		deck.at(0)->setState(STATE::GRAVE);
-		deck.erase(0);
+		grave.pushBack(deck.at(DECK_TOP));
+		deck.at(DECK_TOP)->setState(STATE::GRAVE);
+		deck.erase(DECK_TOP);
 	}
 };
 

@@ -20,8 +20,6 @@ public:
 	static MainGameLayer* create(int level);
 	bool init(int level);
 	void update(float delta);
-	//ノックされたか
-	bool isKnock;
 	//ーーーーーーーーーーゲームの準備関数ーーーーーーーーー
 	//誰が一番初めにゲームを始めるか
 	void startPlayer();
@@ -56,6 +54,12 @@ public:
 	Dealer* dealer;
 	Label* phaseLabel,*turnLabel;
 	EffectManager* effectManager;
+	//ターンのカウント
+	int turnCount;
+	//ノックされたか(ゲームの終了条件)
+	bool isKnock;
+	//パスしたかどうか(先行のみ有効) 
+	bool isPass;
 
 };
 

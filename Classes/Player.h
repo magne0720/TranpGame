@@ -12,7 +12,6 @@ class Player :public Node
 public:
 	CREATE_FUNC(Player);
 	bool init();
-	void update(float delta);
 	//カードの表示
 	void cardDispHand();
 	//カードの並び替え

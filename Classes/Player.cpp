@@ -13,11 +13,6 @@ bool Player::init()
 	return true;
 };
 
-void Player::update(float delta) 
-{
-
-};
-
 void Player::cardDispHand() 
 {
 	cardSort(0);

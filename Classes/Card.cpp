@@ -37,14 +37,7 @@ bool Card::init(MARK mark,NUMBER number)
 	isFamed = false;
 	setKind(mark, number);
 
-	scheduleUpdate();
-
 	return true;
-};
-
-void Card::update(float delta) 
-{
-
 };
 
 void Card::setKind(MARK mark, NUMBER num)
@@ -56,7 +49,7 @@ void Card::setKind(MARK mark, NUMBER num)
 
 void Card::setDesign(int num) 
 {
-	String* name = String::createWithFormat("");
+	String* name = String::createWithFormat("Card/reverce.png");
 
 	switch (myMark)
 	{

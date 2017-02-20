@@ -20,19 +20,18 @@ Button* Button::create(Vec2 buttonPos)
 
 bool Button::init(Vec2 buttonPos)
 {
-	if (!Node::init())
+	if (!Sprite::init())
 	{
 		return false;
 	}
-	buttonSp = Sprite::create("button.png");
-	buttonSp->setScale(1);
+	initWithFile("button.png");
 	setButtonPosition(buttonPos);
 }
 
 void Button::setButtonPosition(Vec2 pos)
 {
 	ButtonPosition = pos;
-	buttonSp->setPosition(ButtonPosition);
+	setPosition(pos);
 };
 
 Vec2 Button::getButtonPosition()

@@ -59,7 +59,7 @@ bool MainGameLayer::init(int level)
 	//ゲームの準備
 	gameStart();
 
-	effectManager->phaseChange(PHASE::START);
+	//effectManager->phaseChange(PHASE::START);
 
 	
 	scheduleUpdate();
@@ -103,18 +103,30 @@ void MainGameLayer::cardDivision()
 //スタート
 void MainGameLayer::gameStart()
 {
+	//カウントの初期化
+	turnCount = 1;
+	isPass = false;
+	//フェイズの初期化
+	phase = PHASE::START;
+	//プレイヤーのカードをすべて捨てる
 	player_one->handDeath();
 	player_two->handDeath();
-	dealer->cardDispGrave();
+	//デッキを再構築
 	dealer->setDeck(true);
+	//デッキをシャッフル
 	dealer->cardShuffle();
+	//プレイヤーに10枚ずつ交互に配る
 	cardDivision();
+	//デッキの上から一枚捨て札に送る
+	dealer->cardDeckThrow();
+	//先行を決める
 	startPlayer();
-	phase = PHASE::START;
+	//始まる
 	nextPhase(true);
 };
 
 //ーーーーーーーーーーゲーム中に行う関数ーーーーーーーー
+
 //タッチが離された時にプレイヤーが行う行動
 //trueを返すとき：その処理を行うと自動的に次のフェイズに行くとき
 //falseを返すとき：行う処理が同じフェイズ内で何度行ってもよいとき
@@ -125,20 +137,42 @@ bool MainGameLayer::actionPhase()
 	case PHASE::START:
 		return true;
 	case PHASE::DROW:
-		if (turn == TURN::PLAY_ONE)
+		if (turn == TURN::PLAY_ONE)//プレイヤー１
 		{
-			if (player_one->pickState == STATE::DECK)
+			if (player_one->pickState == STATE::DECK)//デッキから引くを選ぶ
 			{
-				player_one->cardDrow(dealer->deck);
-				return true;
+				if (isPass)//自身が後攻で先行がパスしていたら
+				{
+					if (turnCount >= 3)//お互いのターンが3ターン目以降
+					{
+						player_one->cardDrow(dealer->deck);
+						return true;
+					}
+				}
+				else//自身が先行かパスを行わない場合
+				{
+					if(turnCount>=2)//お互いのターンが2ターン目以降
+					{
+						player_one->cardDrow(dealer->deck);
+						return true;
+					}
+				}
 			}
-			else if (player_one->pickState == STATE::GRAVE)
+			else if (player_one->pickState == STATE::GRAVE)//捨て札から引くを選ぶ
 			{
 				player_one->cardDrow(dealer->grave);
 				return true;
 			}
+			else if (player_one->pickState == STATE::FREE)
+			{
+				if (turnCount==1)//1ターン目のみ 
+				{
+					isPass = true;
+					return true;
+				} 
+			}
 		}
-		else if (turn == TURN::PLAY_TWO)
+		else if (turn == TURN::PLAY_TWO)//プレイヤー２
 		{
 			player_two->cardDrow(dealer->deck);
 			return true;
@@ -166,6 +200,8 @@ bool MainGameLayer::actionPhase()
 	case PHASE::KNOCK:
 		return true;
 	case PHASE::END:
+		return true;
+	case PHASE::PASS:
 		return true;
 	default:
 		return false;
@@ -205,9 +241,15 @@ void MainGameLayer::nextPhase(bool isAction)
 		break;
 	case PHASE::DROW:
 		phase = PHASE::THROW;
-		dealer->checkDeckZero();
-		phaseLabel->setString("THROW"); 
-		break;
+		phaseLabel->setString("THROW");
+
+		if (isPass)
+		{
+			isPass = false;
+			phase = PHASE::PASS;
+			phaseLabel->setString("PASS");
+		}
+			break;
 	case PHASE::THROW:
 			if (isKnock||dealer->deck.size()<=0)
 			{
@@ -227,7 +269,12 @@ void MainGameLayer::nextPhase(bool isAction)
 		phaseLabel->setString("START");
 		phase = PHASE::START;
 		nextPlayerTurn();
+		turnCount++;
+		break;
 
+	case PHASE::PASS:
+		phaseLabel->setString("END");
+		phase = PHASE::END;
 		break;
 	default:
 
@@ -273,6 +320,10 @@ bool MainGameLayer::onTouchBegan(const Touch * touch, Event *unused_event)
 
 	}
 
+	if (touch->getLocation().x < designResolutionSize.width*0.05f)
+	{
+		gameStart();
+	};
 
 
 
@@ -286,26 +337,27 @@ void MainGameLayer::onTouchMoved(const Touch * touch, Event *unused_event)
 
 void MainGameLayer::onTouchEnded(const Touch * touch, Event *unused_event) 
 {
-	bool isNext = false;
 	//次にドローするカードをデッキからにする
 	if (dealer->deckSp->getBoundingBox().containsPoint(touch->getLocation())) 
 	{
 		player_one->pickState = STATE::DECK;
-		isNext = true;
 	}
 	//次にドローするカードを捨て札からにする
 	else if (dealer->graveSp->getBoundingBox().containsPoint(touch->getLocation()))
 	{
 		player_one->pickState = STATE::GRAVE;
-		isNext = true;
 	}
+	if (touch->getLocation().x > designResolutionSize.width*0.95f)
+	{
+		player_one->pickState = STATE::FREE;
+	};
 
 	for (int i = 0; i < player_one->hand.size();i++)
 	{
-		if (player_one->hand.at(i)->getBoundingBox().intersectsRect(dealer->graveSp->getBoundingBox()))
+		//if (player_one->hand.at(i)->getBoundingBox().intersectsRect(dealer->graveSp->getBoundingBox()))
+		if(player_one->hand.at(i)->getBoundingBox().containsPoint(touch->getLocation()))
 		{
 			player_one->pickNumber = i;
-			isNext = true;
 			break;
 		}
 		else

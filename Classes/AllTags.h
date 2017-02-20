@@ -3,6 +3,8 @@
 
 #include "cocos2d.h"
 
+USING_NS_CC;
+
 #define DECK_TOP deck.size()-1
 #define DECK_BOTTOM 0
 #define GRAVE_TOP grave.size()-1
@@ -10,32 +12,32 @@
 #define HAND_SIZE hand.size()-1
 
 //ゲームのターン制御
-static enum TURN
+enum TURN
 {
 	WAIT = 0, PLAY_ONE = 1, PLAY_TWO = 2, NUM
 };
-//ターンごとの制御
-static enum PHASE
+//ターンごとのプレイヤーの行動の制御
+enum PHASE
 {
-	START, DROW, THROW, KNOCK, END,
+	START, DROW, THROW, KNOCK, END,PASS
 };
 //カードの番号
-static enum NUMBER
+enum NUMBER
 {
 	ZERO = -1, ONE = 1, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, JACK, QUEEN, KING, NUMBER_NUM, JOKER_NUMBER, ITEM_NUMBER
 };
 //カードのマーク
-static enum MARK
+enum MARK
 {
 	NONE = -1, SPADE = 1, CLOVER, HEART, DIAMOND, MARK_NUM, JOKER_MARK, ITEM_MARK
 };
-//カードの位置情報
-static enum STATE
+//カードの位置情報とプレイヤーの選択状況
+enum STATE
 {
-	DECK = 0, HAND, GRAVE
+	DECK = 0,GRAVE,HAND,FREE
 };
-
-static enum ROLE
+//役
+enum ROLE
 {
 	WITHOUT = 0, ORDER, EQUAL
 };
