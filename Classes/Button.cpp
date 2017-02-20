@@ -20,31 +20,41 @@ Button* Button::create(Vec2 buttonPos)
 
 bool Button::init(Vec2 buttonPos)
 {
-	if (!Node::init())
+	if (!Sprite::init())
 	{
 		return false;
 	}
-	buttonSp = Sprite::create("button.png");
-	buttonSp->setScale(1);
-	setButtonPosition(buttonPos);
-}
 
-void Button::setButtonPosition(Vec2 pos)
+
+	//ƒ^ƒbƒ`”»’è
+	EventListenerTouchOneByOne *listener = EventListenerTouchOneByOne::create();
+	listener->onTouchBegan = CC_CALLBACK_2(Button::onTouchBegan, this);
+	listener->onTouchMoved = CC_CALLBACK_2(Button::onTouchMoved, this);
+	listener->onTouchEnded = CC_CALLBACK_2(Button::onTouchEnded, this);
+	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, this);
+
+	initWithFile("button.png");
+	setPosition(buttonPos);
+	ButtonPosition = buttonPos;
+	
+	return true;
+}
+void Button::setMyPosition(Vec2 pos)
 {
-	ButtonPosition = pos;
-	buttonSp->setPosition(ButtonPosition);
+	MyPosition = pos;
+	setPosition(pos);
 };
 
-Vec2 Button::getButtonPosition()
-{
-	return ButtonPosition;
-}
 void update(float delta)
 {
 
 }
 bool Button::onTouchBegan(const Touch * touch, Event *unused_event)
 {
+	if (getBoundingBox().containsPoint(touch->getLocation()))
+	{
+
+	}
 	return true;
 };
 
