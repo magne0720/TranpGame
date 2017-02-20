@@ -28,72 +28,20 @@ bool HelloWorld::init()
         return false;
     }
     
-
-
-	//ƒ^ƒbƒ`”»’è
-	EventListenerTouchOneByOne *listener = EventListenerTouchOneByOne::create();
-	listener->onTouchBegan = CC_CALLBACK_2(HelloWorld::onTouchBegan, this);
-	listener->onTouchMoved = CC_CALLBACK_2(HelloWorld::onTouchMoved, this);
-	listener->onTouchEnded = CC_CALLBACK_2(HelloWorld::onTouchEnded, this);
-	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, this);
-
-
-
-    Size visibleSize = Director::getInstance()->getVisibleSize();
-    Vec2 origin = Director::getInstance()->getVisibleOrigin();
-
-    /////////////////////////////
-    // 2. add a menu item with "X" image, which is clicked to quit the program
-    //    you may modify it.
-
-    // add a "close" icon to exit the progress. it's an autorelease object
-    auto closeItem = MenuItemImage::create(
-                                           "CloseNormal.png",
-                                           "CloseSelected.png",
-                                           CC_CALLBACK_1(HelloWorld::menuCloseCallback, this));
-    
-	closeItem->setPosition(Vec2(origin.x + visibleSize.width - closeItem->getContentSize().width/2 ,
-                                origin.y + closeItem->getContentSize().height/2));
-
-    // create menu, it's an autorelease object
-    auto menu = Menu::create(closeItem, NULL);
-    menu->setPosition(Vec2::ZERO);
-    this->addChild(menu, 1);
-
-    /////////////////////////////
-    // 3. add your codes below...
-
-    // add a label shows "Hello World"
-    // create and initialize a label
-    
-    auto label = Label::createWithTTF("Hello World", "fonts/Marker Felt.ttf", 24);
-    
-    // position the label on the center of the screen
-    label->setPosition(Vec2(origin.x + visibleSize.width/2,
-                            origin.y + visibleSize.height - label->getContentSize().height));
-
-    // add the label as a child to this layer
-    this->addChild(label, 1);
-
-    // add "HelloWorld" splash screen"
-    auto sprite = Sprite::create("HelloWorld.png");
-
-    // position the sprite on the center of the screen
-    sprite->setPosition(Vec2(visibleSize.width/2 + origin.x, visibleSize.height/2 + origin.y));
-
-    // add the sprite as a child to this layer
-    this->addChild(sprite, 0);
-    
-
-
+	dealer = Dealer::create(Vec2(designResolutionSize.width*0.4f, designResolutionSize.height*0.5f),
+		Vec2(designResolutionSize.width*0.6f, designResolutionSize.height*0.5f));
+	addChild(dealer);
 
 	p1 = Player::create();
-	p1->setPosition(Vec2(visibleSize.width*0.2f, visibleSize.height*0.3f));
+	p1->setPosition(Vec2(designResolutionSize.width*0.2f, designResolutionSize.height*0.3f));
 	addChild(p1);
 
 	p2 = Player::create();
-	p2->setPosition(Vec2(visibleSize.width*0.2f, visibleSize.height*0.7f));
+	p2->setPosition(Vec2(designResolutionSize.width*0.2f, designResolutionSize.height*0.7f));
 	addChild(p2);
+
+	button = Button::create(Vec2(designResolutionSize.width *0.1f, designResolutionSize.height*0.5f));
+	addChild(button,1);
 
 
     return true;
@@ -113,7 +61,7 @@ void HelloWorld::menuCloseCallback(Ref* pSender)
 
 bool HelloWorld::onTouchBegan(const Touch * touch, Event *unused_event) 
 {
-	if (dealer->deckSp->getBoundingBox().containsPoint(touch->getLocation()))
+	//if (dealer->deckSp->getBoundingBox().containsPoint(touch->getLocation()))
 	{
 	/*	if (dealer->deck.size() <= 0)
 		{

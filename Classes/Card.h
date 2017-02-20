@@ -21,7 +21,7 @@ public:
 	virtual bool init(MARK mark, NUMBER number);
 
 	//自分の位置
-	Vec2 myPoisition;
+	Vec2 myPosition;
 	//自分の番号
 	NUMBER myNumber;
 	//自分のスート(4つのマーク)
