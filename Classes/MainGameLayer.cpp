@@ -58,7 +58,7 @@ bool MainGameLayer::init(int level)
 	effectManager = EffectManager::create();
 	addChild(effectManager);
 
-	button = Button::create(Vec2(designResolutionSize.width *0.05f, designResolutionSize.height*0.5f));
+	button = Button::create(Vec2(designResolutionSize.width *0.05f, designResolutionSize.height*0.5f),Vec2(0,0),Vec2(0,0));
 	addChild(button);
 
 	//ƒQ[ƒ€‚Ì€”õ

@@ -122,7 +122,7 @@ void Player::ressetRole()
 {
 	for (int i = 0; i < hand.size(); i++) 
 	{
-		hand.at(i)->myRole = ROLE::WITHOUT;
+		hand.at(i)->setRole(ROLE::WITHOUT);
 		hand.at(i)->setColor(Color3B::WHITE);
 	}
 }
