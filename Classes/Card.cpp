@@ -109,6 +109,11 @@ void Card::setRole(ROLE role)
 	myRole = role;
 };
 
+void Card::setRoleNumber(int num) 
+{
+	roleNumber = num;
+}
+
 void Card::reverse()
 {
 	if (myState != STATE::DECK)

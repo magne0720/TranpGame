@@ -23,6 +23,8 @@ bool MainGameLayer::init(int level)
 		return false;
 	}
 
+	addChild(LayerColor::create(Color4B::GREEN));
+
 	//ƒ^ƒbƒ`”»’è
 	EventListenerTouchOneByOne *listener = EventListenerTouchOneByOne::create();
 	listener->onTouchBegan = CC_CALLBACK_2(MainGameLayer::onTouchBegan, this);
@@ -233,6 +235,7 @@ void MainGameLayer::nextPhase(bool isAction)
 	{
 		return;
 	}
+	effectManager->phaseChange(phase);
 	switch (phase)
 	{
 	case PHASE::START:
@@ -294,6 +297,7 @@ void MainGameLayer::callKnock()
 	turn = TURN::WAIT;
 
 	player_one->checkRole();
+	player_one->cardDispHand();
 
 };
 
@@ -324,8 +328,15 @@ bool MainGameLayer::onTouchBegan(const Touch * touch, Event *unused_event)
 	{
 		gameStart();
 	};
-
-
+	if (touch->getLocation().y > designResolutionSize.height*0.9f)
+	{
+		player_one->cardSort(ROLE::EQUAL);
+	};
+	if (touch->getLocation().y < designResolutionSize.height*0.1f)
+	{
+		player_one->cardSort(ROLE::ORDER);
+	};
+	player_one->cardDispHand();
 
 	return true;
 };

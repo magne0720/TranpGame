@@ -8,14 +8,14 @@ bool Player::init()
 	}
 	pickNumber = 0;
 	pickState = STATE::HAND;
-	
-
+	brainHandCount = 0;
+	cardSort(ROLE::EQUAL);
 	return true;
 };
 
 void Player::cardDispHand() 
 {
-	cardSort(ROLE::ORDER);
+	cardSort(sortType);
 	for (int i = 0; i < hand.size(); i++)
 	{
 		hand.at(i)->setMyPosition(Vec2(150 * i + getPositionX() / 3, getPositionY()));
@@ -24,6 +24,7 @@ void Player::cardDispHand()
 };
 void Player::cardSort(ROLE kind)
 {
+	sortType = kind;
 	switch (kind)
 	{
 	//番号順
@@ -67,6 +68,20 @@ void Player::cardSort(ROLE kind)
 			}
 		}
 		break;
+	case ROLE::WITHOUT:
+		//出来たやくの順番
+		for (int i = 0; i < hand.size(); i++)
+		{
+			//一番右のカードを見るまで
+			for (int j = 0; j + 1<hand.size(); j++)
+			{
+				//マーク順に並び替え
+				if ((int)hand.at(j)->roleNumber < (int)hand.at(j + 1)->roleNumber)
+				{
+					hand.swap(j, j + 1);
+				}
+			}
+		}
 	default:
 		break;
 	}
@@ -102,6 +117,16 @@ void Player::handDeath()
 	hand.clear();
 };
 
+//役の初期化
+void Player::ressetRole() 
+{
+	for (int i = 0; i < hand.size(); i++) 
+	{
+		hand.at(i)->myRole = ROLE::WITHOUT;
+		hand.at(i)->setColor(Color3B::WHITE);
+	}
+}
+
 //役を見る
 //一つずつカードを見る
 //連番(同じマーク、次の数)を見つけるまで検査
@@ -110,25 +135,37 @@ void Player::handDeath()
 //最後まで見たら見つけたカードを役付きで設定する
 //
 
-void Player::checkRole()
+int Player::checkRole()
 {
 	int one, two;
 	//刻子→順子
 	checkEqual(0);
 	checkOrder(0);
 	one=calcRole();
+	ressetRole();
 	//順子→刻子
 	checkOrder(0);
 	checkEqual(0);
 	two = calcRole();
-	log("%d-%d", one, two);
-	if(one>two)
+	ressetRole();
+	log("order%d-equal%d", one, two);
+	if(one<two)
 	{
-		log("junsi");
+		log("junsi->kokusi");
+		checkEqual(0);
+		checkOrder(0);
+		cardSort(ROLE::WITHOUT);
+		log("playEnd");
+		return one;
 	}
 	else
 	{
-		log("kokusi");
+		log("kokusi->junsi");
+		checkOrder(0);
+		checkEqual(0);
+		cardSort(ROLE::WITHOUT);
+		log("playEnd");
+		return two;
 	}
 };
 
@@ -142,60 +179,70 @@ void Player::chanceRole(Card* card, ROLE role, bool isAllCheck)
 	//まだすべてを見ていないなら
 	if (!isAllCheck)
 	{
-		//抜ける
 		return;
 	}
+	if (brain.size() < 3) 
+	{
+		brain.clear();
+		return;
+	}
+	log("size<<<[%d]", brain.size());
 	switch (role)
 	{
 	case WITHOUT:
 		break;
 	case ORDER:
-		for (int i = 0; i < hand.size(); i++)
+		for (int i = 0; i < brain.size(); i++) 
 		{
-			for (int j = 0; j < brain.size(); j++)
+			if (brain.at(i)->myRole == ROLE::EQUAL) 
 			{
-				if (hand.at(i)->myMark == brain.at(j)->myMark&&hand.at(i)->myNumber == brain.at(j)->myNumber)
+				break;
+			}
+		}
+		for (int i = 0; i < brain.size(); i++)
+		{
+			brain.at(i)->setRoleNumber(brainHandCount);
+			if (brain.at(i)->myRole != ROLE::EQUAL)
+			{
+				if (brain.size() >= 4)
 				{
-					//役が四つなら
-					if (brain.size() >= 4)
-					{
-						hand.at(i)->setRole(ROLE::ORDER_FOUR);
-					}
-					//もう役ができていたら
-					if (hand.at(i)->myRole != ROLE::EQUAL)
-					{
-						hand.at(i)->setRole(ROLE::ORDER);
-						hand.at(i)->setColor(Color3B::MAGENTA);
-					}
-					else
-					{
-						hand.at(i)->setRole(ROLE::WITHOUT);
-					}
+					brain.at(i)->setRole(ROLE::ORDER_FOUR);
+					brain.at(i)->setColor(Color3B::BLUE);
+					log("order_four-%d", i);
+				}
+				else//3枚役
+				{
+					brain.at(i)->setRole(ROLE::ORDER);
+					brain.at(i)->setColor(Color3B::MAGENTA);
+					log("order-%d", i);
 				}
 			}
 		}
 		break;
 	case EQUAL://絶対４枚まで
-		for (int i = 0; i < hand.size(); i++)
+		for (int i = 0; i < brain.size(); i++)
 		{
-			for (int j = 0; j < brain.size(); j++)
+			if (brain.at(i)->myRole == ROLE::ORDER)
 			{
+				break;
+			}
+		}
+		for (int i = 0; i < brain.size(); i++)
+		{
+			brain.at(i)->setRoleNumber(brainHandCount);
+			if (brain.at(i)->myRole != ROLE::ORDER)
+			{
+				brain.at(i)->setRole(ROLE::EQUAL);
+				if (brain.size() >= 4)
 				{
-				if (hand.at(i)->myMark == brain.at(j)->myMark&&hand.at(i)->myNumber == brain.at(j)->myNumber)
-					if (hand.at(i)->myRole != ROLE::ORDER)
-					{
-						hand.at(i)->setRole(ROLE::EQUAL);
-						hand.at(i)->setColor(Color3B::YELLOW);
-					}
-					else
-					{
-						hand.at(i)->setRole(ROLE::WITHOUT);
-					}
-					//役が四つなら
-					if (brain.size() >= 4)
-					{
-						hand.at(i)->setRole(ROLE::EQUAL_FOUR);
-					}
+					brain.at(i)->setRole(ROLE::EQUAL_FOUR);
+					brain.at(i)->setColor(Color3B::GREEN);
+					log("four_equal-%d", i);
+				}
+				else//3枚役
+				{
+					brain.at(i)->setColor(Color3B::YELLOW);
+					log("equal-%d", i);
 				}
 			}
 		}
@@ -203,8 +250,8 @@ void Player::chanceRole(Card* card, ROLE role, bool isAllCheck)
 	default:
 		break;
 	}
+	brainHandCount++;
 	//頭を空っぽに
-
 	brain.clear();
 };
 
@@ -216,6 +263,7 @@ int Player::calcRole()
 	{
 		if(hand.at(i)->myRole==ROLE::WITHOUT)
 		{
+			log("%d-plus%d", i,(int)hand.at(i)->myNumber);
 			point += (int)hand.at(i)->myNumber;
 		}
 	}
@@ -223,7 +271,7 @@ int Player::calcRole()
 };
 
 //マークが同じ、順番のカード
-void Player::checkOrder(int num) 
+void Player::checkOrder(int num)
 {
 	//自身を役の可能性に追加
 	chanceRole(hand.at(num), ROLE::ORDER);
@@ -234,20 +282,25 @@ void Player::checkOrder(int num)
 	{
 		if (num != j&&															//自身でないかかどうか
 			hand.at(num)->myMark == hand.at(j)->myMark &&						//マークが一緒か
-			(int)hand.at(num)->myNumber + 1 == (int)hand.at(j)->myNumber)		//番号が1だけ差がある
+			hand.at(num)->myNumber + 1 == hand.at(j)->myNumber)					//番号が1だけ差がある
 		{
 			checkOrder(j);
 		}
 	}
+	checkEqualFour(hand.at(num));
 	chanceRole(nullptr, ROLE::ORDER, true);
 	if (num != HAND_SIZE)
 	{
-		checkOrder(num + 1);
+		if (hand.at(num + 1)->myRole == ROLE::WITHOUT)
+		{
+			log("next%d", num + 1);
+			checkOrder(num + 1);
+		}
 	}
 };
 
 //マーク関係なし、番号が同じ
-void Player::checkEqual(int num) 
+void Player::checkEqual(int num)
 {
 	//自身を役の可能性に追加
 	chanceRole(hand.at(num), ROLE::EQUAL);
@@ -257,14 +310,42 @@ void Player::checkEqual(int num)
 	for (int j = num; j < hand.size(); j++)//0から始めるのが基本なのでその前のカードは調べない
 	{
 		if (num != j &&														//自身でないかかどうか
-			(int)hand.at(num)->myNumber == (int)hand.at(j)->myNumber)		//番号が同じか
+			hand.at(num)->myNumber == hand.at(j)->myNumber)		//番号が同じか
 		{
 			checkEqual(j);
 		}
 	}
+	checkOrderFour(hand.at(num));
 	chanceRole(nullptr, ROLE::EQUAL, true);
 	if (num != HAND_SIZE)
 	{
-		checkEqual(num + 1);
+		if (hand.at(num + 1)->myRole == ROLE::WITHOUT)
+		{
+			checkEqual(num + 1);
+		}
+	}
+};
+
+//四枚刻子の一枚抜きOK検査
+void Player::checkEqualFour(Card* card)
+{
+	for (int i = 0; i < brain.size(); i++)
+	{
+		if (brain.at(i)->myRole == ROLE::EQUAL_FOUR)
+		{
+			brain.at(i)->setRole(ROLE::EQUAL);
+		}
+	}
+};
+
+//四枚順子の一枚抜きOK検査
+void Player::checkOrderFour(Card* card)
+{
+	for (int i = 0; i < brain.size(); i++)
+	{
+		if (brain.at(i)->myRole == ROLE::ORDER_FOUR)
+		{
+			brain.at(i)->setRole(ROLE::ORDER);
+		}
 	}
 };

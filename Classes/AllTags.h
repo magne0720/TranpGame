@@ -2,8 +2,10 @@
 #define __ALL_TAGS_H__
 
 #include "cocos2d.h"
+#include "SimpleAudioEngine.h"
 
 USING_NS_CC;
+using namespace CocosDenshion;
 
 #define DECK_TOP deck.size()-1
 #define DECK_BOTTOM 0

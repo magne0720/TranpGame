@@ -30,6 +30,8 @@ public:
 	STATE myState;
 	//©•ª‚ª‚Ç‚Ì–ğ‚©
 	ROLE myRole;
+	//–ğ‚Ì”Ô†
+	int roleNumber;
 	//•\‚©‚Ç‚¤‚©
 	bool isReversed;
 	//G‚ç‚ê‚Ä‚¢‚é‚©‚Ç‚¤‚©
@@ -43,6 +45,7 @@ public:
 	void setDesign(int num=0);
 	void setState(STATE state);
 	void setRole(ROLE role);
+	void setRoleNumber(int num);
 	//— •Ô‚·
 	void reverse();
 

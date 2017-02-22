@@ -22,8 +22,10 @@ public:
 	void cardThrow(int num,Vector<Card*>&grave);
 	//カードすべて捨てる
 	void handDeath();
+	//役の初期化
+	void ressetRole();
 	//役の調査
-	void checkRole();
+	int checkRole();
 	//役の発見
 	void chanceRole(Card* card,ROLE role,bool isAllCheck=false);
 	//役の得点を計算する
@@ -32,7 +34,14 @@ public:
 	void checkOrder(int num);
 	//刻子
 	void checkEqual(int num);
-
+	//三枚のところからカードを抜いていいかどうか
+	void checkOrderExcept();
+	//三枚のところからカードを抜いていいかどうか
+	void checkEqualExcept();
+	//四枚刻子の一枚抜きOK検査
+	void checkEqualFour(Card* card);
+	//四枚順子の一枚抜きOK検査
+	void checkOrderFour(Card* card);
 
 	Vector<Card*> hand,brain;
 	//頭の中の計算
@@ -43,6 +52,8 @@ public:
 	int pickNumber;
 	//選んだパイル
 	STATE pickState;
+	//並び替えの状態
+	ROLE sortType;
 
 };
 

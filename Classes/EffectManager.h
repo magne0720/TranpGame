@@ -15,7 +15,6 @@ public:
 	void update(float delta);
 
 	void phaseChange(PHASE phase);
-
 };
 
 
