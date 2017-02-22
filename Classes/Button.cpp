@@ -34,7 +34,7 @@ bool Button::init(Vec2 buttonPos)
 	listener->onTouchEnded = CC_CALLBACK_2(Button::onTouchEnded, this);
 	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, this);
 
-	initWithFile("mathsort.png");
+	sortButton = Sprite::create("mathsort.png");
 	setMyPosition(buttonPos);
 	return true;
 }

@@ -3,14 +3,15 @@
 
 #include "cocos2d.h"
 #include "Player.h"
+#include "AllTags.h"
 
 USING_NS_CC;
 
 class Button :public Sprite
 {
 public:
-	static Button* create(Vec2 buttonPos);
-	Player* cardsort;
+	static Button* create(Vec2 buttonPos,Vec2 passbuttonPos,Vec2 nockbuttonPos);
+	Sprite* sortButton, passButton;
 
 	ROLE myRole;
 	Vec2 ButtonPosition;
@@ -18,6 +19,7 @@ public:
 	bool init(Vec2 buttonPos);
 	bool isTouched;
 
+	void setDesign(int num);
 	void setMyPosition(Vec2 pos);
 
 	bool onTouchBegan(const Touch * touch, Event *unused_event);
