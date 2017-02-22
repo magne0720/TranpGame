@@ -24,7 +24,8 @@ bool Button::init(Vec2 buttonPos)
 	{
 		return false;
 	}
-	initWithFile("button.png");
+
+	myRole = ROLE::ORDER;
 	
 	//ƒ^ƒbƒ`”»’è
 	EventListenerTouchOneByOne *listener = EventListenerTouchOneByOne::create();
@@ -33,7 +34,7 @@ bool Button::init(Vec2 buttonPos)
 	listener->onTouchEnded = CC_CALLBACK_2(Button::onTouchEnded, this);
 	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, this);
 
-	initWithFile("button.png");
+	initWithFile("mathsort.png");
 	setMyPosition(buttonPos);
 	return true;
 }
@@ -52,17 +53,72 @@ bool Button::onTouchBegan(const Touch * touch, Event *unused_event)
 {
 	if (getBoundingBox().containsPoint(touch->getLocation()))
 	{
-
+		ModeChangeFor(myRole);
 	}
 	return true;
 };
 
 void Button::onTouchMoved(const Touch * touch, Event *unused_event)
 {
+	if (getBoundingBox().containsPoint(touch->getLocation()))
+	{
 
+	}
+	else
+	{
+
+		ModeChange(myRole, false);
+	}
+	
 };
 
 void Button::onTouchEnded(const Touch * touch, Event *unused_event)
 {
+	if (getBoundingBox().containsPoint(touch->getLocation()))
+	{
+		ModeChange(myRole,true);
+	}
+	else
+	{
+		ModeChange(myRole, false);
+	}
+};
+
+void Button::ModeChange(ROLE &kind,bool is)
+{
+	if (is)
+	{
+		if (kind == ROLE::ORDER) {
+			setTexture("marksort.png");
+			kind = ROLE::EQUAL;
+		}
+		else if (kind == ROLE::EQUAL) {
+			setTexture("mathsort.png");
+			kind = ROLE::ORDER;
+		}
+	}
+	else
+	{
+
+		if (kind == ROLE::ORDER) {
+			setTexture("mathsort.png");
+		}
+		else if (kind == ROLE::EQUAL) {
+			setTexture("marksort.png");
+		}
+	}
+	
 
 };
+
+void Button::ModeChangeFor(ROLE &kind)
+{
+	if (kind == ROLE::ORDER)
+	{
+		setTexture("mathfor.png");
+	}
+	else if (kind == ROLE::EQUAL)
+	{
+		setTexture("markfor.png");
+	}
+}
