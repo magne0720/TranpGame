@@ -5,6 +5,7 @@
 #include "Player.h"
 #include "Dealer.h"
 #include "EffectManager.h"
+#include "Button.h"
 
 USING_NS_CC;
 
@@ -54,6 +55,7 @@ public:
 	Dealer* dealer;
 	Label* phaseLabel,*turnLabel;
 	EffectManager* effectManager;
+	Button* button;
 	//ターンのカウント
 	int turnCount;
 	//ノックされたか(ゲームの終了条件)
