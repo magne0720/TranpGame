@@ -2,10 +2,10 @@
 
 
 
-Button* Button::create(Vec2 buttonPos)
+Button* Button::create(Vec2 buttonPos, Vec2 passbuttonPos, Vec2 nockbuttonPos)
 {
 	Button *pRet = new Button();
-	if (pRet && pRet->init(buttonPos))
+	if (pRet && pRet->init(buttonPos, passbuttonPos, nockbuttonPos))
 	{
 		pRet->autorelease();
 		return pRet;
@@ -18,7 +18,7 @@ Button* Button::create(Vec2 buttonPos)
 	}
 };
 
-bool Button::init(Vec2 buttonPos)
+bool Button::init(Vec2 buttonPos, Vec2 passbuttonPos, Vec2 nockbuttonPos)
 {
 	if (!Sprite::init())
 	{
@@ -35,14 +35,25 @@ bool Button::init(Vec2 buttonPos)
 	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, this);
 
 	sortButton = Sprite::create("mathsort.png");
-	setMyPosition(buttonPos);
+	passButton = Sprite::create("mathsort.png");
+	nockButton = Sprite::create("mathsort.png");
+	setMyPosition(buttonPos,passbuttonPos,nockbuttonPos);
+	addChild(sortButton);
+	addChild(passButton);
+	addChild(nockButton);
 	return true;
 }
-void Button::setMyPosition(Vec2 pos)
+void Button::setMyPosition(Vec2 buttonPos, Vec2 passbuttonPos, Vec2 nockbuttonPos)
 {
-	ButtonPosition = pos;
-	MyPosition = pos;
-	setPosition(pos);
+	SortButtonPosition = buttonPos;
+	MyPosition = buttonPos;
+	sortButton->setPosition(buttonPos);
+	PassButtonPosition = passbuttonPos;
+	MyPosition = passbuttonPos;
+	passButton->setPosition(passbuttonPos);	
+	NockButtonPosition = nockbuttonPos;
+	MyPosition = nockbuttonPos;
+	nockButton->setPosition(nockbuttonPos);
 };
 
 void update(float delta)

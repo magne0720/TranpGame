@@ -11,16 +11,16 @@ class Button :public Sprite
 {
 public:
 	static Button* create(Vec2 buttonPos,Vec2 passbuttonPos,Vec2 nockbuttonPos);
-	Sprite* sortButton, passButton;
+	Sprite* sortButton,*passButton, *nockButton;
 
 	ROLE myRole;
-	Vec2 ButtonPosition;
+	Vec2 SortButtonPosition, PassButtonPosition, NockButtonPosition;
 	Vec2 MyPosition;
-	bool init(Vec2 buttonPos);
+	bool init(Vec2 buttonPos, Vec2 passbuttonPos, Vec2 nockbuttonPos);
 	bool isTouched;
 
 	void setDesign(int num);
-	void setMyPosition(Vec2 pos);
+	void setMyPosition(Vec2 buttonPos,Vec2 passbuttonPos, Vec2 nockbuttonPos);
 
 	bool onTouchBegan(const Touch * touch, Event *unused_event);
 	void onTouchMoved(const Touch * touch, Event *unused_event);
