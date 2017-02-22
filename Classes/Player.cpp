@@ -76,7 +76,7 @@ void Player::cardSort(ROLE kind)
 			for (int j = 0; j + 1<hand.size(); j++)
 			{
 				//マーク順に並び替え
-				if ((int)hand.at(j)->roleNumber < (int)hand.at(j + 1)->roleNumber)
+				if ((int)hand.at(j)->roleNumber > (int)hand.at(j + 1)->roleNumber)
 				{
 					hand.swap(j, j + 1);
 				}
@@ -143,19 +143,20 @@ int Player::checkRole()
 	checkOrder(0);
 	one=calcRole();
 	ressetRole();
+	brainHandCount = 0;
 	//順子→刻子
 	checkOrder(0);
 	checkEqual(0);
 	two = calcRole();
 	ressetRole();
 	log("order%d-equal%d", one, two);
+	brainHandCount = 0;
 	if(one<two)
 	{
 		log("junsi->kokusi");
 		checkEqual(0);
 		checkOrder(0);
-		cardSort(ROLE::WITHOUT);
-		log("playEnd");
+		brainHandCount = 0;
 		return one;
 	}
 	else
@@ -163,8 +164,7 @@ int Player::checkRole()
 		log("kokusi->junsi");
 		checkOrder(0);
 		checkEqual(0);
-		cardSort(ROLE::WITHOUT);
-		log("playEnd");
+		brainHandCount = 0;
 		return two;
 	}
 };
@@ -196,7 +196,7 @@ void Player::chanceRole(Card* card, ROLE role, bool isAllCheck)
 		{
 			if (brain.at(i)->myRole == ROLE::EQUAL) 
 			{
-				break;
+				return;
 			}
 		}
 		for (int i = 0; i < brain.size(); i++)
@@ -224,7 +224,7 @@ void Player::chanceRole(Card* card, ROLE role, bool isAllCheck)
 		{
 			if (brain.at(i)->myRole == ROLE::ORDER)
 			{
-				break;
+				return;
 			}
 		}
 		for (int i = 0; i < brain.size(); i++)
@@ -310,7 +310,7 @@ void Player::checkEqual(int num)
 	for (int j = num; j < hand.size(); j++)//0から始めるのが基本なのでその前のカードは調べない
 	{
 		if (num != j &&														//自身でないかかどうか
-			hand.at(num)->myNumber == hand.at(j)->myNumber)		//番号が同じか
+			hand.at(num)->myNumber == hand.at(j)->myNumber)					//番号が同じか
 		{
 			checkEqual(j);
 		}
@@ -334,6 +334,7 @@ void Player::checkEqualFour(Card* card)
 		if (brain.at(i)->myRole == ROLE::EQUAL_FOUR)
 		{
 			brain.at(i)->setRole(ROLE::EQUAL);
+			brain.at(i)->setRoleNumber(brainHandCount);
 		}
 	}
 };
@@ -346,6 +347,7 @@ void Player::checkOrderFour(Card* card)
 		if (brain.at(i)->myRole == ROLE::ORDER_FOUR)
 		{
 			brain.at(i)->setRole(ROLE::ORDER);
+			brain.at(i)->setRoleNumber(brainHandCount);
 		}
 	}
 };

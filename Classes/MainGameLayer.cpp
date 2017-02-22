@@ -137,6 +137,8 @@ void MainGameLayer::gameStart()
 //falseを返すとき：行う処理が同じフェイズ内で何度行ってもよいとき
 bool MainGameLayer::actionPhase() 
 {
+	player_one->cardDispHand();
+	player_two->cardDispHand();
 	switch (phase)
 	{
 	case PHASE::START:
@@ -150,7 +152,8 @@ bool MainGameLayer::actionPhase()
 				{
 					if (turnCount >= 3)//お互いのターンが3ターン目以降
 					{
-						player_one->cardDrow(dealer->deck);
+						player_one->cardDrow(dealer->deck); 
+						player_one->checkRole();
 						return true;
 					}
 				}
@@ -159,6 +162,7 @@ bool MainGameLayer::actionPhase()
 					if(turnCount>=2)//お互いのターンが2ターン目以降
 					{
 						player_one->cardDrow(dealer->deck);
+						player_one->checkRole();
 						return true;
 					}
 				}
@@ -166,12 +170,14 @@ bool MainGameLayer::actionPhase()
 			else if (player_one->pickState == STATE::GRAVE)//捨て札から引くを選ぶ
 			{
 				player_one->cardDrow(dealer->grave);
+				player_one->checkRole();
 				return true;
 			}
 			else if (player_one->pickState == STATE::FREE)
 			{
 				if (turnCount==1)//1ターン目のみ 
 				{
+					player_one->checkRole();
 					isPass = true;
 					return true;
 				} 
@@ -180,6 +186,7 @@ bool MainGameLayer::actionPhase()
 		else if (turn == TURN::PLAY_TWO)//プレイヤー２
 		{
 			player_two->cardDrow(dealer->deck);
+			player_one->checkRole();
 			return true;
 		}
 		return false;
@@ -211,8 +218,6 @@ bool MainGameLayer::actionPhase()
 	default:
 		return false;
 	}
-	player_one->cardDispHand();
-	player_two->cardDispHand();
 	return false;
 };
 
@@ -298,10 +303,23 @@ void MainGameLayer::nextPhase(bool isAction)
 void MainGameLayer::callKnock() 
 {
 	turn = TURN::WAIT;
-
-	player_one->checkRole();
+	int one=0, two=0;
+	one=player_one->checkRole();
 	player_one->cardDispHand();
-
+	two=player_two->checkRole();
+	player_two->cardDispHand();
+	if (one < two) 
+	{
+		turnLabel->setString("PLAYER_ONE\nWIN");
+	}
+	else if(one>two)
+	{
+		turnLabel->setString("PLAYER_TWO\nWIN");
+	}
+	else
+	{
+		turnLabel->setString("DRAW");
+	}
 };
 
 //ノック時に行われる役の計算
@@ -327,18 +345,18 @@ bool MainGameLayer::onTouchBegan(const Touch * touch, Event *unused_event)
 
 	}
 
-	if (touch->getLocation().x < designResolutionSize.width*0.05f)
+	if (touch->getLocation().y > designResolutionSize.height*0.9f)
 	{
 		gameStart();
 	};
-	if (touch->getLocation().y > designResolutionSize.height*0.9f)
-	{
-		player_one->cardSort(ROLE::EQUAL);
-	};
 	if (touch->getLocation().y < designResolutionSize.height*0.1f)
 	{
-		player_one->cardSort(ROLE::ORDER);
+		player_one->cardSort(ROLE::WITHOUT);
 	};
+	if (button->getBoundingBox().containsPoint(touch->getLocation())) 
+	{
+		player_one->cardSort(button->myRole);
+	}
 	player_one->cardDispHand();
 
 	return true;
@@ -365,10 +383,8 @@ void MainGameLayer::onTouchEnded(const Touch * touch, Event *unused_event)
 	{
 		player_one->pickState = STATE::FREE;
 	};
-
 	for (int i = 0; i < player_one->hand.size();i++)
 	{
-		//if (player_one->hand.at(i)->getBoundingBox().intersectsRect(dealer->graveSp->getBoundingBox()))
 		if(player_one->hand.at(i)->getBoundingBox().containsPoint(touch->getLocation()))
 		{
 			player_one->pickNumber = i;
