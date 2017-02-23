@@ -58,7 +58,7 @@ bool MainGameLayer::init(int level)
 	effectManager = EffectManager::create();
 	addChild(effectManager);
 
-	button = Button::create(Vec2(designResolutionSize.width *0.05f, designResolutionSize.height*0.5f),Vec2(0,0),Vec2(0,0));
+	button = SortButton::create(ROLE::EQUAL,Vec2(designResolutionSize.width *0.05f, designResolutionSize.height*0.5f));
 	addChild(button);
 
 	//ゲームの準備
@@ -349,15 +349,7 @@ bool MainGameLayer::onTouchBegan(const Touch * touch, Event *unused_event)
 	{
 		gameStart();
 	};
-	if (touch->getLocation().y < designResolutionSize.height*0.1f)
-	{
-		player_one->cardSort(ROLE::WITHOUT);
-	};
-	if (button->getBoundingBox().containsPoint(touch->getLocation())) 
-	{
-		player_one->cardSort(button->myRole);
-	}
-	player_one->cardDispHand();
+	
 
 	return true;
 };
@@ -369,6 +361,10 @@ void MainGameLayer::onTouchMoved(const Touch * touch, Event *unused_event)
 
 void MainGameLayer::onTouchEnded(const Touch * touch, Event *unused_event) 
 {
+	if (button->getBoundingBox().containsPoint(touch->getLocation()))
+	{
+		player_one->cardSort(button->switchRole);
+	}
 	//次にドローするカードをデッキからにする
 	if (dealer->deckSp->getBoundingBox().containsPoint(touch->getLocation())) 
 	{
@@ -395,5 +391,6 @@ void MainGameLayer::onTouchEnded(const Touch * touch, Event *unused_event)
 			player_one->pickNumber = -1;
 		}
 	}
+	player_one->cardDispHand();
 };
 

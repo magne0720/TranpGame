@@ -41,7 +41,7 @@ enum STATE
 //–ð
 enum ROLE
 {
-	WITHOUT = 0, ORDER, EQUAL,ORDER_FOUR,EQUAL_FOUR
+	WITHOUT = 0, ORDER, EQUAL,ORDER_FOUR,EQUAL_FOUR,ROLE_NUM
 };
 
 static cocos2d::Size designResolutionSize = cocos2d::Size(1920, 1080);

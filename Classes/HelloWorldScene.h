@@ -5,7 +5,7 @@
 #include "Card.h"
 #include "Dealer.h"
 #include "Player.h"
-#include "Button.h"
+#include "SortButton.h"
 
 class HelloWorld : public cocos2d::Layer
 {
@@ -24,7 +24,7 @@ public:
 
 	Player* p1, *p2;
 	Dealer* dealer;
-	Button* button;
+	SortButton* button;
 	
 
     // implement the "static create()" method manually

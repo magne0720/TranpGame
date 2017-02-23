@@ -196,7 +196,7 @@ void Player::chanceRole(Card* card, ROLE role, bool isAllCheck)
 		{
 			if (brain.at(i)->myRole == ROLE::EQUAL) 
 			{
-				return;
+				break;
 			}
 		}
 		for (int i = 0; i < brain.size(); i++)
@@ -224,7 +224,7 @@ void Player::chanceRole(Card* card, ROLE role, bool isAllCheck)
 		{
 			if (brain.at(i)->myRole == ROLE::ORDER)
 			{
-				return;
+				break;
 			}
 		}
 		for (int i = 0; i < brain.size(); i++)
