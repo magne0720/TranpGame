@@ -40,8 +40,8 @@ bool HelloWorld::init()
 	p2->setPosition(Vec2(designResolutionSize.width*0.2f, designResolutionSize.height*0.7f));
 	addChild(p2);
 
-	//button = Button::create(Vec2(designResolutionSize.width *0.1f, designResolutionSize.height*0.5f));
-	//addChild(button,1);
+	button = OriginalButton::create(Vec2(designResolutionSize.width *0.1f, designResolutionSize.height*0.5f));
+	addChild(button);
 
 
     return true;
