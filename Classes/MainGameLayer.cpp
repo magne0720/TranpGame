@@ -354,7 +354,7 @@ bool MainGameLayer::onTouchBegan(const Touch * touch, Event *unused_event)
 
 void MainGameLayer::onTouchMoved(const Touch * touch, Event *unused_event) 
 {
-
+	//‚Ì‚Á‚Æ
 };
 
 void MainGameLayer::onTouchEnded(const Touch * touch, Event *unused_event) 
