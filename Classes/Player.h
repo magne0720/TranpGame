@@ -13,7 +13,7 @@ public:
 	CREATE_FUNC(Player);
 	bool init();
 	//カードの表示
-	void cardDispHand();
+	void cardDispHand(bool isReversed);
 	//カードの並び替え
 	void cardSort(ROLE kind);
 	//ドローする

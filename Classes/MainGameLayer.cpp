@@ -101,8 +101,8 @@ void MainGameLayer::cardDivision()
 		player_one->cardDrow(dealer->deck);
 		player_two->cardDrow(dealer->deck);
 	}
-	player_one->cardDispHand();
-	player_two->cardDispHand();
+	player_one->cardDispHand(true);
+	player_two->cardDispHand(false);
 };
 
 //スタート
@@ -137,8 +137,8 @@ void MainGameLayer::gameStart()
 //falseを返すとき：行う処理が同じフェイズ内で何度行ってもよいとき
 bool MainGameLayer::actionPhase() 
 {
-	player_one->cardDispHand();
-	player_two->cardDispHand();
+	player_one->cardDispHand(true);
+	player_two->cardDispHand(false);
 	switch (phase)
 	{
 	case PHASE::START:
@@ -186,7 +186,7 @@ bool MainGameLayer::actionPhase()
 		else if (turn == TURN::PLAY_TWO)//プレイヤー２
 		{
 			player_two->cardDrow(dealer->deck);
-			player_one->checkRole();
+			player_two->checkRole();
 			return true;
 		}
 		return false;
@@ -282,19 +282,17 @@ void MainGameLayer::nextPhase(bool isAction)
 		nextPlayerTurn();
 		turnCount++;
 		break;
-
 	case PHASE::PASS:
 		phaseLabel->setString("END");
 		phase = PHASE::END;
 		break;
 	default:
-
 		phaseLabel->setString("DROW"); 
 		break;
 	}
 	player_one->pickState = STATE::HAND;
-	player_one->cardDispHand();
-	player_two->cardDispHand();	
+	player_one->cardDispHand(true);
+	player_two->cardDispHand(false);	
 	dealer->cardDispGrave();
 
 };
@@ -305,9 +303,9 @@ void MainGameLayer::callKnock()
 	turn = TURN::WAIT;
 	int one=0, two=0;
 	one=player_one->checkRole();
-	player_one->cardDispHand();
+	player_one->cardDispHand(true);
 	two=player_two->checkRole();
-	player_two->cardDispHand();
+	player_two->cardDispHand(true);
 	if (one < two) 
 	{
 		turnLabel->setString("PLAYER_ONE\nWIN");
@@ -391,6 +389,10 @@ void MainGameLayer::onTouchEnded(const Touch * touch, Event *unused_event)
 			player_one->pickNumber = -1;
 		}
 	}
-	player_one->cardDispHand();
+	if(turn==TURN::WAIT)
+	{
+		player_two->cardDispHand(true);
+	}
+	player_one->cardDispHand(true);
 };
 

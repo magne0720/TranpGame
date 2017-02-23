@@ -94,6 +94,7 @@ void Dealer::setDeck(bool isJoker,int num)
 			//card->setScale(0.5);
 			card ->setPosition(getDeckPosition());
 			card->setState(STATE::DECK);
+		//	card->setReverse(false);
 			deck.pushBack(card);
 			addChild(card);
 		}
@@ -106,6 +107,7 @@ void Dealer::setDeck(bool isJoker,int num)
 			//joker->setScale(0.5);
 			joker->setPosition(getDeckPosition());	
 			joker->setState(STATE::DECK);
+		//	joker->setReverse(false);
 			deck.pushBack(joker);
 			addChild(joker);
 		}
@@ -160,7 +162,8 @@ void Dealer::cardDeckThrow()
 //ƒfƒbƒL‚É‰Á‚¦‚é
 void Dealer::cardAdd(Card* card)
 {
-	card->setState(STATE::DECK);
+	card->setState(STATE::DECK);	
+	card->setReverse(false);
 	deck.pushBack(card);
 	checkDeckZero();
 };
@@ -173,6 +176,7 @@ void Dealer::cardLose(Card* card)
 		if (deck.at(i)==card)
 		{
 			deck.at(i)->setState(STATE::GRAVE);
+			card->setReverse(false);
 			deck.erase(i);
 			return;
 		}
@@ -199,9 +203,7 @@ void Dealer::cardDispGrave()
 	{
 		grave.at(i)->setMyPosition(graveSp->getPosition());
 		grave.at(i)->setZOrder(1);
-	}
-	{
-		graveSp->setTexture("Card/grave.png");
+		grave.at(i)->setReverse(true);
 	}
 };
 

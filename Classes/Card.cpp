@@ -32,7 +32,6 @@ bool Card::init(MARK mark,NUMBER number)
 
 
 	initWithFile("Card/reverse.png");
-	isReversed = true;
 	isTouched = false;
 	isFamed = false;
 	setKind(mark, number);
@@ -44,38 +43,34 @@ void Card::setKind(MARK mark, NUMBER num)
 {
 	myMark = mark;
 	myNumber = num;
-	setDesign();
+	setDesign((int)myNumber);
 };
 
-void Card::setDesign(int num) 
+void Card::setDesign(int num,bool is) 
 {
 	String* name = String::createWithFormat("Card/reverce.png");
 
 	switch (myMark)
 	{
 	case SPADE:
-		if(num==0)name = String::createWithFormat("Card/spade_num_%02d.png", (int)myNumber);
-		else name = String::createWithFormat("Card/spade_%02d.png", (int)myNumber);
+		name = String::createWithFormat("Card/spade_num_%02d.png", num);
 		break;
 	case CLOVER:
-		if (num == 0)name = String::createWithFormat("Card/clover_num_%02d.png", (int)myNumber);
-		else name = String::createWithFormat("Card/clover_%02d.png", (int)myNumber);
+		name = String::createWithFormat("Card/clover_num_%02d.png", num);
 		break;
 	case HEART:
-		if (num == 0)name = String::createWithFormat("Card/heart_num_%02d.png", (int)myNumber);
-		else name = String::createWithFormat("Card/heart_%02d.png", (int)myNumber);
+		name = String::createWithFormat("Card/heart_num_%02d.png", num);
 		break;
 	case DIAMOND:
-		if (num == 0)name = String::createWithFormat("Card/diamond_num_%02d.png", (int)myNumber);
-		else name = String::createWithFormat("Card/diamond_%02d.png", (int)myNumber);
+		name = String::createWithFormat("Card/diamond_num_%02d.png", num);
 		break;
 	case JOKER_MARK:
-		name = String::createWithFormat("Card/joker.png", (int)myNumber);
+		name = String::createWithFormat("Card/joker.png", num);
 		break;
 	default:
 		break;
 	}
-	if (isReversed) 
+	if (is) 
 	{
 		setTexture(name->getCString());
 	}
@@ -114,6 +109,11 @@ void Card::setRoleNumber(int num)
 	roleNumber = num;
 }
 
+void Card::setReverse(bool is) 
+{
+	setDesign((int)myNumber, is);
+}
+
 void Card::reverse()
 {
 	if (myState != STATE::DECK)
@@ -121,12 +121,12 @@ void Card::reverse()
 		if (isReversed)
 		{
 			isReversed = false;
-			setDesign();
+			setDesign((int)myNumber);
 		}
 		else
 		{
 			isReversed = true;
-			setDesign();
+			setDesign((int)myNumber);
 		}
 	}
 };

@@ -13,15 +13,19 @@ bool Player::init()
 	return true;
 };
 
-void Player::cardDispHand() 
+//true：表
+//false：裏
+void Player::cardDispHand(bool isReversed) 
 {
 	cardSort(sortType);
 	for (int i = 0; i < hand.size(); i++)
 	{
 		hand.at(i)->setMyPosition(Vec2(150 * i + getPositionX() / 3, getPositionY()));
 		hand.at(i)->setState(STATE::HAND);
+		hand.at(i)->setReverse(isReversed);
 	}
 };
+
 void Player::cardSort(ROLE kind)
 {
 	sortType = kind;
@@ -103,8 +107,9 @@ void Player::cardDrow(Vector<Card*>&deck)
 //カードを捨てる
 void Player::cardThrow(int num,Vector<Card*>&grave) 
 {
+	hand.at(num)->setReverse(true);
 	grave.pushBack(hand.at(num));
-	grave.at(GRAVE_TOP)->setState(STATE::GRAVE);
+	grave.at(GRAVE_TOP)->setState(STATE::GRAVE);	
 	hand.erase(num);
 };
 

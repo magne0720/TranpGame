@@ -42,10 +42,11 @@ public:
 	void setMyPosition(Vec2 pos);
 	//ÉJÅ[ÉhÇÃê›íË
 	void setKind(MARK mark,NUMBER number);
-	void setDesign(int num=0);
+	void setDesign(int num,bool is=true);
 	void setState(STATE state);
 	void setRole(ROLE role);
 	void setRoleNumber(int num);
+	void setReverse(bool is);
 	//ó†ï‘Ç∑
 	void reverse();
 
