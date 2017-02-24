@@ -9,14 +9,20 @@ USING_NS_CC;
 class OriginalButton :public Sprite
 {
 public:
-	static OriginalButton* create(Vec2 buttonpos);
+	static OriginalButton* create(Vec2 passPos , int num);
+
+	Sprite* pass,*nock,*pause;
 
 	Vec2 MyPosition;
 	Vec2 ButtonPosition;
 
-	bool init(Vec2 pos);
+	bool init(Vec2 passPos,int num);
+	bool flg = false;
 
-	void setMyPosition(Vec2 buttonPos);
+	//ƒ{ƒ^ƒ“•`‰æ
+	void setDesign(int num);
+
+	void setMyPosition(Vec2 passPos);
 
 	bool onTouchBegan(const Touch * touch, Event *unused_event);
 	void onTouchMoved(const Touch * touch, Event *unused_event);
