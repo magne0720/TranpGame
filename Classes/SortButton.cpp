@@ -34,7 +34,7 @@ bool SortButton::init(ROLE role,Vec2 buttonPos)
 	switchRole = role;
 
 	
-	initWithFile("mathsort.png");
+	initWithFile("Button/mathsort.png");
 
 	setMyPosition(buttonPos);
 
@@ -93,17 +93,17 @@ void SortButton::ModeChange(ROLE &kind,bool is)
 	{
 		if (kind == ROLE::ORDER) 
 		{
-			setTexture("numbersort.png");
+			setTexture("Button/numbersort.png");
 			kind = ROLE::EQUAL;
 		}
 		else if (kind == ROLE::EQUAL)
 		{
-			setTexture("marksort.png");
+			setTexture("Button/marksort.png");
 			kind = ROLE::WITHOUT;
 		}
 		else if(kind==ROLE::WITHOUT)
 		{
-			setTexture("mathsort.png");
+			setTexture("Button/mathsort.png");
 			kind = ROLE::ORDER;
 		}
 	}
@@ -111,13 +111,13 @@ void SortButton::ModeChange(ROLE &kind,bool is)
 	{
 
 		if (kind == ROLE::ORDER) {
-			setTexture("mathsort.png");
+			setTexture("Button/mathsort.png");
 		}
 		else if (kind == ROLE::EQUAL) {
-			setTexture("numbersort.png");
+			setTexture("Button/numbersort.png");
 		}
 		else if (kind == ROLE::WITHOUT) {
-			setTexture("marksort.png");
+			setTexture("Button/marksort.png");
 		}
 	}
 	
@@ -128,15 +128,15 @@ void SortButton::ModeChangeFor(ROLE &kind)
 {
 	if (kind == ROLE::ORDER)
 	{
-		setTexture("mathfor.png");
+		setTexture("Button/mathfor.png");
 	}
 	else if (kind == ROLE::EQUAL)
 	{
-		setTexture("numberfor.png");
+		setTexture("Button/numberfor.png");
 	}
 	else if (kind == ROLE::WITHOUT)
 	{
-		setTexture("markfor.png");
+		setTexture("Button/markfor.png");
 	}
 };
 
