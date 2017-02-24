@@ -74,6 +74,16 @@ bool MainGameLayer::init(int level)
 
 void MainGameLayer::update(float delta)
 {
+	if (dealer->grave.at(dealer->GRAVE_TOP)->myMark == MARK::SPADE) 
+	{
+		player_one->pickState = STATE::GRAVE;
+	}
+	else
+	{
+		player_one->pickState = STATE::DECK;
+	}
+	player_one->pickNumber = player_one->hand.size() - 1;
+
 	if (turn != TURN::WAIT)
 	{
 		nextPhase(actionPhase());
@@ -153,7 +163,7 @@ bool MainGameLayer::actionPhase()
 					if (turnCount >= 3)//お互いのターンが3ターン目以降
 					{
 						player_one->cardDrow(dealer->deck); 
-						player_one->checkRole();
+						//player_one->checkRole();
 						return true;
 					}
 				}
@@ -162,7 +172,7 @@ bool MainGameLayer::actionPhase()
 					if(turnCount>=2)//お互いのターンが2ターン目以降
 					{
 						player_one->cardDrow(dealer->deck);
-						player_one->checkRole();
+						//player_one->checkRole();
 						return true;
 					}
 				}
@@ -170,14 +180,12 @@ bool MainGameLayer::actionPhase()
 			else if (player_one->pickState == STATE::GRAVE)//捨て札から引くを選ぶ
 			{
 				player_one->cardDrow(dealer->grave);
-				player_one->checkRole();
 				return true;
 			}
 			else if (player_one->pickState == STATE::FREE)
 			{
 				if (turnCount==1)//1ターン目のみ 
 				{
-					player_one->checkRole();
 					isPass = true;
 					return true;
 				} 
@@ -186,7 +194,7 @@ bool MainGameLayer::actionPhase()
 		else if (turn == TURN::PLAY_TWO)//プレイヤー２
 		{
 			player_two->cardDrow(dealer->deck);
-			player_two->checkRole();
+			//player_two->checkRole();
 			return true;
 		}
 		return false;
@@ -294,6 +302,7 @@ void MainGameLayer::nextPhase(bool isAction)
 	player_one->cardDispHand(true);
 	player_two->cardDispHand(false);	
 	dealer->cardDispGrave();
+	dealer->checkDeckZero();
 
 };
 
@@ -301,16 +310,17 @@ void MainGameLayer::nextPhase(bool isAction)
 void MainGameLayer::callKnock() 
 {
 	turn = TURN::WAIT;
-	int one=0, two=0;
-	one=player_one->checkRole();
+	player_one->checkRole();
 	player_one->cardDispHand(true);
-	two=player_two->checkRole();
+	player_two->checkRole();
 	player_two->cardDispHand(true);
-	if (one < two) 
+	log("one_%d", player_one->point);
+	log("two_%d", player_two->point);
+	if (player_one->point < player_two->point)
 	{
 		turnLabel->setString("PLAYER_ONE\nWIN");
 	}
-	else if(one>two)
+	else if(player_one->point>player_two->point)
 	{
 		turnLabel->setString("PLAYER_TWO\nWIN");
 	}
@@ -359,9 +369,12 @@ void MainGameLayer::onTouchMoved(const Touch * touch, Event *unused_event)
 
 void MainGameLayer::onTouchEnded(const Touch * touch, Event *unused_event) 
 {
+
+	if (!player_one->brainEnd)
+		return;
 	if (button->getBoundingBox().containsPoint(touch->getLocation()))
 	{
-		player_one->cardSort(button->switchRole);
+		player_one->cardSort(button->switchRole,player_one->hand);
 	}
 	//次にドローするカードをデッキからにする
 	if (dealer->deckSp->getBoundingBox().containsPoint(touch->getLocation())) 

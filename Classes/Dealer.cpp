@@ -204,6 +204,7 @@ void Dealer::cardDispGrave()
 		grave.at(i)->setMyPosition(graveSp->getPosition());
 		grave.at(i)->setZOrder(1);
 		grave.at(i)->setReverse(true);
+		grave.at(i)->setColor(Color3B::WHITE);
 	}
 };
 

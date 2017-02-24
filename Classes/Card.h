@@ -11,11 +11,6 @@ USING_NS_CC;
 class Card :public Sprite
 {
 public:
-
-
-	bool onTouchBegan(const Touch * touch, Event *unused_event);
-	void onTouchMoved(const Touch * touch, Event *unused_event);
-	void onTouchEnded(const Touch * touch, Event *unused_event);
 	
 	static Card* create(MARK mark,NUMBER number);
 	virtual bool init(MARK mark, NUMBER number);
@@ -34,8 +29,6 @@ public:
 	int roleNumber;
 	//•\‚©‚Ç‚¤‚©
 	bool isReversed;
-	//G‚ç‚ê‚Ä‚¢‚é‚©‚Ç‚¤‚©
-	bool isTouched;
 	//–ğ‚Æ‚µ‚Ä‘I‚Î‚ê‚½‚©
 	bool isFamed;
 	//ˆÊ’u‚Ìİ’è
@@ -49,7 +42,6 @@ public:
 	void setReverse(bool is);
 	//— •Ô‚·
 	void reverse();
-
 };
 
 #endif // !__CARD_H__

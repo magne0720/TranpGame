@@ -15,7 +15,7 @@ public:
 	//カードの表示
 	void cardDispHand(bool isReversed);
 	//カードの並び替え
-	void cardSort(ROLE kind);
+	void cardSort(ROLE kind,Vector<Card*> &hand);
 	//ドローする
 	void cardDrow(Vector<Card*>&deck);
 	//カードを捨てる
@@ -25,25 +25,9 @@ public:
 	//役の初期化
 	void ressetRole();
 	//役の調査
-	int checkRole();
-	//役の発見
-	void chanceRole(Card* card,ROLE role,bool isAllCheck=false);
+	void checkRole();
 	//役の得点を計算する
-	int calcRole();
-	//順子
-	void checkOrder(int num);
-	//刻子
-	void checkEqual(int num);
-	//三枚のところからカードを抜いていいかどうか
-	void checkOrderExcept();
-	//三枚のところからカードを抜いていいかどうか
-	void checkEqualExcept();
-	//四枚刻子の一枚抜きOK検査
-	void checkEqualFour(Card* card);
-	//四枚順子の一枚抜きOK検査
-	void checkOrderFour(Card* card);
-
-	Vector<Card*> hand,brain;
+	int calcRole(Vector<Card*> result);
 	//頭の中の計算
 	int brainHandCount;
 	//得点
@@ -54,6 +38,17 @@ public:
 	STATE pickState;
 	//並び替えの状態
 	ROLE sortType;
+
+	void addPoint(int num);
+
+
+	Vector<Card*> hand,result;
+	void checkRoleNew(Player* hand);
+	Player* check(Player*& player, int x, int y, int z);
+	Player* check(Player*& player, int x, int y, int z,int q);
+	void sort(Vector<Card*> &card);
+	bool brainEnd;
+	int brainCount;
 
 };
 

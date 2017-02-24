@@ -22,17 +22,7 @@ bool Card::init(MARK mark,NUMBER number)
 	{
 		return false;
 	}
-
-	//ƒ^ƒbƒ`”»’è
-	EventListenerTouchOneByOne *listener = EventListenerTouchOneByOne::create();
-	listener->onTouchBegan = CC_CALLBACK_2(Card::onTouchBegan, this);
-	listener->onTouchMoved = CC_CALLBACK_2(Card::onTouchMoved, this);
-	listener->onTouchEnded = CC_CALLBACK_2(Card::onTouchEnded, this);
-	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, this);
-
-
 	initWithFile("Card/reverse.png");
-	isTouched = false;
 	isFamed = false;
 	setKind(mark, number);
 
@@ -48,7 +38,7 @@ void Card::setKind(MARK mark, NUMBER num)
 
 void Card::setDesign(int num,bool is) 
 {
-	String* name = String::createWithFormat("Card/reverce.png");
+	String* name = String::createWithFormat("Card/reverse.png");
 
 	switch (myMark)
 	{
@@ -68,6 +58,7 @@ void Card::setDesign(int num,bool is)
 		name = String::createWithFormat("Card/joker.png", num);
 		break;
 	default:
+		name = String::createWithFormat("Card/joker.png", num);
 		break;
 	}
 	if (is) 
@@ -135,29 +126,4 @@ void Card::setMyPosition(Vec2 pos)
 {
 	myPosition = pos;
 	setPosition(pos);
-};
-
-bool Card::onTouchBegan(const Touch * touch, Event *unused_event) 
-{
-	if (myState == STATE::HAND) 
-	{
-		if (getBoundingBox().containsPoint(touch->getLocation()))
-		{
-			isTouched = true;
-		}
-	}
-	return true;
-};
-
-void Card::onTouchMoved(const Touch * touch, Event *unused_event) 
-{
-	if (isTouched) 
-	{
-		setMyPosition(touch->getLocation());
-	}
-};
-
-void Card::onTouchEnded(const Touch * touch, Event *unused_event) 
-{
-	isTouched = false;
 };
