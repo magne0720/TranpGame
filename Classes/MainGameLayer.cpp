@@ -83,16 +83,19 @@ bool MainGameLayer::init(int level)
 void MainGameLayer::update(float delta)
 {
 	static float timer = 0;
-	timer += delta;
-	if (dealer->grave.size() > 0) 
-	{
-	//if (dealer->grave.at(dealer->GRAVE_TOP)->myMark == MARK::SPADE) 
-		player_one->pickState = STATE::GRAVE;
-	}
-	else
-	{
-		player_one->pickState = STATE::DECK;
-	}
+	timer += delta;	
+	
+	//player_one->pickNumber = random(0, (int)player_one->hand.size() - 1);
+
+	//if (dealer->grave.size() > 0) 
+	//{
+	////if (dealer->grave.at(dealer->GRAVE_TOP)->myMark == MARK::SPADE) 
+	//	player_one->pickState = STATE::GRAVE;
+	//}
+	//else
+	//{
+	//	player_one->pickState = STATE::DECK;
+	//}
 
 
 	if (turn != TURN::WAIT)
@@ -100,14 +103,14 @@ void MainGameLayer::update(float delta)
 		nextPhase(actionPhase());
 		timer = 0;
 	}
-	else
-	{
-		if(timer>=3.0f)
-		{
-			gameStart();
-			timer = 0;
-		}
-	}
+	//else
+	//{
+	//	if(timer>=3.0f)
+	//	{
+	//		gameStart();
+	//		timer = 0;
+	//	}
+	//}
 };
 
 //ーーーーーーーーーーゲームの準備関数ーーーーーーーーー
@@ -216,7 +219,6 @@ bool MainGameLayer::actionPhase()
 		}
 		return false;
 	case PHASE::THROW:	
-		player_one->pickNumber = random(0, (int)player_one->hand.size()-1);
 		player_two->pickNumber = random(0, (int)player_one->hand.size()-1);
 
 		if (turn == TURN::PLAY_ONE)
@@ -357,6 +359,9 @@ void MainGameLayer::callKnock()
 	{
 		turnLabel->setString("DRAW");
 	}
+	player_one->sortType = ROLE::WITHOUT;
+	player_one->cardDispHand(true);
+	player_two->cardDispHand(true);
 };
 
 //ノック時に行われる役の計算
