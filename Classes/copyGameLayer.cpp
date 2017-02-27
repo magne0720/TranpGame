@@ -309,16 +309,15 @@ void copyGameLayer::nextPhase(bool isAction)
 void copyGameLayer::callKnock()
 {
 	turn = TURN::WAIT;
-	int one = 0, two = 0;
-	one = player_one->checkRole();
+	player_one->checkRole();
 	player_one->cardDispHand(true);
-	two = player_two->checkRole();
+	player_two->checkRole();
 	player_two->cardDispHand(true);
-	if (one < two)
+	if (player_one->point<player_two->point)
 	{
 		turnLabel->setString("PLAYER_ONE\nWIN");
 	}
-	else if (one>two)
+	else if (player_one->point>player_two->point)
 	{
 		turnLabel->setString("PLAYER_TWO\nWIN");
 	}
@@ -369,7 +368,7 @@ void copyGameLayer::onTouchEnded(const Touch * touch, Event *unused_event)
 {
 	if (button->getBoundingBox().containsPoint(touch->getLocation()))
 	{
-		player_one->cardSort(button->switchRole);
+		player_one->cardSort(button->switchRole,player_one->hand);
 	}
 	//次にドローするカードをデッキからにする
 	if (dealer->deckSp->getBoundingBox().containsPoint(touch->getLocation()))

@@ -53,7 +53,7 @@ public:
 
 	Player* player_one, *player_two;
 	Dealer* dealer;
-	Label* phaseLabel,*turnLabel;
+	Label* phaseLabel,*turnLabel, *P_ONE_LABEL, *P_TWO_LABEL;
 	EffectManager* effectManager;
 	SortButton* button;
 	//ターンのカウント

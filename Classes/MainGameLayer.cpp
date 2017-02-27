@@ -55,6 +55,14 @@ bool MainGameLayer::init(int level)
 	phaseLabel->setPosition(designResolutionSize.width*0.7f, designResolutionSize.height*0.5f);
 	addChild(phaseLabel);
 
+	P_ONE_LABEL = Label::create("point", "fonts/arial.ttf", 30);
+	P_ONE_LABEL->setPosition(designResolutionSize.width*0.3f, designResolutionSize.height*0.4f);
+	addChild(P_ONE_LABEL);
+
+	P_TWO_LABEL = Label::create("point", "fonts/arial.ttf", 30);
+	P_TWO_LABEL->setPosition(designResolutionSize.width*0.3f, designResolutionSize.height*0.6f);
+	addChild(P_TWO_LABEL);
+
 	effectManager = EffectManager::create();
 	addChild(effectManager);
 
@@ -74,19 +82,31 @@ bool MainGameLayer::init(int level)
 
 void MainGameLayer::update(float delta)
 {
-	if (dealer->grave.at(dealer->GRAVE_TOP)->myMark == MARK::SPADE) 
+	static float timer = 0;
+	timer += delta;
+	if (dealer->grave.size() > 0) 
 	{
+	//if (dealer->grave.at(dealer->GRAVE_TOP)->myMark == MARK::SPADE) 
 		player_one->pickState = STATE::GRAVE;
 	}
 	else
 	{
 		player_one->pickState = STATE::DECK;
 	}
-	player_one->pickNumber = player_one->hand.size() - 1;
+
 
 	if (turn != TURN::WAIT)
 	{
 		nextPhase(actionPhase());
+		timer = 0;
+	}
+	else
+	{
+		if(timer>=3.0f)
+		{
+			gameStart();
+			timer = 0;
+		}
 	}
 };
 
@@ -97,7 +117,8 @@ void MainGameLayer::update(float delta)
 void MainGameLayer::startPlayer() 
 {
 	int iRand = rand() % 2 + 1;
-	turn = (TURN)iRand;
+	//turn = (TURN)iRand;
+	turn = TURN::PLAY_ONE;
 	String* name = String::createWithFormat("Player_%d_start", iRand);
 	turnLabel->setString(name->getCString());
 };
@@ -123,9 +144,9 @@ void MainGameLayer::gameStart()
 	isPass = false;
 	//フェイズの初期化
 	phase = PHASE::START;
-	//プレイヤーのカードをすべて捨てる
-	player_one->handDeath();
-	player_two->handDeath();
+	//お互いの初期化
+	player_one->RessetPlayer();
+	player_two->RessetPlayer();
 	//デッキを再構築
 	dealer->setDeck(true);
 	//デッキをシャッフル
@@ -147,8 +168,6 @@ void MainGameLayer::gameStart()
 //falseを返すとき：行う処理が同じフェイズ内で何度行ってもよいとき
 bool MainGameLayer::actionPhase() 
 {
-	player_one->cardDispHand(true);
-	player_two->cardDispHand(false);
 	switch (phase)
 	{
 	case PHASE::START:
@@ -163,7 +182,6 @@ bool MainGameLayer::actionPhase()
 					if (turnCount >= 3)//お互いのターンが3ターン目以降
 					{
 						player_one->cardDrow(dealer->deck); 
-						//player_one->checkRole();
 						return true;
 					}
 				}
@@ -172,7 +190,6 @@ bool MainGameLayer::actionPhase()
 					if(turnCount>=2)//お互いのターンが2ターン目以降
 					{
 						player_one->cardDrow(dealer->deck);
-						//player_one->checkRole();
 						return true;
 					}
 				}
@@ -198,13 +215,20 @@ bool MainGameLayer::actionPhase()
 			return true;
 		}
 		return false;
-	case PHASE::THROW:
+	case PHASE::THROW:	
+		player_one->pickNumber = random(0, (int)player_one->hand.size()-1);
+		player_two->pickNumber = random(0, (int)player_one->hand.size()-1);
+
 		if (turn == TURN::PLAY_ONE)
 		{
+			if(player_one->brainEnd)
+			{
+				isKnock = true;
+				return true;
+			}
 			if (player_one->pickNumber >= 0)
 			{
 				player_one->cardThrow(player_one->pickNumber, dealer->grave);
-				player_one->pickNumber = -1;
 				return true;
 			}
 		}
@@ -244,13 +268,16 @@ void MainGameLayer::nextPlayerTurn()
 	}
 };
 
-//フェイズチェンジ(プレイヤーが選択したらtrue)
+//フェイズチェンジ(プレイヤーが選択を行いtrueが引数に渡されたら発動)
+//フェイズごとに一度行う行動
 void MainGameLayer::nextPhase(bool isAction) 
 {
 	if (!isAction) 
 	{
 		return;
 	}
+	player_one->cardDispHand(true);
+	player_two->cardDispHand(false);
 	effectManager->phaseChange(phase);
 	switch (phase)
 	{
@@ -268,6 +295,9 @@ void MainGameLayer::nextPhase(bool isAction)
 			phase = PHASE::PASS;
 			phaseLabel->setString("PASS");
 		}
+		player_one->cardDispHand(true);
+		player_two->cardDispHand(false);
+		//player_one->checkRole();
 			break;
 	case PHASE::THROW:
 			if (isKnock||dealer->deck.size()<=0)
@@ -299,23 +329,22 @@ void MainGameLayer::nextPhase(bool isAction)
 		break;
 	}
 	player_one->pickState = STATE::HAND;
-	player_one->cardDispHand(true);
-	player_two->cardDispHand(false);	
 	dealer->cardDispGrave();
 	dealer->checkDeckZero();
-
 };
 
 //ノック
 void MainGameLayer::callKnock() 
 {
 	turn = TURN::WAIT;
-	player_one->checkRole();
 	player_one->cardDispHand(true);
-	player_two->checkRole();
 	player_two->cardDispHand(true);
-	log("one_%d", player_one->point);
-	log("two_%d", player_two->point);
+	player_one->checkRole();
+	player_two->checkRole();
+	String* name1 = String::createWithFormat("%d", player_one->point);
+	String* name2 = String::createWithFormat("%d", player_two->point);
+	P_ONE_LABEL->setString(name1->getCString());
+	P_TWO_LABEL->setString(name2->getCString());
 	if (player_one->point < player_two->point)
 	{
 		turnLabel->setString("PLAYER_ONE\nWIN");
@@ -364,14 +393,13 @@ bool MainGameLayer::onTouchBegan(const Touch * touch, Event *unused_event)
 
 void MainGameLayer::onTouchMoved(const Touch * touch, Event *unused_event) 
 {
-	//のっと
+
 };
 
 void MainGameLayer::onTouchEnded(const Touch * touch, Event *unused_event) 
 {
 
-	if (!player_one->brainEnd)
-		return;
+
 	if (button->getBoundingBox().containsPoint(touch->getLocation()))
 	{
 		player_one->cardSort(button->switchRole,player_one->hand);

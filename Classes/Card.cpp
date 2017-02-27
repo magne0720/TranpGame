@@ -25,7 +25,8 @@ bool Card::init(MARK mark,NUMBER number)
 	initWithFile("Card/reverse.png");
 	isFamed = false;
 	setKind(mark, number);
-
+	setRole(ROLE::WITHOUT);
+	roleNumber = 100;
 	return true;
 };
 

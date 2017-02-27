@@ -1,6 +1,38 @@
 #include "Player.h"
 
-bool Player::init() 
+Player* Player::create(Player* &p)
+{
+	Player *pRet = new Player();
+	if (pRet && pRet->init(p))
+	{
+		pRet->autorelease();
+		return pRet;
+	}
+	else
+	{
+		delete pRet;
+		pRet = nullptr;
+		return nullptr;
+	}
+};
+Player* Player::create()
+{
+	Player *pRet = new Player();
+	if (pRet && pRet->init())
+	{
+		pRet->autorelease();
+		return pRet;
+	}
+	else
+	{
+		delete pRet;
+		pRet = nullptr;
+		return nullptr;
+	}
+};
+
+
+bool Player::init()
 {
 	if (!Node::init())
 	{
@@ -9,13 +41,35 @@ bool Player::init()
 	point = 50000;
 	pickNumber = 0;
 	pickState = STATE::HAND;
-	brainHandCount = 10;
 	brainCount = 10;
-	brainEnd = true;
-	cardSort(ROLE::EQUAL,hand);
-	for (int i = 0; i < 13; i++) 
+	RoleSplit = 0;
+	brainEnd = false;
+	cardSort(ROLE::EQUAL, hand);
+	for (int i = 0; i < 11; i++)
 	{
 		result.pushBack(Card::create(MARK::NONE, NUMBER::ZERO));
+	}
+	return true;
+};
+
+bool Player::init(Player* &p)
+{
+	if (!Node::init())
+	{
+		return false;
+	}
+	point = p->point;
+	pickNumber = 0;
+	pickState = STATE::HAND;
+	brainCount = p->brainCount;
+	RoleSplit = p->RoleSplit;
+	brainEnd = false;
+	for (int i = 0; i < p->hand.size(); i++)
+	{
+		result.pushBack(Card::create(p->hand.at(i)->myMark, p->hand.at(i)->myNumber));
+		hand.pushBack(Card::create(p->hand.at(i)->myMark, p->hand.at(i)->myNumber));
+		result.at(i)->setRole(p->result.at(i)->myRole);
+		//log("role%d=[%d]", i, result.at(i)->myRole);
 	}
 	return true;
 };
@@ -120,7 +174,7 @@ void Player::cardThrow(int num,Vector<Card*>&grave)
 {
 	hand.at(num)->setReverse(true);
 	grave.pushBack(hand.at(num));
-	grave.at(GRAVE_TOP)->setState(STATE::GRAVE);	
+	grave.at(GRAVE_TOP)->setState(STATE::GRAVE);
 	hand.erase(num);
 };
 
@@ -153,116 +207,176 @@ void Player::ressetRole()
 
 void Player::checkRole()
 {
+	result=hand;
 	brainEnd = false;
-	brainHandCount = hand.size();
+	ressetRole();
+	brainCount = hand.size();
 	checkRoleNew(this);
-	brainEnd = true;
+	log("roleSplit=%d", RoleSplit);
+	if (RoleSplit >= 2) 
+	{ 
+		log("count=%d", brainCount);
+		brainEnd = true; 
+	}
 };
 
 //役の得点の計算
-int Player::calcRole(Vector<Card*> result) 
+void Player::calcRole(Vector<Card*> cResult) 
 {
 	int point=0;
-	for (int i = 0; i < hand.size(); i++) 
+//	log("---------start------");
+	for (int i = 0; i < hand.size(); i++)
 	{
-		//if(result.at(i)->myNumber==NUMBER::ZERO)
+		if(cResult.at(i)->myRole==ROLE::WITHOUT)
 		{
-			log("%d-plus%d", i,(int)result.at(i)->myNumber);
-			point += (int)result.at(i)->myNumber;
+//			log("%d-plus%d", i,(int)cResult.at(i)->myNumber);
+			point += (int)cResult.at(i)->myNumber;
+		}else{
+//			log("%d-[%d]", i, cResult.at(i)->myNumber);
 		}
 	}
-	return point;
+	if (addPoint(point)) 
+	{
+		setRoleColor(cResult);
+	};
+//	log("---------end--------");
 };
+
 void Player::checkRoleNew(Player* player)
 {
 	//３枚セットの組み合わせを全スキャン
 	for (int z = 0; z < player->brainCount - 2; z++)
 		for (int y = z + 1; y < player->brainCount - 1; y++)
-			for (int x = y + 1; x < player->brainCount ; x++) {
+			for (int x = y + 1; x < player->brainCount; x++) {
 				if ((player->hand.at(z)->myNumber == player->hand.at(y)->myNumber) && (player->hand.at(y)->myNumber == player->hand.at(x)->myNumber)) {//３枚そろっている
-					if (x < player->brainCount - 1 && x < player->hand.size() - 3)
-						if ((player->hand.at(x)->myNumber == player->hand.at(x + 1)->myNumber) //４枚も一緒
-							)
+						if (x < player->brainCount - 1&&(player->hand.at(x)->myNumber == player->hand.at(x + 1)->myNumber))
 							checkRoleNew(check(player, z, y, x, x + 1));//４枚の処理へ　戻り値がカード情報なので、それで再起処理
-						else checkRoleNew(check(player, z, y, x));//３枚の処理
+						else
+							checkRoleNew(check(player, z, y, x));//３枚の処理
 				}
 				if (((int)player->hand.at(z)->myNumber + 1 == (int)player->hand.at(y)->myNumber) && ((int)player->hand.at(z)->myNumber + 2 == (int)player->hand.at(x)->myNumber) &&//順番に並んでいる
-					(player->hand.at(z)->myMark == player->hand.at(y)->myMark) && (player->hand.at(z)->myMark == player->hand.at(x)->myMark)//マークが同じ
-					) checkRoleNew(check(player, z, y, x));//３枚の処理
+					(player->hand.at(z)->myMark == player->hand.at(y)->myMark) && (player->hand.at(z)->myMark == player->hand.at(x)->myMark))//マークが同じ
+						if (x < player->brainCount - 1&&(player->hand.at(x)->myMark == player->hand.at(x + 1)->myMark && (int)player->hand.at(x)->myNumber + 1 == (int)player->hand.at(x + 1)->myNumber))
+							checkRoleNew(check(player, z, y, x, x + 1));//4枚の処理
+						else checkRoleNew(check(player, z, y, x));//３枚の処理
 			}
-				addPoint(calcRole(player->result));
+	calcRole(player->result);
 };
 
 
 Player* Player::check(Player* &brainPlayer, int x, int y, int z) {//3まいそろった時の処理
-	log("3");
-	Player* brain(brainPlayer);
-	for (int i = 0; i < hand.size() - 2; i++) {
-		if (brain->result.at(i)->myRole==ROLE::WITHOUT) {
+	Player* brain=Player::create(brainPlayer);
+	//log("brainCount=%d", brain->brainCount);
+	for (int i = 0; i < brain->hand.size() - 2; i++) {
+		if (brain->result.at(i)->myRole!=ROLE::ROLEIN)
+		{
 			//結果に３枚コピーして保存
-			brain->result.at(i)->myNumber=brainPlayer->hand.at(x)->myNumber; brain->hand.at(x)->myRole=ROLE::ROLEIN;//役を付けて、処理済みのカードとしてマーク
-			brain->result.at(i+1)->myNumber = brainPlayer->hand.at(y)->myNumber; brain->hand.at(y)->myRole = ROLE::ROLEIN;
-			brain->result.at(i+2)->myNumber = brainPlayer->hand.at(z)->myNumber; brain->hand.at(z)->myRole = ROLE::ROLEIN;
+			brain->hand.at(x)->setRole(ROLE::ROLEIN);//役を付けて、処理済みのカードとしてマーク
+			brain->result.at(x)->setRole(ROLE::ROLEIN);
+			brain->result.at(x)->setRoleNumber(brain->RoleSplit);
+			brain->hand.at(y)->setRole(ROLE::ROLEIN);
+			brain->result.at(y)->setRole(ROLE::ROLEIN);
+			brain->result.at(y)->setRoleNumber(brain->RoleSplit);
+			brain->hand.at(z)->setRole(ROLE::ROLEIN);
+			brain->result.at(z)->setRole(ROLE::ROLEIN);
+			brain->result.at(z)->setRoleNumber(brain->RoleSplit);
+			//log("%d-%d-%d-GetRole", hand.at(x)->myNumber, hand.at(y)->myNumber, hand.at(z)->myNumber);
 			brain->brainCount -= 3;//処理すべきカード枚数減算
+			brain->RoleSplit++;
+			break;
 		}
 	}
-	////結果情報に処理済みのカード情報をなくして記録
+	//結果情報に処理済みのカード情報をなくして記録
 	for (int i = 0; i < brainPlayer->hand.size(); i++) {
-	if (brainPlayer->hand.at(i)->myRole == ROLE::ROLEIN)brainPlayer->hand.at(i)->setRole(ROLE::WITHOUT);//処理済みカード検出　→　－１にする（本当は上の処理でやればいい）
-		else brainPlayer->hand.at(i)->setRole(hand.at(i)->myRole);//元カード情報からカード情報をコピー(これも上に組み込める）
+		if (brain->hand.at(i)->myRole == ROLE::ROLEIN)brain->hand.at(i)->setRole(ROLE::WITHOUT);//処理済みカード検出　→　－１にする（本当は上の処理でやればいい）
+		else brain->hand.at(i)->setRole(brainPlayer->hand.at(i)->myRole);//元カード情報からカード情報をコピー(これも上に組み込める）
 	}
-	log("ok");
-	//sort
-	//sort(brain);//ソートしてー１の情報を末尾に、そして整頓して処理を効率化（本当か）
 
 	return brain;
 };
 
 
-Player* Player::check(Player *&brainHand, int x, int y, int z,int q) {//4まいそろった時の処理
-	log("4");
-	Player* brain(brainHand);
-	//	if (brain.at(x)->myRole == ROLE::WITHOUT) {//結果書き込み先の末尾を探す
-	//											   //結果に３枚コピーして保存
-	//		brain.at(x)->setRole(ROLE::ROLEIN); //役を付けて、処理済みのカードとしてマーク
-	//		brain.at(y)->setRole(ROLE::ROLEIN);
-	//		brain.at(z)->setRole(ROLE::ROLEIN);
-	//		brain.at(q)->setRole(ROLE::ROLEIN);
-	//		brainHandCount -= 4;//処理すべきカード枚数減算
-	//	}
-	////結果情報に処理済みのカード情報をなくして記録
-	//for (int i = 0; i < brain.size() || hand.at(i)>0; i++) {
-	//	if (brain.at(i)->myRole == ROLE::ROLEIN)brain.at(i)->setRole(ROLE::WITHOUT);//処理済みカード検出　→　－１にする（本当は上の処理でやればいい）
-	//	else brain.at(i)->setRole(hand.at(i)->myRole);//元カード情報からカード情報をコピー(これも上に組み込める）
-	//}
-	////sort
-	//sort(brain);//ソートしてー１の情報を末尾に、そして整頓して処理を効率化（本当か）
-
+Player* Player::check(Player* &brainPlayer, int x, int y, int z,int q) {//4まいそろった時の処理
+	Player* brain = Player::create(brainPlayer);
+	//log("brainCount=%d", brain->brainCount);
+	for (int i = 0; i < brain->hand.size() - 3; i++) {
+		if (brain->result.at(i)->myRole != ROLE::ROLEIN)
+		{
+			//結果に３枚コピーして保存
+			brain->hand.at(x)->setRole(ROLE::ROLEIN);//役を付けて、処理済みのカードとしてマーク
+			brain->result.at(x)->setRole(ROLE::ROLEIN);
+			brain->result.at(x)->setRoleNumber(brain->RoleSplit);
+			brain->hand.at(y)->setRole(ROLE::ROLEIN);
+			brain->result.at(y)->setRole(ROLE::ROLEIN);
+			brain->result.at(y)->setRoleNumber(brain->RoleSplit);
+			brain->hand.at(z)->setRole(ROLE::ROLEIN);
+			brain->result.at(z)->setRole(ROLE::ROLEIN);
+			brain->result.at(z)->setRoleNumber(brain->RoleSplit);
+			brain->hand.at(q)->setRole(ROLE::ROLEIN);
+			brain->result.at(q)->setRole(ROLE::ROLEIN);
+			brain->result.at(q)->setRoleNumber(brain->RoleSplit);
+			//log("%d-%d-%d-GetRole", hand.at(x)->myNumber, hand.at(y)->myNumber, hand.at(z)->myNumber);
+			brain->brainCount -= 4;//処理すべきカード枚数減算
+			break;
+		}
+	}
+	//結果情報に処理済みのカード情報をなくして記録
+	for (int i = 0; i < brainPlayer->hand.size(); i++) {
+		if (brain->hand.at(i)->myRole == ROLE::ROLEIN)brain->hand.at(i)->setRole(ROLE::WITHOUT);//処理済みカード検出　→　－１にする（本当は上の処理でやればいい）
+		else brain->hand.at(i)->setRole(brainPlayer->hand.at(i)->myRole);//元カード情報からカード情報をコピー(これも上に組み込める）
+	}
 	return brain;
 };
 
-void Player::addPoint(int num)
+bool Player::addPoint(int num)
 {
 	if (num < point) {
 		point = num;
-		for(int i = 0; i < hand.size(); i++) 
+		return true;
+	}
+	return false;
+}
+
+void Player::setRoleColor(Vector<Card*>cResult) 
+{
+	for (int i = 0; i < hand.size(); i++) 
+	{
+		if (cResult.at(i)->myRole == ROLE::ROLEIN)
 		{
-			if(hand.at(i)->myNumber!=NUMBER::ZERO)
-			{
-				log("ok");
-			}
+			hand.at(i)->setColor(Color3B::YELLOW);
+		}
+		else
+		{
+			hand.at(i)->setColor(Color3B::WHITE);
 		}
 	}
 }
 
-
 //ソート
 void Player::sort(Vector<Card*> &temp) {
-	for (int i = 0; i < hand.size() - 1; i++) {
-		for (int k = i + 1; k < hand.size(); k++) {
-			if (temp.at(i)->myRole < temp.at(k)->myRole) {//大小比較して交換していく
+	for (int i = 0; i < temp.size() - 1; i++) {
+		for (int k = i + 1; k < temp.size(); k++) {
+			if (temp.at(i)->myRole > temp.at(k)->myRole) {//大小比較して交換していく
 				temp.swap(i, k);
 			}
 		}
 	}
-}
+};
+
+void Player::RessetPlayer() 
+{
+	//頭の中の計算
+	brainCount = 0;
+	//得点
+	point=5000;
+	//選んだ番号
+	pickNumber = -1;
+	//選んだパイル
+	pickState=STATE::HAND;
+	//役の組み分け
+	RoleSplit=0;
+	//手札とそれの役情報が入る仮想手札
+	handDeath();
+	//ノックできるか
+	brainEnd=false;
+};

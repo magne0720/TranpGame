@@ -9,9 +9,12 @@ USING_NS_CC;
 //プレイヤー
 class Player :public Node 
 {
+private:
 public:
-	CREATE_FUNC(Player);
+	static Player* create();
+	static Player* create(Player* &p);
 	bool init();
+	bool init(Player* &p);
 	//カードの表示
 	void cardDispHand(bool isReversed);
 	//カードの並び替え
@@ -27,9 +30,9 @@ public:
 	//役の調査
 	void checkRole();
 	//役の得点を計算する
-	int calcRole(Vector<Card*> result);
+	void calcRole(Vector<Card*> result);
 	//頭の中の計算
-	int brainHandCount;
+	int brainCount;
 	//得点
 	int point;
 	//選んだ番号
@@ -38,17 +41,22 @@ public:
 	STATE pickState;
 	//並び替えの状態
 	ROLE sortType;
-
-	void addPoint(int num);
-
-
+	//役の組み分け
+	int RoleSplit;
+	//手札とそれの役情報が入る仮想手札
 	Vector<Card*> hand,result;
-	void checkRoleNew(Player* hand);
-	Player* check(Player*& player, int x, int y, int z);
-	Player* check(Player*& player, int x, int y, int z,int q);
-	void sort(Vector<Card*> &card);
+	//ノックできるか
 	bool brainEnd;
-	int brainCount;
+
+
+	bool addPoint(int num);
+	void setRoleColor(Vector<Card*> cResult);
+	void checkRoleNew(Player* player);
+	Player* check(Player* &player, int x, int y, int z);
+	Player* check(Player* &player, int x, int y, int z,int q);
+	void sort(Vector<Card*> &cards);
+	void RessetPlayer();
+
 
 };
 
