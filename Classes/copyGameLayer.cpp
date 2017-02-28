@@ -40,11 +40,17 @@ bool copyGameLayer::init(int level)
 	addChild(dealer, 0);
 
 	player_one = Player::create();
-	player_one->setPosition(Vec2(designResolutionSize.width*0.5f, designResolutionSize.height*0.2f));
+	player_one->setPosition(Vec2(designResolutionSize.width*0.4f, designResolutionSize.height*0.5f));
+	auto action1 = MoveTo::create(1, Vec2(designResolutionSize.width * 0.5f, designResolutionSize.height * 0.2f));
+	player_one->runAction(action1);
+	//player_one->setPosition(Vec2(designResolutionSize.width*0.5f, designResolutionSize.height*0.2f));
 	addChild(player_one, 1);
 
 	player_two = Player::create();
-	player_two->setPosition(Vec2(designResolutionSize.width*0.5f, designResolutionSize.height*0.8f));
+	player_two->setPosition(Vec2(designResolutionSize.width*0.4f, designResolutionSize.height*0.5f));
+	auto action2 = MoveTo::create(1,Vec2(designResolutionSize.width * 0.5f,designResolutionSize.height * 0.8f));
+	player_two->runAction(action2);
+	//player_two->setPosition(Vec2(designResolutionSize.width*0.5f, designResolutionSize.height*0.8f));
 	addChild(player_two, 1);
 
 	turnLabel = Label::create("gameSTART", "fonts/arial.ttf", 30);

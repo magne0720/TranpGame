@@ -46,3 +46,8 @@ void EffectManager::phaseChange(PHASE phase)
 	}
 
 };
+
+void EffectManager::openCard(int num)
+{
+	
+}
