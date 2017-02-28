@@ -17,7 +17,7 @@ public:
 	bool init();
 	bool init(Player* &p);
 	//カードの表示
-	void cardDispHand(bool isReversed);
+	void cardDispHand(bool isReversed,int max=11);
 	//カードの並び替え
 	void cardSort(ROLE kind,Vector<Card*> &hand);
 	//ドローする
@@ -32,6 +32,8 @@ public:
 	void checkRole();
 	//役の得点を計算する
 	void calcRole(Vector<Card*> result);
+	//最後に引いたカードの確認
+	int checkLastCard();
 	
 	//頭の中の計算
 	int brainCount;
@@ -53,6 +55,8 @@ public:
 	Vec2 handPos[11];
 	//エフェクト
 	EffectManager* effect;
+	//最後に引いたカード
+	Card* lastCard;
 
 
 	bool addPoint(int num);

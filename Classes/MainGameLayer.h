@@ -52,6 +52,8 @@ public:
 	bool cardDivisionDesign();
 	//引く
 	bool cardDrowDesign();
+	//引く
+	bool cardThrowDesign();
 
 	//ーーーーーーーーーーーーーーーーーーーーーーーーーーー
 
@@ -74,6 +76,8 @@ public:
 	bool isPass;
 	//演出のための変数
 	int one_hand, two_hand;
+	//進行スピード
+	float phaseTimer, phaseSpeed;
 
 };
 

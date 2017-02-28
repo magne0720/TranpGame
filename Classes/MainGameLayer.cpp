@@ -69,6 +69,9 @@ bool MainGameLayer::init(int level)
 	button = SortButton::create(ROLE::EQUAL,Vec2(designResolutionSize.width *0.05f, designResolutionSize.height*0.5f));
 	addChild(button);
 
+	phaseTimer = 0;
+	phaseSpeed = 0.02f;
+
 	//ゲームの準備
 	gameStart();
 
@@ -82,9 +85,37 @@ bool MainGameLayer::init(int level)
 
 void MainGameLayer::update(float delta)
 {
-	static float timer = 0;
-	timer += delta;	
+	phaseTimer += phaseSpeed;
 
+	
+	//player_one->pickNumber = random(0, (int)player_one->hand.size() - 1);
+
+	//if (dealer->grave.size() > 0) 
+	//{
+	////if (dealer->grave.at(dealer->GRAVE_TOP)->myMark == MARK::SPADE) 
+	//	player_one->pickState = STATE::GRAVE;
+	//}
+	//else
+	//{
+	//	player_one->pickState = STATE::DECK;
+	//}
+
+
+	if (turn != TURN::WAIT)
+	{
+		if (phaseTimer >= 0.5f) {
+			nextPhase(actionPhase());
+		phaseTimer = 0;
+		}
+	}
+	else
+	{
+		if(phaseTimer>=3.0f)
+		{
+			gameStart();
+			phaseTimer = 0;
+		}
+	}
 	switch (commonEffect)
 	{
 	case DO_NOT:
@@ -104,38 +135,15 @@ void MainGameLayer::update(float delta)
 		}
 		break;
 	case DO_THROW:
+		if (cardThrowDesign())
+		{
+			commonEffect = EFFECT::DO_NOT;
+		}
 		break;
 	case DO_SORT:
 		break;
 	default:
 		break;
-	}
-	
-	//player_one->pickNumber = random(0, (int)player_one->hand.size() - 1);
-
-	//if (dealer->grave.size() > 0) 
-	//{
-	////if (dealer->grave.at(dealer->GRAVE_TOP)->myMark == MARK::SPADE) 
-	//	player_one->pickState = STATE::GRAVE;
-	//}
-	//else
-	//{
-	//	player_one->pickState = STATE::DECK;
-	//}
-
-
-	if (turn != TURN::WAIT)
-	{
-		nextPhase(actionPhase());
-		timer = 0;
-	}
-	else
-	{
-		if(timer>=3.0f)
-		{
-			gameStart();
-			timer = 0;
-		}
 	}
 };
 
@@ -155,47 +163,91 @@ void MainGameLayer::startPlayer()
 //カードを配る(初期カードの配置)
 void MainGameLayer::cardDivision() 
 {
+	one_hand = 0;
+	two_hand = 0;
 	//10回
 	for (int i = 0; i < HAND_START_MAX; i++)
 	{
 		player_one->cardDrow(dealer->deck);
 		player_two->cardDrow(dealer->deck);
 	}
-	
-	player_one->cardDispHand(true);
-	player_two->cardDispHand(false);
 	commonEffect = EFFECT::DO_DIVISION;
 };
 
+//カードを分ける演出
 bool MainGameLayer::cardDivisionDesign() 
 {
+	player_one->cardDispHand(true, one_hand);
+	player_two->cardDispHand(false, two_hand);
 	if (one_hand < player_one->HAND_SIZE)
 		if (player_one->effect->drowCard(player_one->hand, one_hand, dealer->deckSp->getPosition(), player_one->handPos[one_hand], 0.2f))
 		{
+			effectManager->phaseChange(PHASE::DROW);
 			one_hand++;
 		}
 	if (two_hand < player_two->HAND_SIZE)
 		if (player_two->effect->drowCard(player_two->hand, two_hand, dealer->deckSp->getPosition(), player_two->handPos[two_hand], 0.2f))
 		{
+			effectManager->phaseChange(PHASE::DROW);
 			two_hand++;
 		}
-	if (one_hand >= player_one->HAND_SIZE&&two_hand >= player_two->HAND_SIZE) 
+	if (one_hand > player_one->HAND_SIZE&&two_hand > player_two->HAND_SIZE) 
 	{
-		one_hand = 0;
-		two_hand = 0;
 		return true;
 	}
 	return false;
 };
 
+//カードをひく演出
 bool MainGameLayer::cardDrowDesign() 
 {
-
-
+	if (turn == TURN::PLAY_ONE){
+		if (player_one->pickState == STATE::DECK) {
+			if (player_one->effect->drowCard(player_one->hand, player_one->checkLastCard(), dealer->deckSp->getPosition(), player_one->handPos[player_one->checkLastCard()], 0.05f)){
+				return true;
+			}
+		}
+		else if (player_one->pickState == STATE::GRAVE) {
+			if (player_one->effect->drowCard(player_one->hand, player_one->checkLastCard(), dealer->graveSp->getPosition(), player_one->handPos[player_one->checkLastCard()], 0.05f)){
+				return true;
+			}
+		}
+	}
+	else if(turn==TURN::PLAY_TWO)
+	{
+		if (player_two->pickState == STATE::DECK) {
+			if (player_two->effect->drowCard(player_two->hand, player_two->checkLastCard(), dealer->deckSp->getPosition(), player_two->handPos[player_two->checkLastCard()], 0.05f)){
+				return true;
+			}
+		}
+		else if (player_two->pickState == STATE::GRAVE) {
+			if (player_two->effect->drowCard(player_two->hand, player_two->checkLastCard(), dealer->graveSp->getPosition(), player_two->handPos[player_two->checkLastCard()], 0.05f)){
+				return true;
+			}
+		}
+	}
 
 	return false;
 }
 
+bool MainGameLayer::cardThrowDesign()
+{
+	if (turn == TURN::PLAY_ONE)
+	{
+		if (player_one->effect->drowCard(dealer->grave, dealer->GRAVE_TOP, player_one->handPos[player_one->pickNumber], dealer->graveSp->getPosition(), 0.05f))
+		{
+			return true;
+		}
+	}
+	else if (turn == TURN::PLAY_TWO)
+	{
+		if (player_two->effect->drowCard(dealer->grave, dealer->GRAVE_TOP, player_two->handPos[player_two->hand.size() - 1], dealer->graveSp->getPosition(), 0.05f))
+		{
+			return true;
+		}
+	}
+	return false;
+}
 //スタート
 void MainGameLayer::gameStart()
 {
@@ -274,12 +326,13 @@ bool MainGameLayer::actionPhase()
 		}
 		else if (turn == TURN::PLAY_TWO)//プレイヤー２
 		{
+			player_two->pickState = STATE::DECK;
 			player_two->cardDrow(dealer->deck);
 			//player_two->checkRole();
 			return true;
 		}
 		return false;
-	case PHASE::THROW:	
+	case PHASE::THROW:
 		player_two->pickNumber = random(0, (int)player_one->hand.size()-1);
 
 		if (turn == TURN::PLAY_ONE)
@@ -335,12 +388,10 @@ void MainGameLayer::nextPlayerTurn()
 //フェイズごとに一度行う行動
 void MainGameLayer::nextPhase(bool isAction) 
 {
-	if (!isAction) 
+	if (!isAction)
 	{
 		return;
 	}
-	//player_one->cardDispHand(true);
-	//player_two->cardDispHand(false);
 	effectManager->phaseChange(phase);
 	switch (phase)
 	{
@@ -351,15 +402,14 @@ void MainGameLayer::nextPhase(bool isAction)
 	case PHASE::DROW:
 		phase = PHASE::THROW;
 		phaseLabel->setString("THROW");
-
+		player_one->lastCard->setKind(player_one->hand.at(player_one->hand.size() - 1)->myMark, player_one->hand.at(player_one->hand.size() - 1)->myNumber);
 		if (isPass)
 		{
 			isPass = false;
 			phase = PHASE::PASS;
 			phaseLabel->setString("PASS");
 		}
-		//player_one->cardDispHand(true);
-		//player_two->cardDispHand(false);
+		commonEffect = EFFECT::DO_DRAW;
 		//player_one->checkRole();
 			break;
 	case PHASE::THROW:
@@ -373,6 +423,7 @@ void MainGameLayer::nextPhase(bool isAction)
 				phase = PHASE::END;
 				phaseLabel->setString("END");
 			}
+			commonEffect = EFFECT::DO_THROW;
 		break;
 	case PHASE::KNOCK:
 		callKnock();
@@ -380,6 +431,10 @@ void MainGameLayer::nextPhase(bool isAction)
 	case PHASE::END:
 		phaseLabel->setString("START");
 		phase = PHASE::START;
+		player_one->pickState = STATE::HAND;
+		player_two->pickState = STATE::HAND;
+		player_one->pickNumber = -1;
+		player_two->pickNumber = -1;
 		nextPlayerTurn();
 		turnCount++;
 		break;
@@ -391,7 +446,8 @@ void MainGameLayer::nextPhase(bool isAction)
 		phaseLabel->setString("DROW"); 
 		break;
 	}
-	player_one->pickState = STATE::HAND;
+	player_one->cardDispHand(true);
+	player_two->cardDispHand(false);
 	dealer->cardDispGrave();
 	dealer->checkDeckZero();
 };
@@ -400,8 +456,8 @@ void MainGameLayer::nextPhase(bool isAction)
 void MainGameLayer::callKnock() 
 {
 	turn = TURN::WAIT;
-	//player_one->cardDispHand(true);
-	//player_two->cardDispHand(true);
+	player_one->cardDispHand(true);
+	player_two->cardDispHand(true);
 	player_one->checkRole();
 	player_two->checkRole();
 	String* name1 = String::createWithFormat("%d", player_one->point);
