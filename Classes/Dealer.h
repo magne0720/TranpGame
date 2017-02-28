@@ -46,6 +46,8 @@ public :
 	void checkDeckZero();
 	//ŽÌ‚ÄŽD‚Ì•\Ž¦
 	void cardDispGrave();
+	//
+	void ShuffleAnimation();
 
 
 
