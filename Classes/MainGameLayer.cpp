@@ -85,17 +85,17 @@ void MainGameLayer::update(float delta)
 	static float timer = 0;
 	timer += delta;	
 	
-	//player_one->pickNumber = random(0, (int)player_one->hand.size() - 1);
+	player_one->pickNumber = random(0, (int)player_one->hand.size() - 1);
 
-	//if (dealer->grave.size() > 0) 
-	//{
-	////if (dealer->grave.at(dealer->GRAVE_TOP)->myMark == MARK::SPADE) 
-	//	player_one->pickState = STATE::GRAVE;
-	//}
-	//else
-	//{
-	//	player_one->pickState = STATE::DECK;
-	//}
+	if (dealer->grave.size() > 0) 
+	{
+	//if (dealer->grave.at(dealer->GRAVE_TOP)->myMark == MARK::SPADE) 
+		player_one->pickState = STATE::GRAVE;
+	}
+	else
+	{
+		player_one->pickState = STATE::DECK;
+	}
 
 
 	if (turn != TURN::WAIT)
@@ -103,14 +103,14 @@ void MainGameLayer::update(float delta)
 		nextPhase(actionPhase());
 		timer = 0;
 	}
-	//else
-	//{
-	//	if(timer>=3.0f)
-	//	{
-	//		gameStart();
-	//		timer = 0;
-	//	}
-	//}
+	else
+	{
+		if(timer>=3.0f)
+		{
+			gameStart();
+			timer = 0;
+		}
+	}
 };
 
 //ーーーーーーーーーーゲームの準備関数ーーーーーーーーー
@@ -150,6 +150,8 @@ void MainGameLayer::gameStart()
 	//お互いの初期化
 	player_one->RessetPlayer();
 	player_two->RessetPlayer();
+	player_one->sortType = ROLE::ORDER;
+	player_two->sortType = ROLE::ORDER;
 	//デッキを再構築
 	dealer->setDeck(true);
 	//デッキをシャッフル
@@ -407,7 +409,7 @@ void MainGameLayer::onTouchEnded(const Touch * touch, Event *unused_event)
 
 	if (button->getBoundingBox().containsPoint(touch->getLocation()))
 	{
-		player_one->cardSort(button->switchRole,player_one->hand);
+		player_one->cardSort(button->switchRole,player_one->result);
 	}
 	//次にドローするカードをデッキからにする
 	if (dealer->deckSp->getBoundingBox().containsPoint(touch->getLocation())) 

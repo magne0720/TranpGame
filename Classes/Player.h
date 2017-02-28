@@ -54,6 +54,7 @@ public:
 	bool addPoint(int num);
 	void setRoleColor(Vector<Card*> cResult);
 	void checkRoleNew(Player* player);
+	bool chance(Player* &player, int x, int y);
 	Player* check(Player* &player, int x, int y, int z);
 	Player* check(Player* &player, int x, int y, int z,int q);
 	void sort(Player*&p);
