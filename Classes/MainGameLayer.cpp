@@ -83,7 +83,10 @@ bool MainGameLayer::init(int level)
 void MainGameLayer::update(float delta)
 {
 	static float timer = 0;
-	timer += delta;
+	timer += delta;	
+	
+	player_one->pickNumber = random(0, (int)player_one->hand.size() - 1);
+
 	if (dealer->grave.size() > 0) 
 	{
 	//if (dealer->grave.at(dealer->GRAVE_TOP)->myMark == MARK::SPADE) 
@@ -147,6 +150,8 @@ void MainGameLayer::gameStart()
 	//お互いの初期化
 	player_one->RessetPlayer();
 	player_two->RessetPlayer();
+	player_one->sortType = ROLE::ORDER;
+	player_two->sortType = ROLE::ORDER;
 	//デッキを再構築
 	dealer->setDeck(true);
 	//デッキをシャッフル
@@ -216,7 +221,6 @@ bool MainGameLayer::actionPhase()
 		}
 		return false;
 	case PHASE::THROW:	
-		player_one->pickNumber = random(0, (int)player_one->hand.size()-1);
 		player_two->pickNumber = random(0, (int)player_one->hand.size()-1);
 
 		if (turn == TURN::PLAY_ONE)
@@ -357,6 +361,9 @@ void MainGameLayer::callKnock()
 	{
 		turnLabel->setString("DRAW");
 	}
+	player_one->sortType = ROLE::WITHOUT;
+	player_one->cardDispHand(true);
+	player_two->cardDispHand(true);
 };
 
 //ノック時に行われる役の計算
@@ -402,7 +409,7 @@ void MainGameLayer::onTouchEnded(const Touch * touch, Event *unused_event)
 
 	if (button->getBoundingBox().containsPoint(touch->getLocation()))
 	{
-		player_one->cardSort(button->switchRole,player_one->hand);
+		player_one->cardSort(button->switchRole,player_one->result);
 	}
 	//次にドローするカードをデッキからにする
 	if (dealer->deckSp->getBoundingBox().containsPoint(touch->getLocation())) 

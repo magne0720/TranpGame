@@ -27,5 +27,5 @@ bool Enemy::init(int level)
 
 int Enemy::pickCardThink() 
 {
-
+	return 0;
 };

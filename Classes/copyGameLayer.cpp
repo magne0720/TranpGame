@@ -374,7 +374,7 @@ void copyGameLayer::onTouchEnded(const Touch * touch, Event *unused_event)
 {
 	if (button->getBoundingBox().containsPoint(touch->getLocation()))
 	{
-		player_one->cardSort(button->switchRole,player_one->hand);
+		player_one->cardSort(button->switchRole,player_one->result);
 	}
 	//次にドローするカードをデッキからにする
 	if (dealer->deckSp->getBoundingBox().containsPoint(touch->getLocation()))

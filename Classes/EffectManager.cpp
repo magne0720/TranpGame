@@ -14,6 +14,8 @@ bool EffectManager::init()
 
 	SimpleAudioEngine::sharedEngine()->preloadEffect("Sound/card-put1.mp3");
 
+	SimpleAudioEngine::sharedEngine()->preloadEffect("Sound/knock.mp3");
+
 	return true;
 };
 
@@ -36,6 +38,7 @@ void EffectManager::phaseChange(PHASE phase)
 		SimpleAudioEngine::sharedEngine()->playEffect("Sound/card-put1.mp3");
 		break;
 	case KNOCK:
+		SimpleAudioEngine::sharedEngine()->playEffect("Sound/knock.mp3");
 		break;
 	case END:
 		break;

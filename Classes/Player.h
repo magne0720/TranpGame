@@ -31,6 +31,8 @@ public:
 	void checkRole();
 	//役の得点を計算する
 	void calcRole(Vector<Card*> result);
+	
+	
 	//頭の中の計算
 	int brainCount;
 	//得点
@@ -52,9 +54,10 @@ public:
 	bool addPoint(int num);
 	void setRoleColor(Vector<Card*> cResult);
 	void checkRoleNew(Player* player);
+	bool chance(Player* &player, int x, int y);
 	Player* check(Player* &player, int x, int y, int z);
 	Player* check(Player* &player, int x, int y, int z,int q);
-	void sort(Vector<Card*> &cards);
+	void sort(Player*&p);
 	void RessetPlayer();
 
 
