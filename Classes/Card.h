@@ -33,6 +33,7 @@ public:
 	bool isFamed;
 	//位置の設定
 	void setMyPosition(Vec2 pos);
+	Vec2 getMyPosition();
 	//カードの設定
 	void setKind(MARK mark,NUMBER number);
 	void setDesign(int num,bool is=true);

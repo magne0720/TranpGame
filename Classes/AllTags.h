@@ -43,6 +43,11 @@ enum ROLE
 {
 	WITHOUT = 0, ORDER, EQUAL,ROLEIN
 };
+//ゲーム進行における演出制御
+enum EFFECT 
+{
+	DO_NOT=0, DO_SHUFFLE,DO_DIVISION,DO_DRAW,DO_THROW,DO_SORT
+};
 
 static cocos2d::Size designResolutionSize = cocos2d::Size(1920, 1080);
 static cocos2d::Size smallResolutionSize = cocos2d::Size(480, 320);

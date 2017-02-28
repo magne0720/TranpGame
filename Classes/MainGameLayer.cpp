@@ -84,18 +84,44 @@ void MainGameLayer::update(float delta)
 {
 	static float timer = 0;
 	timer += delta;	
-	
-	player_one->pickNumber = random(0, (int)player_one->hand.size() - 1);
 
-	if (dealer->grave.size() > 0) 
+	switch (commonEffect)
 	{
-	//if (dealer->grave.at(dealer->GRAVE_TOP)->myMark == MARK::SPADE) 
-		player_one->pickState = STATE::GRAVE;
+	case DO_NOT:
+		break;
+	case DO_DIVISION:
+		if (cardDivisionDesign()) 
+		{
+			commonEffect = EFFECT::DO_NOT;
+		}
+		break;
+	case DO_SHUFFLE:
+		break;
+	case DO_DRAW:
+		if (cardDrowDesign()) 
+		{
+			commonEffect = EFFECT::DO_NOT;
+		}
+		break;
+	case DO_THROW:
+		break;
+	case DO_SORT:
+		break;
+	default:
+		break;
 	}
-	else
-	{
-		player_one->pickState = STATE::DECK;
-	}
+	
+	//player_one->pickNumber = random(0, (int)player_one->hand.size() - 1);
+
+	//if (dealer->grave.size() > 0) 
+	//{
+	////if (dealer->grave.at(dealer->GRAVE_TOP)->myMark == MARK::SPADE) 
+	//	player_one->pickState = STATE::GRAVE;
+	//}
+	//else
+	//{
+	//	player_one->pickState = STATE::DECK;
+	//}
 
 
 	if (turn != TURN::WAIT)
@@ -135,9 +161,40 @@ void MainGameLayer::cardDivision()
 		player_one->cardDrow(dealer->deck);
 		player_two->cardDrow(dealer->deck);
 	}
+	
 	player_one->cardDispHand(true);
 	player_two->cardDispHand(false);
+	commonEffect = EFFECT::DO_DIVISION;
 };
+
+bool MainGameLayer::cardDivisionDesign() 
+{
+	if (one_hand < player_one->HAND_SIZE)
+		if (player_one->effect->drowCard(player_one->hand, one_hand, dealer->deckSp->getPosition(), player_one->handPos[one_hand], 0.2f))
+		{
+			one_hand++;
+		}
+	if (two_hand < player_two->HAND_SIZE)
+		if (player_two->effect->drowCard(player_two->hand, two_hand, dealer->deckSp->getPosition(), player_two->handPos[two_hand], 0.2f))
+		{
+			two_hand++;
+		}
+	if (one_hand >= player_one->HAND_SIZE&&two_hand >= player_two->HAND_SIZE) 
+	{
+		one_hand = 0;
+		two_hand = 0;
+		return true;
+	}
+	return false;
+};
+
+bool MainGameLayer::cardDrowDesign() 
+{
+
+
+
+	return false;
+}
 
 //スタート
 void MainGameLayer::gameStart()
@@ -145,6 +202,8 @@ void MainGameLayer::gameStart()
 	//カウントの初期化
 	turnCount = 1;
 	isPass = false;
+	one_hand = 0;
+	two_hand = 0;
 	//フェイズの初期化
 	phase = PHASE::START;
 	//お互いの初期化
@@ -280,8 +339,8 @@ void MainGameLayer::nextPhase(bool isAction)
 	{
 		return;
 	}
-	player_one->cardDispHand(true);
-	player_two->cardDispHand(false);
+	//player_one->cardDispHand(true);
+	//player_two->cardDispHand(false);
 	effectManager->phaseChange(phase);
 	switch (phase)
 	{
@@ -299,8 +358,8 @@ void MainGameLayer::nextPhase(bool isAction)
 			phase = PHASE::PASS;
 			phaseLabel->setString("PASS");
 		}
-		player_one->cardDispHand(true);
-		player_two->cardDispHand(false);
+		//player_one->cardDispHand(true);
+		//player_two->cardDispHand(false);
 		//player_one->checkRole();
 			break;
 	case PHASE::THROW:
@@ -341,8 +400,8 @@ void MainGameLayer::nextPhase(bool isAction)
 void MainGameLayer::callKnock() 
 {
 	turn = TURN::WAIT;
-	player_one->cardDispHand(true);
-	player_two->cardDispHand(true);
+	//player_one->cardDispHand(true);
+	//player_two->cardDispHand(true);
 	player_one->checkRole();
 	player_two->checkRole();
 	String* name1 = String::createWithFormat("%d", player_one->point);
@@ -362,8 +421,8 @@ void MainGameLayer::callKnock()
 		turnLabel->setString("DRAW");
 	}
 	player_one->sortType = ROLE::WITHOUT;
-	player_one->cardDispHand(true);
-	player_two->cardDispHand(true);
+	//player_one->cardDispHand(true);
+	//player_two->cardDispHand(true);
 };
 
 //ノック時に行われる役の計算
@@ -382,8 +441,6 @@ void MainGameLayer::callAddTotal()
 
 bool MainGameLayer::onTouchBegan(const Touch * touch, Event *unused_event) 
 {
-
-
 	if (dealer->deckSp->getBoundingBox().containsPoint(touch->getLocation()))
 	{
 

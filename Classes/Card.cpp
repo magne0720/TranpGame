@@ -126,5 +126,9 @@ void Card::reverse()
 void Card::setMyPosition(Vec2 pos) 
 {
 	myPosition = pos;
-	setPosition(pos);
+};
+
+Vec2 Card::getMyPosition()
+{
+	return myPosition;
 };

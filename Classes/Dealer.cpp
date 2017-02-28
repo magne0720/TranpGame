@@ -201,7 +201,7 @@ void Dealer::cardDispGrave()
 {
 	for (int i = 0; i < grave.size(); i++)
 	{
-		grave.at(i)->setMyPosition(graveSp->getPosition());
+		grave.at(i)->setPosition(graveSp->getPosition());
 		grave.at(i)->setZOrder(1);
 		grave.at(i)->setReverse(true);
 		grave.at(i)->setColor(Color3B::WHITE);

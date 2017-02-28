@@ -21,7 +21,7 @@ bool EffectManager::init()
 
 void EffectManager::update(float delta) 
 {
-
+	
 };
 
 void EffectManager::phaseChange(PHASE phase) 
@@ -53,4 +53,18 @@ void EffectManager::phaseChange(PHASE phase)
 void EffectManager::openCard(int num)
 {
 	
-}
+};
+
+bool EffectManager::drowCard(Vector<Card*>&card,int limit,Vec2 start,Vec2 end, float delta) 
+{
+	//p=(1-n)A+nB;
+	timer += delta;
+	card.at(limit)->setPosition((1 - timer)*start + timer*end);
+	if (timer > 1)
+	{
+		log("true");
+		timer = 0;
+		return true;
+	}
+	return false;
+};

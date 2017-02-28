@@ -17,6 +17,7 @@ class MainGameLayer:public Layer
 public:
 	TURN turn;
 	PHASE phase;
+	EFFECT commonEffect;
 
 	static MainGameLayer* create(int level);
 	bool init(int level);
@@ -45,6 +46,15 @@ public:
 
 	//ーーーーーーーーーーーーーーーーーーーーーーーーーーー
 
+	//ーーーーーーーーー演出ーーーーーーーーーーーーーー
+
+	//配る
+	bool cardDivisionDesign();
+	//引く
+	bool cardDrowDesign();
+
+	//ーーーーーーーーーーーーーーーーーーーーーーーーーーー
+
 	//タッチ判定
 	bool onTouchBegan(const Touch * touch, Event *unused_event);
 	void onTouchMoved(const Touch * touch, Event *unused_event);
@@ -62,6 +72,8 @@ public:
 	bool isKnock;
 	//パスしたかどうか(先行のみ有効) 
 	bool isPass;
+	//演出のための変数
+	int one_hand, two_hand;
 
 };
 

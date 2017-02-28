@@ -3,6 +3,7 @@
 
 #include "cocos2d.h"
 #include "Card.h"
+#include "EffectManager.h"
 
 USING_NS_CC;
 
@@ -32,7 +33,6 @@ public:
 	//役の得点を計算する
 	void calcRole(Vector<Card*> result);
 	
-	
 	//頭の中の計算
 	int brainCount;
 	//得点
@@ -49,6 +49,10 @@ public:
 	Vector<Card*> hand,result;
 	//ノックできるか
 	bool brainEnd;
+	//手札の位置
+	Vec2 handPos[11];
+	//エフェクト
+	EffectManager* effect;
 
 
 	bool addPoint(int num);

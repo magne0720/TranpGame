@@ -38,6 +38,8 @@ bool Player::init()
 	{
 		return false;
 	}
+	effect = EffectManager::create();
+	addChild(effect);
 	point = 50000;
 	pickNumber = 0;
 	pickState = STATE::HAND;
@@ -49,6 +51,10 @@ bool Player::init()
 	{
 		result.pushBack(Card::create(MARK::NONE, NUMBER::ZERO));
 		result.at(i)->roleNumber = 0;
+	}
+	for (int i = 0; i < HAND_SIZE; i++) 
+	{
+		handPos[i] = Vec2(150*i+200, 0);
 	}
 	return true;
 };
@@ -86,6 +92,7 @@ void Player::cardDispHand(bool isReversed)
 	for (int i = 0; i < hand.size(); i++)
 	{
 		hand.at(i)->setMyPosition(Vec2(150 * i + getPositionX() / 3, getPositionY()));
+		handPos[i] = hand.at(i)->getMyPosition();
 		hand.at(i)->setState(STATE::HAND);
 		hand.at(i)->setReverse(isReversed);
 		if (!isReversed) 
