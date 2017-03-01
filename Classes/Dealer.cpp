@@ -207,17 +207,26 @@ void Dealer::cardDispGrave()
 		grave.at(i)->setColor(Color3B::WHITE);
 	}
 };
-void Dealer::ShuffleAnimation()
+void Dealer::ShuffleAnimation(bool is)
 {
 	Animation *animation = Animation::create();
-	animation->addSpriteFrameWithFileName("Card/shuffle1.png");
-	animation->addSpriteFrameWithFileName("Card/shuffle2.png");
-	animation->addSpriteFrameWithFileName("Card/shuffle3.png");
+
+	animation->addSpriteFrameWithFileName("Card/shuffle00.png");
+	animation->addSpriteFrameWithFileName("Card/shuffle01.png");
+	animation->addSpriteFrameWithFileName("Card/shuffle02.png");
+	animation->addSpriteFrameWithFileName("Card/shuffle03.png");
+	animation->addSpriteFrameWithFileName("Card/shuffle04.png");
+	animation->addSpriteFrameWithFileName("Card/shuffle05.png");
+	animation->addSpriteFrameWithFileName("Card/shuffle04.png");
+	animation->addSpriteFrameWithFileName("Card/shuffle03.png");
+	animation->addSpriteFrameWithFileName("Card/shuffle02.png");
+	animation->addSpriteFrameWithFileName("Card/shuffle01.png");
+	animation->addSpriteFrameWithFileName("Card/shuffle00.png");
 	animation->setRestoreOriginalFrame(true);   // Å‰‚Ì‰æ‘œ‚É–ß‚·‚©‚Ç‚¤‚©
-	animation->setDelayPerUnit(0.5f / 4.0f);
+	animation->setDelayPerUnit(0.3f / 4.0f);
 	Animate* action = Animate::create(animation);
-	RepeatForever* anime = RepeatForever::create(action);
-	deckSp->runAction(anime);
+	//RepeatForever* anime = RepeatForever::create(action);
+	deckSp->runAction(action);
 }
 bool Dealer::onTouchBegan(const Touch * touch, Event *unused_event) 
 {
