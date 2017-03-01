@@ -47,7 +47,7 @@ public :
 	//ŽÌ‚ÄŽD‚Ì•\Ž¦
 	void cardDispGrave();
 	//
-	void ShuffleAnimation();
+	void ShuffleAnimation(bool is);
 
 
 
