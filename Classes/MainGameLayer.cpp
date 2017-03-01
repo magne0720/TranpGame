@@ -182,13 +182,13 @@ bool MainGameLayer::cardDivisionDesign()
 	if (one_hand < player_one->HAND_SIZE)
 		if (player_one->effect->drowCard(player_one->hand, one_hand, dealer->deckSp->getPosition(), player_one->handPos[one_hand], 0.2f))
 		{
-			effectManager->phaseChange(PHASE::DROW);
+			//effectManager->phaseChange(PHASE::DROW);
 			one_hand++;
 		}
 	if (two_hand < player_two->HAND_SIZE)
 		if (player_two->effect->drowCard(player_two->hand, two_hand, dealer->deckSp->getPosition(), player_two->handPos[two_hand], 0.2f))
 		{
-			effectManager->phaseChange(PHASE::DROW);
+			//effectManager->phaseChange(PHASE::DROW);
 			two_hand++;
 		}
 	if (one_hand > player_one->HAND_SIZE&&two_hand > player_two->HAND_SIZE) 

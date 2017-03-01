@@ -3,6 +3,7 @@
 
 #include "cocos2d.h"
 #include "MainGameLayer.h"
+#include "copyGameLayer.h"
 
 USING_NS_CC;
 
@@ -12,6 +13,12 @@ public:
 	static Scene* createScene(int level);
 
 	bool init(int level);
+
+
+	bool onTouchBegan(const Touch * touch, Event *unused_event);
+	void onTouchMoved(const Touch * touch, Event *unused_event);
+	void onTouchEnded(const Touch * touch, Event *unused_event);
+
 
 };
 

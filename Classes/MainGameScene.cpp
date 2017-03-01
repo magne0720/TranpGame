@@ -22,8 +22,43 @@ bool MainGameScene::init(int level)
 	{
 		return false;
 	}
-	MainGameLayer* layer = MainGameLayer::create(0);
-	addChild(layer);
+	
+
+	//ƒ^ƒbƒ`”»’è
+	EventListenerTouchOneByOne *listener = EventListenerTouchOneByOne::create();
+	listener->onTouchBegan = CC_CALLBACK_2(MainGameScene::onTouchBegan, this);
+	listener->onTouchMoved = CC_CALLBACK_2(MainGameScene::onTouchMoved, this);
+	listener->onTouchEnded = CC_CALLBACK_2(MainGameScene::onTouchEnded, this);
+	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, this);
+
+
 
 	return true;
+};
+
+
+
+bool MainGameScene::onTouchBegan(const Touch * touch, Event *unused_event) 
+{
+	if (touch->getLocation().x > designResolutionSize.width*0.5f) 
+	{
+		MainGameLayer* layer = MainGameLayer::create(0);
+		addChild(layer);
+	}
+	else
+	{
+		copyGameLayer* layer = copyGameLayer::create(0);
+		addChild(layer);
+	}
+	return true;
+};
+
+void MainGameScene::onTouchMoved(const Touch * touch, Event *unused_event)
+{
+
+};
+
+void MainGameScene::onTouchEnded(const Touch * touch, Event *unused_event)
+{
+
 };
