@@ -52,6 +52,8 @@ public:
 	bool cardShuffleDesign();
 	//配る
 	bool cardDivisionDesign();
+	//最初の一枚を捨てる
+	bool cardDivisionThrowDesign();
 	//引く
 	bool cardDrowDesign();
 	//捨てる
@@ -76,6 +78,8 @@ public:
 	bool isKnock;
 	//パスしたかどうか(先行のみ有効) 
 	bool isPass;
+	//ゲームが始まったか
+	bool isGameStart;
 	//演出のための変数
 	int one_hand, two_hand;
 	//進行スピード
