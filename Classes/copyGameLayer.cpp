@@ -126,6 +126,7 @@ void copyGameLayer::gameStart()
 	//デッキを再構築
 	dealer->setDeck(true);
 	//デッキをシャッフル
+	dealer->ShuffleAnimation();
 	dealer->cardShuffle();
 	//プレイヤーに10枚ずつ交互に配る
 	cardDivision();

@@ -207,7 +207,18 @@ void Dealer::cardDispGrave()
 		grave.at(i)->setColor(Color3B::WHITE);
 	}
 };
-
+void Dealer::ShuffleAnimation()
+{
+	Animation *animation = Animation::create();
+	animation->addSpriteFrameWithFileName("Card/shuffle1.png");
+	animation->addSpriteFrameWithFileName("Card/shuffle2.png");
+	animation->addSpriteFrameWithFileName("Card/shuffle3.png");
+	animation->setRestoreOriginalFrame(true);   // Å‰‚Ì‰æ‘œ‚É–ß‚·‚©‚Ç‚¤‚©
+	animation->setDelayPerUnit(0.5f / 4.0f);
+	Animate* action = Animate::create(animation);
+	RepeatForever* anime = RepeatForever::create(action);
+	deckSp->runAction(anime);
+}
 bool Dealer::onTouchBegan(const Touch * touch, Event *unused_event) 
 {
 
