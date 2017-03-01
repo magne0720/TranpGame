@@ -68,3 +68,11 @@ bool EffectManager::drowCard(Vector<Card*>&card,int limit,Vec2 start,Vec2 end, f
 	}
 	return false;
 };
+
+bool EffectManager::shuffleCard(Vec2 pos,float limit, float delta)
+{
+	timer += delta;
+	if (timer>limit)return true;
+
+	return false;
+};

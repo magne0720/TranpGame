@@ -24,6 +24,9 @@ public:
 	void openCard(int num);
 	//カードをドローするアニメーション
 	bool drowCard(Vector<Card*>&card,int limit,Vec2 start,Vec2 end, float delta);
+	//カードをシャッフルするアニメーション
+	bool shuffleCard(Vec2 pos, float limit, float delta);
+
 };
 
 

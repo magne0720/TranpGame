@@ -48,11 +48,13 @@ public:
 
 	//ーーーーーーーーー演出ーーーーーーーーーーーーーー
 
+	//シャッフル
+	bool cardShuffleDesign();
 	//配る
 	bool cardDivisionDesign();
 	//引く
 	bool cardDrowDesign();
-	//引く
+	//捨てる
 	bool cardThrowDesign();
 
 	//ーーーーーーーーーーーーーーーーーーーーーーーーーーー

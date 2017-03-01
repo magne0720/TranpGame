@@ -121,12 +121,16 @@ void MainGameLayer::update(float delta)
 	case DO_NOT:
 		break;
 	case DO_DIVISION:
-		if (cardDivisionDesign()) 
+		if (cardDivisionDesign())
 		{
 			commonEffect = EFFECT::DO_NOT;
 		}
 		break;
 	case DO_SHUFFLE:
+		if (cardShuffleDesign())
+		{
+			commonEffect = EFFECT::DO_NOT;
+		}
 		break;
 	case DO_DRAW:
 		if (cardDrowDesign()) 
@@ -160,6 +164,7 @@ void MainGameLayer::startPlayer()
 	turnLabel->setString(name->getCString());
 };
 
+
 //カードを配る(初期カードの配置)
 void MainGameLayer::cardDivision() 
 {
@@ -172,6 +177,15 @@ void MainGameLayer::cardDivision()
 		player_two->cardDrow(dealer->deck);
 	}
 	commonEffect = EFFECT::DO_DIVISION;
+};
+
+//カードをシャッフルする
+bool MainGameLayer::cardShuffleDesign()
+{
+	effectManager->
+
+
+	return false;
 };
 
 //カードを分ける演出
