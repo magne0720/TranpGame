@@ -31,7 +31,7 @@ bool MainGameScene::init(int level)
 	listener->onTouchEnded = CC_CALLBACK_2(MainGameScene::onTouchEnded, this);
 	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, this);
 
-
+	is = false;
 
 	return true;
 };
@@ -40,15 +40,18 @@ bool MainGameScene::init(int level)
 
 bool MainGameScene::onTouchBegan(const Touch * touch, Event *unused_event) 
 {
+	if (is)return false;
 	if (touch->getLocation().x > designResolutionSize.width*0.5f) 
 	{
 		MainGameLayer* layer = MainGameLayer::create(0);
 		addChild(layer);
+		is = true;
 	}
 	else
 	{
 		copyGameLayer* layer = copyGameLayer::create(0);
 		addChild(layer);
+		is = true;
 	}
 	return true;
 };
