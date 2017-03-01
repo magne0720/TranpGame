@@ -210,19 +210,12 @@ void Dealer::cardDispGrave()
 void Dealer::ShuffleAnimation(bool is)
 {
 	Animation *animation = Animation::create();
-
-	animation->addSpriteFrameWithFileName("Card/shuffle00.png");
-	animation->addSpriteFrameWithFileName("Card/shuffle01.png");
-	animation->addSpriteFrameWithFileName("Card/shuffle02.png");
-	animation->addSpriteFrameWithFileName("Card/shuffle03.png");
-	animation->addSpriteFrameWithFileName("Card/shuffle04.png");
-	animation->addSpriteFrameWithFileName("Card/shuffle05.png");
-	animation->addSpriteFrameWithFileName("Card/shuffle04.png");
-	animation->addSpriteFrameWithFileName("Card/shuffle03.png");
-	animation->addSpriteFrameWithFileName("Card/shuffle02.png");
-	animation->addSpriteFrameWithFileName("Card/shuffle01.png");
-	animation->addSpriteFrameWithFileName("Card/shuffle00.png");
-	animation->setRestoreOriginalFrame(true);   // Å‰‚Ì‰æ‘œ‚É–ß‚·‚©‚Ç‚¤‚©
+	String* name;
+	for (int i = 0;i<12; i++)
+	{
+		name = String::createWithFormat("Card/shuffle%2d.png", i);
+	animation->addSpriteFrameWithFileName(name->getCString());	
+	}
 	animation->setDelayPerUnit(0.3f / 4.0f);
 	Animate* action = Animate::create(animation);
 	//RepeatForever* anime = RepeatForever::create(action);

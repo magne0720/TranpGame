@@ -15,6 +15,8 @@ public:
 	Vector<Card>* hand;
 	float timer;
 	int limitNumber;
+	Vector<String*> names;
+	Sprite* effectSp;
 
 	bool init();
 	void update(float delta);
@@ -25,7 +27,7 @@ public:
 	//カードをドローするアニメーション
 	bool drowCard(Vector<Card*>&card,int limit,Vec2 start,Vec2 end, float delta);
 	//カードをシャッフルするアニメーション
-	bool shuffleCard(Vec2 pos, float limit, float delta);
+	bool shuffleCard(Vec2 pos,float count, float limit, float delta);
 
 };
 

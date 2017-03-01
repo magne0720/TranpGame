@@ -85,8 +85,8 @@ bool MainGameLayer::init(int level)
 
 void MainGameLayer::update(float delta)
 {
-	phaseTimer += phaseSpeed;
 
+	phaseTimer += phaseSpeed;
 	
 	//player_one->pickNumber = random(0, (int)player_one->hand.size() - 1);
 
@@ -99,56 +99,56 @@ void MainGameLayer::update(float delta)
 	//{
 	//	player_one->pickState = STATE::DECK;
 	//}
+		if (turn != TURN::WAIT)
+		{
+			if (phaseTimer >= 0.5f) {
+				nextPhase(actionPhase());
+				phaseTimer = 0;
+			}
+		}
+		else
+		{
+			if (phaseTimer >= 5.0f)
+			{
+				gameStart();
+				phaseTimer = 0;
+			}
+		}
 
 
-	if (turn != TURN::WAIT)
-	{
-		if (phaseTimer >= 0.5f) {
-			nextPhase(actionPhase());
-		phaseTimer = 0;
-		}
-	}
-	else
-	{
-		if(phaseTimer>=3.0f)
+		switch (commonEffect)
 		{
-			gameStart();
-			phaseTimer = 0;
+		case DO_NOT:
+			break;
+		case DO_DIVISION:
+			if (cardDivisionDesign())
+			{
+				commonEffect = EFFECT::DO_NOT;
+			}
+			break;
+		case DO_SHUFFLE:
+			if (cardShuffleDesign())
+			{
+				commonEffect = EFFECT::DO_DIVISION;
+			}
+			break;
+		case DO_DRAW:
+			if (cardDrowDesign())
+			{
+				commonEffect = EFFECT::DO_NOT;
+			}
+			break;
+		case DO_THROW:
+			if (cardThrowDesign())
+			{
+				commonEffect = EFFECT::DO_NOT;
+			}
+			break;
+		case DO_SORT:
+			break;
+		default:
+			break;
 		}
-	}
-	switch (commonEffect)
-	{
-	case DO_NOT:
-		break;
-	case DO_DIVISION:
-		if (cardDivisionDesign())
-		{
-			commonEffect = EFFECT::DO_NOT;
-		}
-		break;
-	case DO_SHUFFLE:
-		if (cardShuffleDesign())
-		{
-			commonEffect = EFFECT::DO_NOT;
-		}
-		break;
-	case DO_DRAW:
-		if (cardDrowDesign()) 
-		{
-			commonEffect = EFFECT::DO_NOT;
-		}
-		break;
-	case DO_THROW:
-		if (cardThrowDesign())
-		{
-			commonEffect = EFFECT::DO_NOT;
-		}
-		break;
-	case DO_SORT:
-		break;
-	default:
-		break;
-	}
 };
 
 //ーーーーーーーーーーゲームの準備関数ーーーーーーーーー
@@ -176,15 +176,17 @@ void MainGameLayer::cardDivision()
 		player_one->cardDrow(dealer->deck);
 		player_two->cardDrow(dealer->deck);
 	}
-	commonEffect = EFFECT::DO_DIVISION;
 };
 
 //カードをシャッフルする
 bool MainGameLayer::cardShuffleDesign()
 {
-	effectManager->
-
-
+	player_one->cardDispHand(true, -1);//0から始まるため、1枚目が表示されてしまうからー1
+	player_two->cardDispHand(true, -1);
+	if (effectManager->shuffleCard(dealer->deckSp->getPosition(),1.0f, 30, 0.2f)) 
+	{
+		return true;
+	}
 	return false;
 };
 
@@ -196,13 +198,13 @@ bool MainGameLayer::cardDivisionDesign()
 	if (one_hand < player_one->HAND_SIZE)
 		if (player_one->effect->drowCard(player_one->hand, one_hand, dealer->deckSp->getPosition(), player_one->handPos[one_hand], 0.2f))
 		{
-			//effectManager->phaseChange(PHASE::DROW);
+			effectManager->phaseChange(PHASE::DROW);
 			one_hand++;
 		}
 	if (two_hand < player_two->HAND_SIZE)
 		if (player_two->effect->drowCard(player_two->hand, two_hand, dealer->deckSp->getPosition(), player_two->handPos[two_hand], 0.2f))
 		{
-			//effectManager->phaseChange(PHASE::DROW);
+			effectManager->phaseChange(PHASE::DROW);
 			two_hand++;
 		}
 	if (one_hand > player_one->HAND_SIZE&&two_hand > player_two->HAND_SIZE) 
@@ -287,8 +289,7 @@ void MainGameLayer::gameStart()
 	dealer->cardDeckThrow();
 	//先行を決める
 	startPlayer();
-	//始まる
-	nextPhase(true);
+	commonEffect = EFFECT::DO_SHUFFLE;
 };
 
 //ーーーーーーーーーーゲーム中に行う関数ーーーーーーーー
