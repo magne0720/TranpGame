@@ -38,9 +38,34 @@ void EffectManager::update(float delta)
 	
 };
 
+
+EFFECT EffectManager::setCommonEffect(PHASE phase) 
+{
+	EFFECT e = EFFECT::DO_NOT;
+	switch (phase)
+	{
+	case START:
+		break;
+	case DROW:
+		e = EFFECT::DO_DRAW;
+		break;
+	case THROW:
+		e = EFFECT::DO_THROW;
+		break;
+	case KNOCK:
+		break;
+	case END:
+		break;
+	case PASS:
+		break;
+	default:
+		break;
+	}
+	return e;
+};
+
 void EffectManager::phaseChange(PHASE phase) 
 {
-	SimpleAudioEngine::sharedEngine()->stopAllEffects();
 	switch (phase)
 	{
 	case START:
@@ -74,9 +99,11 @@ bool EffectManager::drowCard(Vector<Card*>&card,int limit,Vec2 start,Vec2 end, f
 	//üŒ`•âŠÔ
 	timer += delta;
 	card.at(limit)->setPosition((1 - timer)*start + timer*end);
-	card.at(limit)->setRotation(timer*360);
+	card.at(limit)->setRotation(timer*720);
 	if (timer >= 1)
 	{
+		card.at(limit)->setRotation(0);
+
 		timer = 0;
 		return true;
 	}

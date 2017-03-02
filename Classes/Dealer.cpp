@@ -122,7 +122,7 @@ void Dealer::cardShuffle()
 	Vector<Card*> temp;
 	for (int i = 0; deck.size();i++)
 	{
-		int iRand = random(0, (int)DECK_TOP);
+		int iRand = random(0, (int)deck.size()-1);
 		temp.pushBack(deck.at(iRand));
 		deck.erase(iRand);
 	}
@@ -153,9 +153,9 @@ void Dealer::cardDeckThrow()
 {
 	if (deck.size() > 0) 
 	{
-		grave.pushBack(deck.at(DECK_TOP));
-		deck.at(DECK_TOP)->setState(STATE::GRAVE);
-		deck.erase(DECK_TOP);
+		grave.pushBack(deck.at(deck.size()-1));
+		deck.at(deck.size()-1)->setState(STATE::GRAVE);
+		deck.erase(deck.size()-1);
 	}
 };
 
@@ -199,12 +199,14 @@ void Dealer::checkDeckZero()
 //ŽÌ‚ÄŽD‚Ì•\Ž¦
 void Dealer::cardDispGrave()
 {
-	for (int i = 0; i < grave.size(); i++)
-	{
-		grave.at(i)->setPosition(graveSp->getPosition());
-		grave.at(i)->setZOrder(1);
-		grave.at(i)->setReverse(true);
-		grave.at(i)->setColor(Color3B::WHITE);
+	if (grave.size() > 0) {
+		for (int i = 0; i < grave.size(); i++)
+		{
+			grave.at(i)->setPosition(graveSp->getPosition());
+			grave.at(i)->setZOrder(1);
+			grave.at(i)->setReverse(true);
+			grave.at(i)->setColor(Color3B::WHITE);
+		}
 	}
 };
 void Dealer::ShuffleAnimation(bool is)
