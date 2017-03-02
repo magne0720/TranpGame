@@ -166,6 +166,7 @@ void Player::cardSort(ROLE kind,Vector<Card*>&cardhand)
 				if ((int)cardhand.at(j)->roleNumber < (int)cardhand.at(j + 1)->roleNumber)
 				{
 					cardhand.swap(j, j + 1);
+					hand.swap(j, j + 1);
 				}
 			}
 		}
@@ -225,9 +226,11 @@ void Player::ressetRole()
 
 void Player::checkRole()
 {
+	point = 5000;
 	result=hand;
 	brainEnd = false;
 	ressetRole();
+	sortType = ROLE::WITHOUT;
 	brainCount = hand.size();
 	checkRoleNew(this);
 	//log("roleSplit=%d", RoleSplit);
@@ -345,7 +348,7 @@ Player* Player::check(Player* &brainPlayer, int x, int y, int z) {//3‚Ü‚¢‚»‚ë‚Á‚
 			if (brain->hand.at(i)->myRole == ROLE::ROLEIN)brain->hand.at(i)->setRole(ROLE::WITHOUT);//ˆ—Ï‚İƒJ[ƒhŒŸo@¨@|‚P‚É‚·‚éi–{“–‚Íã‚Ìˆ—‚Å‚â‚ê‚Î‚¢‚¢j
 			else brain->hand.at(i)->setRole(brainPlayer->hand.at(i)->myRole);//Œ³ƒJ[ƒhî•ñ‚©‚çƒJ[ƒhî•ñ‚ğƒRƒs[(‚±‚ê‚àã‚É‘g‚İ‚ß‚éj
 	}
-	sort(brain);
+	//sort(brain);
 	return brain;
 };
 
@@ -382,7 +385,7 @@ Player* Player::check(Player* &brainPlayer, int x, int y, int z,int q) {//4‚Ü‚¢‚
 		else brain->hand.at(i)->setRole(brainPlayer->hand.at(i)->myRole);//Œ³ƒJ[ƒhî•ñ‚©‚çƒJ[ƒhî•ñ‚ğƒRƒs[(‚±‚ê‚àã‚É‘g‚İ‚ß‚éj
 	}
 	
-	sort(brain);
+	//sort(brain);
 	
 	return brain;
 };
