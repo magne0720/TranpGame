@@ -163,6 +163,7 @@ void Player::cardSort(ROLE kind,Vector<Card*>&cardhand)
 				if ((int)cardhand.at(j)->roleNumber < (int)cardhand.at(j + 1)->roleNumber)
 				{
 					cardhand.swap(j, j + 1);
+					hand.swap(j, j + 1);
 				}
 			}
 		}
@@ -222,6 +223,21 @@ void Player::ressetRole()
 
 void Player::checkRole()
 {
+<<<<<<< HEAD
+	point = 5000;
+	result=hand;
+	brainEnd = false;
+	ressetRole();
+	sortType = ROLE::WITHOUT;
+	brainCount = hand.size();
+	checkRoleNew(this);
+	//log("roleSplit=%d", RoleSplit);
+	if (RoleSplit >= 2) 
+	{ 
+		//log("count=%d", brainCount);
+		brainEnd = true; 
+	}
+=======
 	log("-----------checkStart----------");
 	point = 5000;
 	myHand->result= myHand->hand;
@@ -235,6 +251,7 @@ void Player::checkRole()
 	log("check-----OK");
 	
 	log("-----------checkEnd------------");
+>>>>>>> 16580c859f3abcfde5b6e73e84f4e21c2722095c
 };
 
 //–ð‚Ì“¾“_‚ÌŒvŽZ
@@ -345,7 +362,7 @@ Brain* Player::check(Brain* brainPlayer, int x, int y, int z) {//3‚Ü‚¢‚»‚ë‚Á‚½Žž
 			break;
 		}
 	}
-	sort(brain);
+	//sort(brain);
 	return brain;
 };
 
@@ -381,7 +398,12 @@ Brain* Player::check(Brain* brainPlayer, int x, int y, int z,int q) {//4‚Ü‚¢‚»‚ë
 			break;
 		}
 	}
+<<<<<<< HEAD
+	
+	//sort(brain);
+=======
 	sort(brain);
+>>>>>>> 16580c859f3abcfde5b6e73e84f4e21c2722095c
 	
 	return brain;
 };
