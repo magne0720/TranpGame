@@ -11,10 +11,9 @@ USING_NS_CC;
 class Card :public Sprite
 {
 public:
-	
-	static Card* create(MARK mark,NUMBER number);
-	virtual bool init(MARK mark, NUMBER number);
 
+	static Card* create(MARK mark, NUMBER number);
+	virtual bool init(MARK mark, NUMBER number);
 	//自分の位置
 	Vec2 myPosition;
 	//自分の番号
@@ -35,7 +34,8 @@ public:
 	void setMyPosition(Vec2 pos);
 	Vec2 getMyPosition();
 	//カードの設定
-	void setKind(MARK mark,NUMBER number);
+	void setKind(MARK mark, NUMBER number);
+	void setKind(Card* card);
 	void setDesign(int num,bool is=true);
 	void setState(STATE state);
 	void setRole(ROLE role);

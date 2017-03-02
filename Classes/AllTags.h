@@ -7,11 +7,6 @@
 USING_NS_CC;
 using namespace CocosDenshion;
 
-#define DECK_TOP deck.size()-1
-#define DECK_BOTTOM 0
-#define GRAVE_TOP grave.size()-1
-#define GRAVE_BOTTOM 0
-#define HAND_SIZE hand.size()-1
 
 //ゲームのターン制御
 enum TURN
@@ -41,7 +36,7 @@ enum STATE
 //役
 enum ROLE
 {
-	WITHOUT = 0, ORDER, EQUAL,ROLEIN
+	WITHOUT = 0, ORDER, EQUAL,ROLEIN,CHANCE
 };
 //ゲーム進行における演出制御
 enum EFFECT 
