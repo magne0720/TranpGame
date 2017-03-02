@@ -12,3 +12,4 @@ proj.android/
 CMakeLists.txt
 .cocos-project.json
 proj.linux/main.cpp
+Classes/Brain.h
