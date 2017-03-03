@@ -294,6 +294,7 @@ void MainGameLayer::gameStart()
 	turnCount = 1;
 	isGameStart = false;
 	isPass = false;
+	isKnock = false;
 	one_hand = 0;
 	two_hand = 0;
 	//‚¨ŒÝ‚¢‚Ì‰Šú‰»
@@ -438,6 +439,7 @@ void MainGameLayer::nextPhase(bool isAction)
 	case PHASE::DROW:
 		phase = PHASE::THROW;
 		phaseLabel->setString("THROW");
+		log("effect");
 		player_one->lastCard->setKind(player_one->hand.at(player_one->hand.size() - 1)->myMark, player_one->hand.at(player_one->hand.size() - 1)->myNumber);
 		if (isPass)
 		{
@@ -446,7 +448,9 @@ void MainGameLayer::nextPhase(bool isAction)
 			phaseLabel->setString("PASS");
 		}
 		commonEffect = EFFECT::DO_DRAW;
+		log("check");
 		player_one->checkRole();
+		log("end");
 			break;
 	case PHASE::THROW:
 			if (isKnock||dealer->deck.size()<=0)
