@@ -446,7 +446,7 @@ void MainGameLayer::nextPhase(bool isAction)
 			phaseLabel->setString("PASS");
 		}
 		commonEffect = EFFECT::DO_DRAW;
-		//player_one->checkRole();
+		player_one->checkRole();
 			break;
 	case PHASE::THROW:
 			if (isKnock||dealer->deck.size()<=0)

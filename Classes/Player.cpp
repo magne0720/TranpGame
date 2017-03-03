@@ -73,12 +73,8 @@ bool Player::init(Player* &p)
 	brainEnd = false;
 	for (int i = 0; i < p->hand.size(); i++)
 	{
-		result.pushBack(Card::create(p->result.at(i)->myMark, p->result.at(i)->myNumber));
-		hand.pushBack(Card::create(p->hand.at(i)->myMark, p->hand.at(i)->myNumber));
-		result.at(i)->setRole(p->result.at(i)->myRole);
-		hand.at(i)->setRole(p->hand.at(i)->myRole);
-		hand.at(i)->setRoleNumber(p->hand.at(i)->roleNumber);
-		result.at(i)->setRoleNumber(p->result.at(i)->roleNumber);
+		result = p->result;
+		hand = p->hand;
 		//log("%d-%d", p->hand.at(i)->myMark, p->hand.at(i)->myNumber);
 	}
 	lastCard = Card::create(MARK::NONE, NUMBER::ZERO);
@@ -345,7 +341,7 @@ Player* Player::check(Player* &brainPlayer, int x, int y, int z) {//3‚Ü‚¢‚»‚ë‚Á‚
 			if (brain->hand.at(i)->myRole == ROLE::ROLEIN)brain->hand.at(i)->setRole(ROLE::WITHOUT);//ˆ—Ï‚İƒJ[ƒhŒŸo@¨@|‚P‚É‚·‚éi–{“–‚Íã‚Ìˆ—‚Å‚â‚ê‚Î‚¢‚¢j
 			else brain->hand.at(i)->setRole(brainPlayer->hand.at(i)->myRole);//Œ³ƒJ[ƒhî•ñ‚©‚çƒJ[ƒhî•ñ‚ğƒRƒs[(‚±‚ê‚àã‚É‘g‚İ‚ß‚éj
 	}
-	sort(brain);
+	//sort(brain);
 	return brain;
 };
 
@@ -382,7 +378,7 @@ Player* Player::check(Player* &brainPlayer, int x, int y, int z,int q) {//4‚Ü‚¢‚
 		else brain->hand.at(i)->setRole(brainPlayer->hand.at(i)->myRole);//Œ³ƒJ[ƒhî•ñ‚©‚çƒJ[ƒhî•ñ‚ğƒRƒs[(‚±‚ê‚àã‚É‘g‚İ‚ß‚éj
 	}
 	
-	sort(brain);
+	//sort(brain);
 	
 	return brain;
 };
