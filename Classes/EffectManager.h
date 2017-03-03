@@ -21,6 +21,9 @@ public:
 	bool init();
 	void update(float delta);
 
+	//フェイズによって演出予定のもの変更
+	EFFECT setCommonEffect(PHASE phase);
+
 	void phaseChange(PHASE phase);
 	//カードをめくるアニメーション
 	void openCard(int num);

@@ -37,6 +37,13 @@ void Card::setKind(MARK mark, NUMBER num)
 	setDesign((int)myNumber);
 };
 
+void Card::setKind(Card* cCard)
+{
+	myMark = cCard->myMark;
+	myNumber = cCard->myNumber;
+	setDesign((int)myNumber);
+};
+
 void Card::setDesign(int num,bool is) 
 {
 	String* name = String::createWithFormat("Card/reverse.png");
@@ -59,7 +66,7 @@ void Card::setDesign(int num,bool is)
 		name = String::createWithFormat("Card/joker.png", num);
 		break;
 	default:
-		name = String::createWithFormat("Card/joker.png", num);
+		//name = String::createWithFormat("Card/joker.png");
 		break;
 	}
 	if (is) 

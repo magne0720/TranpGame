@@ -369,7 +369,7 @@ void copyGameLayer::onTouchEnded(const Touch * touch, Event *unused_event)
 {
 	if (button->getBoundingBox().containsPoint(touch->getLocation()))
 	{
-		player_one->cardSort(button->switchRole,player_one->result);
+		player_one->cardSort(button->switchRole,player_one->myHand->result);
 	}
 	//次にドローするカードをデッキからにする
 	if (dealer->deckSp->getBoundingBox().containsPoint(touch->getLocation()))
@@ -386,9 +386,9 @@ void copyGameLayer::onTouchEnded(const Touch * touch, Event *unused_event)
 		player_one->pickState = STATE::FREE;
 		button2->pass->setVisible(false);
 	};
-	for (int i = 0; i < player_one->hand.size(); i++)
+	for (int i = 0; i < player_one->myHand->hand.size(); i++)
 	{
-		if (player_one->hand.at(i)->getBoundingBox().containsPoint(touch->getLocation()))
+		if (player_one->myHand->hand.at(i)->getBoundingBox().containsPoint(touch->getLocation()))
 		{
 			player_one->pickNumber = i;
 			break;
