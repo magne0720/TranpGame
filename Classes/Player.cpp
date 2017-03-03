@@ -44,7 +44,6 @@ bool Player::init()
 	pickNumber = 0;
 	pickState = STATE::HAND;
 	brainCount = 10;
-	RoleSplit = 0;
 	brainEnd = false;
 	cardSort(ROLE::EQUAL, hand);
 	for (int i = 0; i < 11; i++)
@@ -69,7 +68,6 @@ bool Player::init(Player* &p)
 	pickNumber = 0;
 	pickState = STATE::HAND;
 	brainCount = p->brainCount;
-	RoleSplit = p->RoleSplit;
 	brainEnd = false;
 	for (int i = 0; i < p->hand.size(); i++)
 	{
@@ -178,9 +176,9 @@ void Player::cardDrow(Vector<Card*>&deck)
 	{
 		return;
 	}
-	hand.pushBack(deck.at(DECK_TOP));
-	deck.at(DECK_TOP)->setState(STATE::HAND);
-	deck.erase(DECK_TOP);
+	hand.pushBack(deck.at(deck.size()-1));
+	deck.at(deck.size()-1)->setState(STATE::HAND);
+	deck.erase(deck.size()-1);
 };
 
 //ƒJ[ƒh‚ğÌ‚Ä‚é
@@ -188,7 +186,7 @@ void Player::cardThrow(int num,Vector<Card*>&grave)
 {
 	hand.at(num)->setReverse(true);
 	grave.pushBack(hand.at(num));
-	grave.at(GRAVE_TOP)->setState(STATE::GRAVE);
+	grave.at(grave.size()-1)->setState(STATE::GRAVE);
 	hand.erase(num);
 };
 
@@ -227,11 +225,7 @@ void Player::checkRole()
 	brainCount = hand.size();
 	checkRoleNew(this);
 	//log("roleSplit=%d", RoleSplit);
-	if (RoleSplit >= 2) 
-	{ 
-		//log("count=%d", brainCount);
-		brainEnd = true; 
-	}
+	
 };
 
 //–ğ‚Ì“¾“_‚ÌŒvZ
@@ -323,15 +317,11 @@ Player* Player::check(Player* &brainPlayer, int x, int y, int z) {//3‚Ü‚¢‚»‚ë‚Á‚
 			//Œ‹‰Ê‚É‚R–‡ƒRƒs[‚µ‚Ä•Û‘¶
 			brain->hand.at(x)->setRole(ROLE::ROLEIN);//–ğ‚ğ•t‚¯‚ÄAˆ—Ï‚İ‚ÌƒJ[ƒh‚Æ‚µ‚Äƒ}[ƒN
 			brain->result.at(x)->setRole(ROLE::ROLEIN);
-			brain->result.at(x)->setRoleNumber(brain->RoleSplit);
 			brain->hand.at(y)->setRole(ROLE::ROLEIN);
 			brain->result.at(y)->setRole(ROLE::ROLEIN);
-			brain->result.at(y)->setRoleNumber(brain->RoleSplit);
 			brain->hand.at(z)->setRole(ROLE::ROLEIN);
 			brain->result.at(z)->setRole(ROLE::ROLEIN);
-			brain->result.at(z)->setRoleNumber(brain->RoleSplit);
 			brain->brainCount -= 3;//ˆ—‚·‚×‚«ƒJ[ƒh–‡”Œ¸Z
-			brain->RoleSplit++;
 			break;
 		}
 	}
@@ -356,16 +346,12 @@ Player* Player::check(Player* &brainPlayer, int x, int y, int z,int q) {//4‚Ü‚¢‚
 			//Œ‹‰Ê‚É‚R–‡ƒRƒs[‚µ‚Ä•Û‘¶
 			brain->hand.at(x)->setRole(ROLE::ROLEIN);//–ğ‚ğ•t‚¯‚ÄAˆ—Ï‚İ‚ÌƒJ[ƒh‚Æ‚µ‚Äƒ}[ƒN
 			brain->result.at(x)->setRole(ROLE::ROLEIN);
-			brain->result.at(x)->setRoleNumber(brain->RoleSplit);
 			brain->hand.at(y)->setRole(ROLE::ROLEIN);
 			brain->result.at(y)->setRole(ROLE::ROLEIN);
-			brain->result.at(y)->setRoleNumber(brain->RoleSplit);
 			brain->hand.at(z)->setRole(ROLE::ROLEIN);
 			brain->result.at(z)->setRole(ROLE::ROLEIN);
-			brain->result.at(z)->setRoleNumber(brain->RoleSplit);
 			brain->hand.at(q)->setRole(ROLE::ROLEIN);
 			brain->result.at(q)->setRole(ROLE::ROLEIN);
-			brain->result.at(q)->setRoleNumber(brain->RoleSplit);
 			//log("%d-%d-%d-GetRole", hand.at(x)->myNumber, hand.at(y)->myNumber, hand.at(z)->myNumber);
 			brain->brainCount -= 4;//ˆ—‚·‚×‚«ƒJ[ƒh–‡”Œ¸Z
 			break;
@@ -434,8 +420,6 @@ void Player::RessetPlayer()
 	pickNumber = -1;
 	//‘I‚ñ‚¾ƒpƒCƒ‹
 	pickState=STATE::HAND;
-	//–ğ‚Ì‘g‚İ•ª‚¯
-	RoleSplit=0;
 	//èD‚Æ‚»‚ê‚Ì–ğî•ñ‚ª“ü‚é‰¼‘zèD
 	handDeath();
 	//ƒmƒbƒN‚Å‚«‚é‚©

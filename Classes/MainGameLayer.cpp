@@ -94,7 +94,7 @@ void MainGameLayer::update(float delta)
 
 	//if (dealer->grave.size() > 0) 
 	//{
-	////if (dealer->grave.at(dealer->GRAVE_TOP)->myMark == MARK::SPADE) 
+	////if (dealer->grave.at(dealer->grave.size()-1)->myMark == MARK::SPADE) 
 	//	player_one->pickState = STATE::GRAVE;
 	//}
 	//else
@@ -207,19 +207,19 @@ bool MainGameLayer::cardDivisionDesign()
 {
 	player_one->cardDispHand(true, one_hand);
 	player_two->cardDispHand(false, two_hand);
-	if (one_hand < player_one->HAND_SIZE)
+	if (one_hand < player_one->hand.size()-1)
 		if (player_one->effect->drowCard(player_one->hand, one_hand, dealer->deckSp->getPosition(), player_one->handPos[one_hand], 0.2f))
 		{
 			effectManager->phaseChange(PHASE::DROW);
 			one_hand++;
 		}
-	if (two_hand < player_two->HAND_SIZE)
+	if (two_hand < player_two->hand.size()-1)
 		if (player_two->effect->drowCard(player_two->hand, two_hand, dealer->deckSp->getPosition(), player_two->handPos[two_hand], 0.2f))
 		{
 			effectManager->phaseChange(PHASE::DROW);
 			two_hand++;
 		}
-	if (one_hand >= player_one->HAND_SIZE&&two_hand >= player_two->HAND_SIZE) 
+	if (one_hand >= player_one->hand.size()-1&&two_hand >= player_two->hand.size()-1) 
 	{
 		return true;
 	}
@@ -228,8 +228,8 @@ bool MainGameLayer::cardDivisionDesign()
 
 bool MainGameLayer::cardDivisionThrowDesign() 
 {
-	dealer->grave.at(dealer->GRAVE_TOP)->setState(STATE::GRAVE);
-	if (effectManager->drowCard(dealer->grave, dealer->GRAVE_TOP, dealer->deckSp->getPosition(), dealer->graveSp->getPosition(), 0.05f))
+	dealer->grave.at(dealer->grave.size()-1)->setState(STATE::GRAVE);
+	if (effectManager->drowCard(dealer->grave, dealer->grave.size()-1, dealer->deckSp->getPosition(), dealer->graveSp->getPosition(), 0.05f))
 	{
 		return true;
 	}
@@ -271,14 +271,14 @@ bool MainGameLayer::cardThrowDesign()
 {
 	if (turn == TURN::PLAY_ONE)
 	{
-		if (player_one->effect->drowCard(dealer->grave, dealer->GRAVE_TOP, player_one->handPos[player_one->pickNumber], dealer->graveSp->getPosition(), 0.05f))
+		if (player_one->effect->drowCard(dealer->grave, dealer->grave.size()-1, player_one->handPos[player_one->pickNumber], dealer->graveSp->getPosition(), 0.05f))
 		{
 			return true;
 		}
 	}
 	else if (turn == TURN::PLAY_TWO)
 	{
-		if (player_two->effect->drowCard(dealer->grave, dealer->GRAVE_TOP, player_two->handPos[player_two->hand.size() - 1], dealer->graveSp->getPosition(), 0.05f))
+		if (player_two->effect->drowCard(dealer->grave, dealer->grave.size()-1, player_two->handPos[player_two->hand.size() - 1], dealer->graveSp->getPosition(), 0.05f))
 		{
 			return true;
 		}

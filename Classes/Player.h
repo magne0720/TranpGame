@@ -2,7 +2,6 @@
 #define __PLAYER_H__
 
 #include "cocos2d.h"
-#include "Brain.h"
 #include "EffectManager.h"
 
 USING_NS_CC;
@@ -51,22 +50,24 @@ public:
 	ROLE sortType;
 	//ノックできるか
 	bool brainEnd;
+	//カウント
+	int brainCount;
+	//手札
+	Vector<Card*>hand, result;
 	//手札の位置
 	Vec2 handPos[11];
 	//エフェクト
 	EffectManager* effect;
 	//最後に引いたカード
 	Card* lastCard;
-	//手札の情報
-	Brain* myHand;
 
 	bool addPoint(int num);
-	void setRoleColor(Brain* cResult);
-	void checkRoleNew(Brain* cHand);
-	bool chance(Brain* cHand, int x, int y);
-	Brain* check(Brain* cHand, int x, int y, int z);
-	Brain* check(Brain* cHand, int x, int y, int z,int q);
-	void sort(Brain* &p);
+	void setRoleColor(Vector<Card*> cResult);
+	void checkRoleNew(Player* cHand);
+	bool chance(Player*& cHand, int x, int y);
+	Player* check(Player*& cHand, int x, int y, int z);
+	Player* check(Player*& cHand, int x, int y, int z,int q);
+	void sort(Player* &p);
 	void RessetPlayer();
 
 
