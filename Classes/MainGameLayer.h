@@ -6,6 +6,7 @@
 #include "Dealer.h"
 #include "EffectManager.h"
 #include "SortButton.h"
+#include "OriginalButton.h"
 
 USING_NS_CC;
 
@@ -72,6 +73,7 @@ public:
 	Label* phaseLabel,*turnLabel, *P_ONE_LABEL, *P_TWO_LABEL;
 	EffectManager* effectManager;
 	SortButton* button;
+	OriginalButton* button2;
 	//ターンのカウント
 	int turnCount;
 	//ノックされたか(ゲームの終了条件)

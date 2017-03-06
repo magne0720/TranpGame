@@ -69,6 +69,9 @@ bool MainGameLayer::init(int level)
 	button = SortButton::create(ROLE::EQUAL,Vec2(designResolutionSize.width *0.05f, designResolutionSize.height*0.5f));
 	addChild(button);
 
+	button2 = OriginalButton::create(Vec2(designResolutionSize.width * 0, designResolutionSize.height * 0), 0);//変更
+	addChild(button2);
+
 	phaseTimer = 0;
 	phaseSpeed = 0.02f;
 
@@ -303,6 +306,8 @@ void MainGameLayer::gameStart()
 	player_two->ressetPlayer();
 	player_one->sortType = ROLE::ORDER;
 	player_two->sortType = ROLE::ORDER;
+	//パスボタン表示
+	button2->pass->setVisible(true);
 	//デッキを再構築
 	dealer->setDeck(true);
 	//デッキをシャッフル
@@ -364,6 +369,7 @@ bool MainGameLayer::actionPhase()
 		}
 		else if (turn == TURN::PLAY_TWO)//プレイヤー２
 		{
+			button2->pass->setVisible(false);
 			player_two->pickState = STATE::DECK;
 			player_two->cardDrow(dealer->deck);
 			//player_two->checkRole();
@@ -600,5 +606,11 @@ void MainGameLayer::onTouchEnded(const Touch * touch, Event *unused_event)
 		player_two->cardDispHand(true);
 	}
 	player_one->cardDispHand(true);
+	//パス
+	if (button2->pass->getBoundingBox().containsPoint(touch->getLocation()))//変更
+	{
+		player_one->pickState = STATE::FREE;
+		button2->pass->setVisible(false);
+	};
 };
 
