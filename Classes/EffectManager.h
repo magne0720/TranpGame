@@ -31,6 +31,8 @@ public:
 	bool drowCard(Vector<Card*>&card,int limit,Vec2 start,Vec2 end, float delta);
 	//カードをシャッフルするアニメーション
 	bool shuffleCard(Vec2 pos,float count, float limit, float delta);
+	//線の描画
+	void drawLine(Card* cCard);
 
 };
 

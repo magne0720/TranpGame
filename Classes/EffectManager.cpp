@@ -133,3 +133,22 @@ bool EffectManager::shuffleCard(Vec2 pos,float count,float limit, float delta)
 
 	return false;
 };
+void EffectManager::drawLine(Card* cCard)
+{
+	Rect line = cCard->getBoundingBox();
+	//“G‘¤‚Ìü•`‰æ
+	DrawNode *enemyline1 = DrawNode::create();
+	enemyline1->drawSegment(Vec2(0, line.getMinY()), Vec2(designResolutionSize.width, line.getMinY()), 3, Color4F(1,1,1,1));
+	addChild(enemyline1);
+	DrawNode *enemyline2 = DrawNode::create();
+	enemyline2->drawSegment(Vec2(0, line.getMaxY()), Vec2(designResolutionSize.width, line.getMaxY()), 3, Color4F(1,1,1,1));
+	addChild(enemyline2);
+	//Ž©•ª‚Ìü•`‰æ
+	//DrawNode *playerline1 = DrawNode::create();
+	//playerline1->drawSegment(Vec2(0, designResolutionSize.height * 0.3f), Vec2(designResolutionSize.width, designResolutionSize.height* 0.3f), 3, Color4F(1, 1, 1, 1));
+	//addChild(playerline1);
+	//DrawNode *playerline2 = DrawNode::create();
+	//playerline2->drawSegment(Vec2(0, designResolutionSize.height * 0.1f), Vec2(designResolutionSize.width, designResolutionSize.height* 0.1f), 3, Color4F(1, 1, 1, 1));
+	//addChild(playerline2);
+
+}
