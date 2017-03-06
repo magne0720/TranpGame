@@ -43,7 +43,6 @@ bool Player::init()
 	point = 50000;
 	roleCount = 0;
 	pickNumber = 0;
-	playerNumber = 0;
 	pickState = STATE::HAND;
 	brainCount = 10;
 	brainEnd = false;
@@ -58,7 +57,6 @@ bool Player::init()
 	lastCard->setVisible(false);
 	addChild(lastCard);
 
-	log("player_%d", playerNumber);
 	return true;
 };
 
@@ -70,7 +68,6 @@ bool Player::init(Player* &p)
 	}
 	point = p->point;
 	pickNumber = 0;
-	playerNumber = p->playerNumber+1;
 	roleCount = p->roleCount;
 	pickState = STATE::HAND;
 	brainCount = p->brainCount;
@@ -85,7 +82,6 @@ bool Player::init(Player* &p)
 	lastCard = Card::create(MARK::NONE, NUMBER::ZERO);
 	lastCard->setVisible(false);
 	addChild(lastCard);
-	log("player_%d", playerNumber);
 
 	return true;
 };
@@ -229,6 +225,7 @@ void Player::ressetRole()
 
 void Player::checkRole()
 {
+	cardDispHand(true);
 	point = 5000;
 	brainEnd = false;
 	ressetRole();
@@ -247,20 +244,18 @@ void Player::calcRole(Vector<Card*> cResult)
 	{
 		if (cResult.at(i)->myRole != ROLE::ROLEIN)
 		{
-			if (cResult.at(i)->myNumber>NUMBER::ZERO) {
-				//log("%d-plus%d", i,(int)cResult.at(i)->myNumber);
-				iPoint += (int)cResult.at(i)->myNumber;
-			}
+			//log("%d-plus%d", i,(int)cResult.at(i)->myNumber);
+			iPoint += (int)cResult.at(i)->myNumber;
 		}
 		else {
 			//log("%d-[%d]", i, cResult.at(i)->myNumber);
 		}
 	}
-	//if (addPoint(iPoint)) 
-	//{
+	if (addPoint(iPoint)) 
+	{
 		cardSort(ROLE::ORDER, result);
 		setRoleColor(cResult);
-	//};
+	};
 	//log("---------end--------");
 };
 
@@ -282,9 +277,9 @@ int Player::checkLastCard()
 void Player::checkRoleNew(Player* player)
 {
 //‚R–‡ƒZƒbƒg‚Ì‘g‚İ‡‚í‚¹‚ğ‘SƒXƒLƒƒƒ“
-	for (int z = 0; z < player->brainCount - 2; z++)
-		for (int y = z + 1; y < player->brainCount - 1; y++)
-			for (int x = y + 1; x < player->brainCount; x++) {
+	for (int z = 0; z < player->hand.size()-2; z++)
+		for (int y = z + 1; y < player->hand.size()- 1; y++)
+			for (int x = y + 1; x < player->hand.size(); x++) {
 				if (player->hand.at(x)->myNumber>ZERO) {
 					if ((player->hand.at(z)->myNumber == player->hand.at(y)->myNumber)) {//2–‡‚»‚ë‚Á‚Ä‚¢‚é
 						if (player->hand.at(y)->myNumber == player->hand.at(x)->myNumber) {//3–‡‚»‚ë‚Á‚Ä‚¢‚é
@@ -310,35 +305,27 @@ void Player::checkRoleNew(Player* player)
 						}
 					}
 				}
-				if (player->hand.at(x)->myNumber == NUMBER::NONUMBER)
-				{
-					log("oneCheck");
-					check(player, x);
-				}
 			}
-	log("player%d", player->roleCount);
-	String* name=String::createWithFormat("");
-	for (int i = 0; i < player->result.size();i++)
+		log("brainCount=[%d]", player->brainCount);
+	if (player->brainCount <= player->hand.size() - 6)
 	{
-		name->appendWithFormat("%d,", player->result.at(i)->myNumber);
-	};
-	log("%s", name->getCString());
-	//	if(player->roleCount>=1)
-		calcRole(player->result);
-};
-
-//ˆê–‡’Ç‰Á‚·‚é‚Ì‚İ
-void Player::check(Player* &player, int x)
-{
-	for (int i = 0; i < player->hand.size(); i++) {
-		if (player->result.at(i)->myNumber<=NUMBER::ZERO)
-		{
-			log("get");
-			player->result.at(i)->setKind(player->hand.at(x));
-			break;
-		}
+		brainEnd = true;
 	}
-	sort(player);
+	//c‚è‚ÌƒJ[ƒh‚ğƒRƒs[
+	copyResultForHand(player);
+
+	//log("player%d", player->roleCount);
+	//String* name = String::createWithFormat("re.");
+	//String* name_s = String::createWithFormat("ha.");
+	//for (int i = 0; i < player->hand.size();i++)
+	//{
+	//	name->appendWithFormat("%d,", player->result.at(i)->myNumber);
+	//	name_s->appendWithFormat("%d,", player->hand.at(i)->myNumber);
+	//};
+	//log("%s", name->getCString());
+	//log("%s", name_s->getCString());
+	//if(player->roleCount>=1)
+		calcRole(player->result);
 };
 
 //“ñ–‡‚ÅO–‡–Ú‚ÌŒ©‚İ‚ª‚ ‚é‚©‚à‚µ‚ê‚È‚¢
@@ -364,8 +351,11 @@ Player* Player::check(Player* &brainPlayer, int x, int y, int z) {//3‚Ü‚¢‚»‚ë‚Á‚
 			brain->result.at(i+1)->roleNumber	= brain->roleCount;
 			brain->result.at(i+2)->roleNumber	= brain->roleCount;
 			brain->result.at(i)->setRole(ROLE::ROLEIN);
-			brain->result.at(i+1)->setRole(ROLE::ROLEIN);
-			brain->result.at(i+2)->setRole(ROLE::ROLEIN);
+			brain->result.at(i + 1)->setRole(ROLE::ROLEIN);
+			brain->result.at(i + 2)->setRole(ROLE::ROLEIN);
+			brain->hand.at(x)->setRole(ROLE::ROLEIN);
+			brain->hand.at(y)->setRole(ROLE::ROLEIN);
+			brain->hand.at(z)->setRole(ROLE::ROLEIN);
 			brain->brainCount -= 3;//ˆ—‚·‚×‚«ƒJ[ƒh–‡”Œ¸Z
 			brain->roleCount++;
 			break;
@@ -403,11 +393,16 @@ Player* Player::check(Player* &brainPlayer, int x, int y, int z,int q) {//4‚Ü‚¢‚
 			brain->result.at(i)->roleNumber = brain->roleCount;
 			brain->result.at(i + 1)->roleNumber = brain->roleCount;
 			brain->result.at(i + 2)->roleNumber = brain->roleCount;
+			brain->result.at(i + 3)->roleNumber = brain->roleCount;
 			brain->result.at(i)->setRole(ROLE::ROLEIN);
 			brain->result.at(i + 1)->setRole(ROLE::ROLEIN);
 			brain->result.at(i + 2)->setRole(ROLE::ROLEIN);
 			brain->result.at(i + 3)->setRole(ROLE::ROLEIN);
-			brain->brainCount -= 3;//ˆ—‚·‚×‚«ƒJ[ƒh–‡”Œ¸Z
+			brain->hand.at(x)->setRole(ROLE::ROLEIN);
+			brain->hand.at(y)->setRole(ROLE::ROLEIN);
+			brain->hand.at(z)->setRole(ROLE::ROLEIN);
+			brain->hand.at(q)->setRole(ROLE::ROLEIN);
+			brain->brainCount -= 4;//ˆ—‚·‚×‚«ƒJ[ƒh–‡”Œ¸Z
 			brain->roleCount++;
 			break;
 		}
@@ -429,12 +424,14 @@ Player* Player::check(Player* &brainPlayer, int x, int y, int z,int q) {//4‚Ü‚¢‚
 
 bool Player::addPoint(int num)
 {
-	//if (num < point) {
 		log("point%d", num);
+	if (num <= point) {
+		log("pointOK");
 		point = num;
 		return true;
-//	}
-	//return false;
+	}
+	log("pointNG");
+	return false;
 }
 
 void Player::setRoleColor(Vector<Card*>cResult)
@@ -468,17 +465,17 @@ void Player::sort(Player* &p)
 		{
 			if ((int)p->result.at(j)->roleNumber < (int)p->result.at(j + 1)->roleNumber)
 			{
-				p->hand.swap(j, j + 1);
+				//p->hand.swap(j, j + 1);
 				p->result.swap(j, j + 1); 
 			}
 		}
 	}
 };
 
-void Player::RessetPlayer() 
+void Player::ressetPlayer() 
 {
 	//“ª‚Ì’†‚ÌŒvZ
-	brainCount = 0;
+	brainCount = 10;
 	//“¾“_
 	point=5000;
 	//‘I‚ñ‚¾”Ô†
@@ -491,7 +488,15 @@ void Player::RessetPlayer()
 	brainEnd=false;
 };
 
-void Player::copyResultForHand() 
+//c‚è‚ÌƒJ[ƒh‚ğƒŠƒUƒ‹ƒg‚É’Ç‰Á
+void Player::copyResultForHand(Player* &p) 
 {
-
+	for (int i = 0; i < hand.size(); i++) {
+		if (p->hand.at(i)->myNumber>NUMBER::ZERO&&p->brainCount>=0) {
+			p->brainCount--;
+			p->result.at(p->brainCount)->setKind(hand.at(i));
+			pickNumber = i;//‚¢‚ç‚È‚¢ƒJ[ƒh;
+			//log("%d", p->brainCount);
+		}
+	}
 };

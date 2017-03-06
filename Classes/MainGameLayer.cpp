@@ -205,18 +205,18 @@ bool MainGameLayer::cardShuffleDesign()
 //カードを分ける演出
 bool MainGameLayer::cardDivisionDesign() 
 {
+	effectManager->phaseChange(PHASE::DROW);
 	player_one->cardDispHand(true, one_hand);
 	player_two->cardDispHand(false, two_hand);
 	if (one_hand < player_one->hand.size()-1)
 		if (player_one->effect->drowCard(player_one->hand, one_hand, dealer->deckSp->getPosition(), player_one->handPos[one_hand], 0.2f))
 		{
-			effectManager->phaseChange(PHASE::DROW);
 			one_hand++;
 		}
 	if (two_hand < player_two->hand.size()-1)
 		if (player_two->effect->drowCard(player_two->hand, two_hand, dealer->deckSp->getPosition(), player_two->handPos[two_hand], 0.2f))
 		{
-			effectManager->phaseChange(PHASE::DROW);
+			//effectManager->phaseChange(PHASE::DROW);
 			two_hand++;
 		}
 	if (one_hand >= player_one->hand.size()-1&&two_hand >= player_two->hand.size()-1) 
@@ -291,6 +291,7 @@ void MainGameLayer::gameStart()
 	//カウントの初期化
 	commonEffect = EFFECT::DO_SHUFFLE;
 	turn = TURN::WAIT;
+	phase = PHASE::START;
 	turnCount = 1;
 	isGameStart = false;
 	isPass = false;
@@ -298,8 +299,8 @@ void MainGameLayer::gameStart()
 	one_hand = 0;
 	two_hand = 0;
 	//お互いの初期化
-	player_one->RessetPlayer();
-	player_two->RessetPlayer();
+	player_one->ressetPlayer();
+	player_two->ressetPlayer();
 	player_one->sortType = ROLE::ORDER;
 	player_two->sortType = ROLE::ORDER;
 	//デッキを再構築
@@ -374,12 +375,17 @@ bool MainGameLayer::actionPhase()
 
 		if (turn == TURN::PLAY_ONE)
 		{
-			if(player_one->brainEnd)
+			if (player_one->brainEnd)
 			{
-				isKnock = true;
-				return true;
+				if (isKnock) 
+				{
+					//ここで役ができなかった一番大きい数字のカードを選ぶ
+					//それをpickNumberともする。
+					player_one->cardThrow(player_one->pickNumber, dealer->grave);
+					return true;
+				}
 			}
-			if (player_one->pickNumber >= 0)
+			if (player_one->pickNumber >= 0&&player_one->isDeside)
 			{
 				player_one->cardThrow(player_one->pickNumber, dealer->grave);
 				return true;
@@ -439,7 +445,6 @@ void MainGameLayer::nextPhase(bool isAction)
 	case PHASE::DROW:
 		phase = PHASE::THROW;
 		phaseLabel->setString("THROW");
-		log("effect");
 		player_one->lastCard->setKind(player_one->hand.at(player_one->hand.size() - 1)->myMark, player_one->hand.at(player_one->hand.size() - 1)->myNumber);
 		if (isPass)
 		{
@@ -448,9 +453,7 @@ void MainGameLayer::nextPhase(bool isAction)
 			phaseLabel->setString("PASS");
 		}
 		commonEffect = EFFECT::DO_DRAW;
-		log("check");
 		player_one->checkRole();
-		log("end");
 			break;
 	case PHASE::THROW:
 			if (isKnock||dealer->deck.size()<=0)
@@ -584,11 +587,12 @@ void MainGameLayer::onTouchEnded(const Touch * touch, Event *unused_event)
 		if(player_one->hand.at(i)->getBoundingBox().containsPoint(touch->getLocation()))
 		{
 			player_one->pickNumber = i;
+			player_one->isDeside = true;
 			break;
 		}
 		else
 		{
-			player_one->pickNumber = -1;
+			player_one->isDeside = false;
 		}
 	}
 	if(turn==TURN::WAIT)

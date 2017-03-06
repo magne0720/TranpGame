@@ -36,7 +36,7 @@ public:
 	//最後に引いたカードの確認
 	int checkLastCard();
 	//リザルトに入らなかったものを入れる
-	void copyResultForHand();
+	void copyResultForHand(Player* &p);
 
 	//得点
 	int point;
@@ -48,6 +48,8 @@ public:
 	ROLE sortType;
 	//ノックできるか
 	bool brainEnd;
+	//捨てるカードが決まっているか
+	bool isDeside;
 	//カウント
 	int brainCount;
 	//役ナンバーのカウント
@@ -60,20 +62,17 @@ public:
 	EffectManager* effect;
 	//最後に引いたカード
 	Card* lastCard;
-	//コピーナンバー
-	int playerNumber;
 	
 	bool addPoint(int num);
 	void setRoleColor(Vector<Card*> cResult);
 	void checkRoleNew(Player* cHand);
 	//役が出来ない
-	void check(Player*& cHand, int x);
 	void check(Player*& cHand, int x, int y);
 	//役ができる
 	Player* check(Player*& cHand, int x, int y, int z);
 	Player* check(Player*& cHand, int x, int y, int z,int q);
 	void sort(Player* &p);
-	void RessetPlayer();
+	void ressetPlayer();
 
 
 };
