@@ -11,16 +11,15 @@ class OriginalButton :public Sprite
 public:
 	static OriginalButton* create(Vec2 passPos , int num);
 
-	Sprite* pass,*nock,*pause;
-
 	Vec2 MyPosition;
 	Vec2 ButtonPosition;
+	int mode;
 
 	bool init(Vec2 passPos,int num);
-	bool flg = false;
+	bool isTouched = false;
 
 	//ƒ{ƒ^ƒ“•`‰æ
-	void setDesign(int num);
+	void setDesign(int num,bool is=false);
 
 	void setMyPosition(Vec2 passPos);
 
@@ -28,8 +27,7 @@ public:
 	void onTouchMoved(const Touch * touch, Event *unused_event);
 	void onTouchEnded(const Touch * touch, Event *unused_event);
 
-	void ModeChange(ROLE &kind, bool is);
+	void setMode(int num);
 
-	void ModeChangeFor(ROLE &kind);
 };
 #endif

@@ -72,8 +72,8 @@ public:
 	Dealer* dealer;
 	Label* phaseLabel,*turnLabel, *P_ONE_LABEL, *P_TWO_LABEL;
 	EffectManager* effectManager;
-	SortButton* button;
-	OriginalButton* button2;
+	SortButton* sortButton;
+	OriginalButton *passButton,*knockButton,*pauseButton;
 	//ターンのカウント
 	int turnCount;
 	//ノックされたか(ゲームの終了条件)

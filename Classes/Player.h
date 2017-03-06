@@ -37,6 +37,8 @@ public:
 	int checkLastCard();
 	//リザルトに入らなかったものを入れる
 	void copyResultForHand(Player* &p);
+	//ノック時に捨てるカード採取
+	void setKnockThrowCard();
 
 	//得点
 	int point;

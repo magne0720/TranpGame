@@ -93,7 +93,7 @@ void Player::cardDispHand(bool isReversed, int max)
 	cardSort(ROLE::ORDER, hand);
 	for (int i = 0; i < hand.size(); i++)
 	{
-		hand.at(i)->setMyPosition(Vec2(150 * i + getPositionX() / 3, getPositionY()));
+		hand.at(i)->setMyPosition(Vec2(150 * i + getPositionX() / 4, getPositionY()));
 		handPos[i] = hand.at(i)->getMyPosition();
 		hand.at(i)->setPosition(handPos[i]);
 		hand.at(i)->setState(STATE::HAND);
@@ -231,6 +231,7 @@ void Player::checkRole()
 	ressetRole();
 	brainCount = hand.size();
 	checkRoleNew(this);
+	cardDispHand(true);
 	//log("roleSplit=%d", RoleSplit);
 	
 };
@@ -244,17 +245,16 @@ void Player::calcRole(Vector<Card*> cResult)
 	{
 		if (cResult.at(i)->myRole != ROLE::ROLEIN)
 		{
-			//log("%d-plus%d", i,(int)cResult.at(i)->myNumber);
 			iPoint += (int)cResult.at(i)->myNumber;
 		}
 		else {
-			//log("%d-[%d]", i, cResult.at(i)->myNumber);
 		}
 	}
 	if (addPoint(iPoint)) 
 	{
 		cardSort(ROLE::ORDER, result);
 		setRoleColor(cResult);
+		setKnockThrowCard();
 	};
 	//log("---------end--------");
 };
@@ -443,12 +443,12 @@ void Player::setRoleColor(Vector<Card*>cResult)
 				if (cResult.at(i)->myRole == ROLE::ROLEIN)
 				{
 					hand.at(j)->setColor(Color3B::YELLOW);
-					hand.at(i)->setRole(ROLE::ROLEIN);
+					hand.at(j)->setRole(ROLE::ROLEIN);
 				}
 				else
 				{
 					hand.at(j)->setColor(Color3B::WHITE);
-					hand.at(i)->setRole(ROLE::WITHOUT);
+					hand.at(j)->setRole(ROLE::WITHOUT);
 				}
 			}
 		}
@@ -465,7 +465,6 @@ void Player::sort(Player* &p)
 		{
 			if ((int)p->result.at(j)->roleNumber < (int)p->result.at(j + 1)->roleNumber)
 			{
-				//p->hand.swap(j, j + 1);
 				p->result.swap(j, j + 1); 
 			}
 		}
@@ -495,8 +494,22 @@ void Player::copyResultForHand(Player* &p)
 		if (p->hand.at(i)->myNumber>NUMBER::ZERO&&p->brainCount>=0) {
 			p->brainCount--;
 			p->result.at(p->brainCount)->setKind(hand.at(i));
-			pickNumber = i;//いらないカード;
-			//log("%d", p->brainCount);
+		}
+	}
+};
+
+//役ができなかったカードの中で一番数が大きいものを特定する
+void Player::setKnockThrowCard()
+{
+	pickNumber = 0;
+	for (int i = 0; i < hand.size(); i++)
+	{
+		if (hand.at(i)->myRole != ROLE::ROLEIN)
+		{
+			if (hand.at(pickNumber)->myNumber < hand.at(i)->myNumber)
+			{
+				pickNumber = i;
+			}
 		}
 	}
 };

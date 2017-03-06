@@ -66,11 +66,17 @@ bool MainGameLayer::init(int level)
 	effectManager = EffectManager::create();
 	addChild(effectManager);
 
-	button = SortButton::create(ROLE::EQUAL,Vec2(designResolutionSize.width *0.05f, designResolutionSize.height*0.5f));
-	addChild(button);
+	sortButton = SortButton::create(ROLE::EQUAL,Vec2(designResolutionSize.width *0.05f, designResolutionSize.height*0.5f));
+	addChild(sortButton);
 
-	button2 = OriginalButton::create(Vec2(designResolutionSize.width * 0, designResolutionSize.height * 0), 0);//変更
-	addChild(button2);
+	passButton = OriginalButton::create(Vec2(designResolutionSize.width * 0.95f, designResolutionSize.height * 0.35f), 0);//変更
+	addChild(passButton);
+
+	knockButton = OriginalButton::create(Vec2(designResolutionSize.width * 0.95f, designResolutionSize.height * 0.65f), 1);//変更
+	addChild(knockButton);
+
+	pauseButton = OriginalButton::create(Vec2(designResolutionSize.width * 0.95f, designResolutionSize.height * 0.85f), 2);//変更
+	addChild(pauseButton);
 
 	phaseTimer = 0;
 	phaseSpeed = 0.02f;
@@ -82,7 +88,6 @@ bool MainGameLayer::init(int level)
 
 	//effectManager->phaseChange(PHASE::START);
 
-	
 	scheduleUpdate();
 
 	return true;
@@ -307,7 +312,7 @@ void MainGameLayer::gameStart()
 	player_one->sortType = ROLE::ORDER;
 	player_two->sortType = ROLE::ORDER;
 	//パスボタン表示
-	button2->pass->setVisible(true);
+	passButton->setVisible(true);
 	//デッキを再構築
 	dealer->setDeck(true);
 	//デッキをシャッフル
@@ -369,7 +374,7 @@ bool MainGameLayer::actionPhase()
 		}
 		else if (turn == TURN::PLAY_TWO)//プレイヤー２
 		{
-			button2->pass->setVisible(false);
+		passButton->setVisible(false);
 			player_two->pickState = STATE::DECK;
 			player_two->cardDrow(dealer->deck);
 			//player_two->checkRole();
@@ -568,11 +573,9 @@ void MainGameLayer::onTouchMoved(const Touch * touch, Event *unused_event)
 
 void MainGameLayer::onTouchEnded(const Touch * touch, Event *unused_event) 
 {
-
-
-	if (button->getBoundingBox().containsPoint(touch->getLocation()))
+	if (sortButton->getBoundingBox().containsPoint(touch->getLocation()))
 	{
-		player_one->cardSort(button->switchRole,player_one->result);
+		player_one->cardSort(sortButton->switchRole,player_one->result);
 	}
 	//次にドローするカードをデッキからにする
 	if (dealer->deckSp->getBoundingBox().containsPoint(touch->getLocation())) 
@@ -584,21 +587,25 @@ void MainGameLayer::onTouchEnded(const Touch * touch, Event *unused_event)
 	{
 		player_one->pickState = STATE::GRAVE;
 	}
-	if (touch->getLocation().x > designResolutionSize.width*0.95f)
+	//ノック
+	if (knockButton->getBoundingBox().containsPoint(touch->getLocation()))
 	{
-		player_one->pickState = STATE::FREE;
-	};
-	for (int i = 0; i < player_one->hand.size();i++)
-	{
-		if(player_one->hand.at(i)->getBoundingBox().containsPoint(touch->getLocation()))
+		isKnock = true;
+	}
+	else 
+	{//ノック以外の行動
+		for (int i = 0; i < player_one->hand.size(); i++)
 		{
-			player_one->pickNumber = i;
-			player_one->isDeside = true;
-			break;
-		}
-		else
-		{
-			player_one->isDeside = false;
+			if (player_one->hand.at(i)->getBoundingBox().containsPoint(touch->getLocation()))
+			{
+				player_one->pickNumber = i;
+				player_one->isDeside = true;
+				break;
+			}
+			else
+			{
+				player_one->isDeside = false;
+			}
 		}
 	}
 	if(turn==TURN::WAIT)
@@ -607,10 +614,11 @@ void MainGameLayer::onTouchEnded(const Touch * touch, Event *unused_event)
 	}
 	player_one->cardDispHand(true);
 	//パス
-	if (button2->pass->getBoundingBox().containsPoint(touch->getLocation()))//変更
+	if (passButton->getBoundingBox().containsPoint(touch->getLocation()))//変更
 	{
 		player_one->pickState = STATE::FREE;
-		button2->pass->setVisible(false);
+		passButton->setVisible(false);
 	};
+	
 };
 

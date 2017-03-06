@@ -18,7 +18,7 @@ OriginalButton* OriginalButton::create(Vec2 pos ,int num)
 	}
 };
 
-bool OriginalButton::init(Vec2 passPos,int num)
+bool OriginalButton::init(Vec2 buttonSpPos,int num)
 {
 	if (!Sprite::init())
 	{
@@ -31,91 +31,69 @@ bool OriginalButton::init(Vec2 passPos,int num)
 	listener->onTouchEnded = CC_CALLBACK_2(OriginalButton::onTouchEnded, this);
 	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, this);
 
-	for (num = 0; num < 3; num++)setDesign(num);
-	setMyPosition(passPos);
-};
-void OriginalButton::setDesign(int num)
-{
-	switch (num)
-	{
-	case 0:
-		pass = Sprite::create("Button/pass.png");
-		pass->setPosition(Vec2(designResolutionSize.width * 0.95, designResolutionSize.height * 0.4f));
-		addChild(pass,1);
-		break;
-	case 1:
-		nock = Sprite::create("Button/nock.png");
-		nock->setPosition(Vec2(designResolutionSize.width * 0.95, designResolutionSize.height * 0.6f));
-		addChild(nock,0);
-		break;
-	case 2:
-		pause = Sprite::create("Button/pause.png");
-		pause->setPosition(Vec2(designResolutionSize.width * 0.95,designResolutionSize.height * 0.9f));
-		addChild(pause,0);
-		break;
-	default:
-		break;
-	}
+
+	setMode(num);
+	setDesign(num);
+	setMyPosition(buttonSpPos);
 };
 
-void OriginalButton::setMyPosition(Vec2 passPos)
+void OriginalButton::setMode(int num) 
 {
-	ButtonPosition = passPos;
-	MyPosition = passPos;
-	setPosition(passPos);
+	mode = num;
+}
+
+void OriginalButton::setDesign(int num, bool is)//trueで押された判定
+{
+	String* name = String::createWithFormat("");
+	switch (num)
+	{
+	case 0://パス
+		if(is)name->initWithFormat("Button/pass.png");
+		else name->initWithFormat("Button/passfor.png");
+		break;
+	case 1://ノック
+		if(is)name->initWithFormat("Button/knockfor.png");
+		else name->initWithFormat("Button/knock.png");
+		break;
+	case 2://ポーズ
+		if(is) name->initWithFormat("Button/pausefor.png");
+		else name->initWithFormat("Button/pause.png");
+		break;
+	default:
+		if (is) name->initWithFormat("Button/pass.png");
+		else name->initWithFormat("Button/pass.png");
+		break;
+	}
+	setTexture(name->getCString());
+};
+
+void OriginalButton::setMyPosition(Vec2 buttonSpPos)
+{
+	setPosition(buttonSpPos);
+	MyPosition = buttonSpPos;
 };
 
 bool OriginalButton::onTouchBegan(const Touch * touch, Event *unused_event)
 {
-	//パスボタンのあたり判定
-	if (pass->getBoundingBox().containsPoint(touch->getLocation()))
+	//ボタンのあたり判定
+	if (getBoundingBox().containsPoint(touch->getLocation()))
 	{
-		pass->setTexture("Button/passfor.png");
+		setDesign(mode,true);
 	}
-	//ノックボタンのあたり判定
-	if (nock->getBoundingBox().containsPoint(touch->getLocation()))
-	{
-		nock->setTexture("Button/nockfor.png");
-	}
-	//ポーズボタンのあたり判定
-	if (pause->getBoundingBox().containsPoint(touch->getLocation()))
-	{
-		pause->setTexture("Button/pausefor.png");
-	}
-
 	return true;
 };
 void OriginalButton::onTouchMoved(const Touch * touch, Event *unused_event)
 {
-	if (pass->getBoundingBox().containsPoint(touch->getLocation())){}
+	if (getBoundingBox().containsPoint(touch->getLocation())){}
 	else
 	{
-		pass->setTexture("Button/pass.png");
-	}
-	if (nock->getBoundingBox().containsPoint(touch->getLocation())) {}
-	else
-	{
-		nock->setTexture("Button/nock.png");
-	}
-	if (pause->getBoundingBox().containsPoint(touch->getLocation())) {}
-	else
-	{
-		pause->setTexture("Button/pause.png");
+		setDesign(mode);
 	}
 };
 void OriginalButton::onTouchEnded(const Touch * touch, Event *unused_event)
 {
-	if (pass->getBoundingBox().containsPoint(touch->getLocation()))
+	if (getBoundingBox().containsPoint(touch->getLocation()))
 	{
-		pass->setTexture("Button/pass.png");
+		setDesign(mode);
 	}
-	if (nock->getBoundingBox().containsPoint(touch->getLocation()))
-	{
-		nock->setTexture("Button/nock.png");
-	}
-	if (pause->getBoundingBox().containsPoint(touch->getLocation()))
-	{
-		pause->setTexture("Button/pause.png");
-	}
-
 }
