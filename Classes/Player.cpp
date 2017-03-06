@@ -46,6 +46,7 @@ bool Player::init()
 	pickState = STATE::HAND;
 	brainCount = 10;
 	brainEnd = false;
+	isFourCard = false;
 	cardSort(ROLE::EQUAL, hand);
 	for (int i = 0; i < 11; i++)
 	{
@@ -72,6 +73,7 @@ bool Player::init(Player* &p)
 	pickState = STATE::HAND;
 	brainCount = p->brainCount;
 	brainEnd = false;
+	isFourCard = false;
 	for (int i = 0; i < p->hand.size(); i++)
 	{
 		result.pushBack(Card::create(p->result.at(i)->myMark, p->result.at(i)->myNumber));
@@ -240,6 +242,9 @@ void Player::checkRole()
 void Player::calcRole(Vector<Card*> cResult) 
 {
 	int iPoint=0;
+	log("BEFOREpick%d", pickNumber);
+	setKnockThrowCard();
+	log("AFTERpick%d", pickNumber);
 	//log("---------start------");
 	for (int i = 0; i < hand.size(); i++)
 	{
@@ -254,7 +259,6 @@ void Player::calcRole(Vector<Card*> cResult)
 	{
 		cardSort(ROLE::ORDER, result);
 		setRoleColor(cResult);
-		setKnockThrowCard();
 	};
 	//log("---------end--------");
 };
@@ -276,9 +280,10 @@ int Player::checkLastCard()
 
 void Player::checkRoleNew(Player* player)
 {
-//‚R–‡ƒZƒbƒg‚Ì‘g‚İ‡‚í‚¹‚ğ‘SƒXƒLƒƒƒ“
-	for (int z = 0; z < player->hand.size()-2; z++)
-		for (int y = z + 1; y < player->hand.size()- 1; y++)
+	isFourCard = false;
+	//‚R–‡ƒZƒbƒg‚Ì‘g‚İ‡‚í‚¹‚ğ‘SƒXƒLƒƒƒ“
+	for (int z = 0; z < player->hand.size() - 2; z++)
+		for (int y = z + 1; y < player->hand.size() - 1; y++)
 			for (int x = y + 1; x < player->hand.size(); x++) {
 				if (player->hand.at(x)->myNumber>ZERO) {
 					if ((player->hand.at(z)->myNumber == player->hand.at(y)->myNumber)) {//2–‡‚»‚ë‚Á‚Ä‚¢‚é
@@ -295,9 +300,13 @@ void Player::checkRoleNew(Player* player)
 					}
 					if (((int)player->hand.at(z)->myNumber + 1 == (int)player->hand.at(y)->myNumber) && player->hand.at(z)->myMark == player->hand.at(y)->myMark) {//2–‡‡”Ô‚É•À‚ñ‚Å‚¢‚é
 						if (((int)player->hand.at(z)->myNumber + 2 == (int)player->hand.at(x)->myNumber) && (player->hand.at(z)->myMark == player->hand.at(x)->myMark)) {//3–‡
-							if (((x < player->brainCount - 1) && (int)player->hand.at(z)->myNumber + 3 == (int)player->hand.at(x + 1)->myNumber) && (player->hand.at(z)->myMark == player->hand.at(x + 1)->myMark))
-								checkRoleNew(check(player, z, y, x, x + 1));//4–‡‚Ìˆ—
-							else checkRoleNew(check(player, z, y, x));//‚R–‡‚Ìˆ—
+							for (int q = x + 1; q < hand.size(); q++)
+								if (((int)player->hand.at(z)->myNumber + 3 == (int)player->hand.at(q)->myNumber) && (player->hand.at(z)->myMark == player->hand.at(q)->myMark)) {
+									checkRoleNew(check(player, z, y, x, q));//4–‡‚Ìˆ—
+									isFourCard = true;
+								}
+							if (!isFourCard)
+								checkRoleNew(check(player, z, y, x));//‚R–‡‚Ìˆ—
 						}
 						else
 						{
@@ -307,24 +316,9 @@ void Player::checkRoleNew(Player* player)
 				}
 			}
 		log("brainCount=[%d]", player->brainCount);
-	if (player->brainCount <= player->hand.size() - 6)
-	{
-		brainEnd = true;
-	}
 	//c‚è‚ÌƒJ[ƒh‚ğƒRƒs[
 	copyResultForHand(player);
 
-	//log("player%d", player->roleCount);
-	//String* name = String::createWithFormat("re.");
-	//String* name_s = String::createWithFormat("ha.");
-	//for (int i = 0; i < player->hand.size();i++)
-	//{
-	//	name->appendWithFormat("%d,", player->result.at(i)->myNumber);
-	//	name_s->appendWithFormat("%d,", player->hand.at(i)->myNumber);
-	//};
-	//log("%s", name->getCString());
-	//log("%s", name_s->getCString());
-	//if(player->roleCount>=1)
 		calcRole(player->result);
 };
 
@@ -424,13 +418,11 @@ Player* Player::check(Player* &brainPlayer, int x, int y, int z,int q) {//4‚Ü‚¢‚
 
 bool Player::addPoint(int num)
 {
-		log("point%d", num);
-	if (num <= point) {
-		log("pointOK");
+		if (num <= point) {
 		point = num;
+		if (point <= 10)brainEnd = true;//ƒmƒbƒN‰Â”\
 		return true;
 	}
-	log("pointNG");
 	return false;
 }
 
@@ -509,6 +501,7 @@ void Player::setKnockThrowCard()
 			if (hand.at(pickNumber)->myNumber < hand.at(i)->myNumber)
 			{
 				pickNumber = i;
+				log("pick%d", hand.at(pickNumber)->myNumber);
 			}
 		}
 	}

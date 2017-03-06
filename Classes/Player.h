@@ -40,6 +40,8 @@ public:
 	//ノック時に捨てるカード採取
 	void setKnockThrowCard();
 
+	//4枚役ができたのかどうか
+	bool isFourCard;
 	//得点
 	int point;
 	//選んだ番号

@@ -395,6 +395,11 @@ bool MainGameLayer::actionPhase()
 					player_one->cardThrow(player_one->pickNumber, dealer->grave);
 					return true;
 				}
+				
+			}
+			else
+			{
+				isKnock = false;
 			}
 			if (player_one->pickNumber >= 0&&player_one->isDeside)
 			{
@@ -442,6 +447,8 @@ void MainGameLayer::nextPlayerTurn()
 //フェイズごとに一度行う行動
 void MainGameLayer::nextPhase(bool isAction) 
 {
+	String* name1 = String::createWithFormat("%d", player_one->point);
+	String* name2 = String::createWithFormat("%d", player_two->point);
 	if (!isAction)
 	{
 		return;
@@ -465,6 +472,10 @@ void MainGameLayer::nextPhase(bool isAction)
 		}
 		commonEffect = EFFECT::DO_DRAW;
 		player_one->checkRole();
+		name1 = String::createWithFormat("%d", player_one->point);
+		name2 = String::createWithFormat("%d", player_one->point);
+		P_ONE_LABEL->setString(name1->getCString());
+		P_TWO_LABEL->setString(name2->getCString());
 			break;
 	case PHASE::THROW:
 			if (isKnock||dealer->deck.size()<=0)
