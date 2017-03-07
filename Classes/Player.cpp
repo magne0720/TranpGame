@@ -47,6 +47,7 @@ bool Player::init()
 	brainCount = 10;
 	brainEnd = false;
 	isFourCard = false;
+	isDeside = false;
 	cardSort(ROLE::EQUAL, hand);
 	for (int i = 0; i < 11; i++)
 	{
@@ -73,7 +74,8 @@ bool Player::init(Player* &p)
 	pickState = STATE::HAND;
 	brainCount = p->brainCount;
 	brainEnd = false;
-	isFourCard = false;
+	isFourCard = false;	
+	isDeside = false;
 	for (int i = 0; i < p->hand.size(); i++)
 	{
 		result.pushBack(Card::create(p->result.at(i)->myMark, p->result.at(i)->myNumber));
@@ -227,6 +229,7 @@ void Player::ressetRole()
 
 void Player::checkRole()
 {
+	roleCount = 0;
 	cardDispHand(true);
 	point = 5000;
 	brainEnd = false;
@@ -242,12 +245,13 @@ void Player::checkRole()
 void Player::calcRole(Vector<Card*> cResult) 
 {
 	int iPoint=0;
-	setKnockThrowCard();
+	setKnockThrowCard(cResult);
 	for (int i = 0; i < hand.size(); i++)
 	{
 		if (cResult.at(i)->myRole != ROLE::ROLEIN)
 		{
-			iPoint += (int)cResult.at(i)->myNumber;
+			if(i!=pickNumber)
+				iPoint += (int)cResult.at(i)->myNumber;
 		}
 		else {
 		}
@@ -416,7 +420,6 @@ bool Player::addPoint(int num)
 		if (num <= point) {
 		point = num;
 		if (point <= 10)brainEnd = true;//ノック可能
-		else brainEnd = false;
 		return true;
 	}
 	return false;
@@ -430,8 +433,18 @@ void Player::setRoleColor(Vector<Card*>cResult)
 			if (cResult.at(i)->myMark == hand.at(j)->myMark&&cResult.at(i)->myNumber == hand.at(j)->myNumber) {
 				if (cResult.at(i)->myRole == ROLE::ROLEIN)
 				{
-					hand.at(j)->setColor(Color3B::YELLOW);
-					hand.at(j)->setRole(ROLE::ROLEIN);
+					if (hand.at(j)->roleNumber % 3 == 2) {
+						hand.at(j)->setColor(Color3B::YELLOW);
+						hand.at(j)->setRole(ROLE::ROLEIN);
+					}
+					else if (hand.at(j)->roleNumber % 3 == 1) {
+						hand.at(j)->setColor(Color3B::RED);
+						hand.at(j)->setRole(ROLE::ROLEIN);
+					}
+					else if (hand.at(j)->roleNumber % 3 == 0) {
+						hand.at(j)->setColor(Color3B::GREEN);
+						hand.at(j)->setRole(ROLE::ROLEIN);
+					}
 				}
 				else
 				{
@@ -487,14 +500,14 @@ void Player::copyResultForHand(Player* &p)
 };
 
 //役ができなかったカードの中で一番数が大きいものを特定する
-void Player::setKnockThrowCard()
+void Player::setKnockThrowCard(Vector<Card*> cResult)
 {
 	pickNumber = 0;
 	for (int i = 0; i < hand.size(); i++)
 	{
-		if (hand.at(i)->myRole != ROLE::ROLEIN)
+		if (cResult.at(i)->myRole != ROLE::ROLEIN)
 		{
-			if (hand.at(pickNumber)->myNumber < hand.at(i)->myNumber)
+			if (cResult.at(pickNumber)->myNumber < cResult.at(i)->myNumber)
 			{
 				pickNumber = i;
 			}
