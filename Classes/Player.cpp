@@ -416,6 +416,7 @@ bool Player::addPoint(int num)
 		if (num <= point) {
 		point = num;
 		if (point <= 10)brainEnd = true;//ƒmƒbƒN‰Â”\
+		else brainEnd = false;
 		return true;
 	}
 	return false;

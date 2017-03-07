@@ -10,7 +10,7 @@ bool EffectManager::init()
 
 	SimpleAudioEngine::sharedEngine()->preloadEffect("Sound/card-hand-out1.mp3");
 
-	SimpleAudioEngine::sharedEngine()->preloadEffect("Sound/card-turn-over1.mp3");
+	SimpleAudioEngine::sharedEngine()->preloadEffect("Sound/card-turn-over2.mp3");
 
 	SimpleAudioEngine::sharedEngine()->preloadEffect("Sound/card-put1.mp3");
 
@@ -71,7 +71,7 @@ void EffectManager::phaseChange(PHASE phase)
 	case START:
 		break;
 	case DROW:
-		SimpleAudioEngine::getInstance()->playEffect("Sound/card-turn-over1.mp3");
+		SimpleAudioEngine::getInstance()->playEffect("Sound/card-turn-over2.mp3");
 		break;
 	case THROW:
 		SimpleAudioEngine::getInstance()->playEffect("Sound/card-put1.mp3");

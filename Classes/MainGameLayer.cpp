@@ -47,19 +47,19 @@ bool MainGameLayer::init(int level)
 	player_two->setPosition(Vec2(designResolutionSize.width*0.5f, designResolutionSize.height*0.8f));
 	addChild(player_two,1);
 
-	turnLabel = Label::create("gameSTART", "fonts/arial.ttf", 30);
+	turnLabel = Label::create("gameSTART", "fonts/JOKERMAN.ttf", 50);
 	turnLabel->setPosition(designResolutionSize.width*0.5f, designResolutionSize.height*0.5f);
 	addChild(turnLabel);
 
-	phaseLabel = Label::create("gameSTART", "fonts/arial.ttf", 30);
+	phaseLabel = Label::create("gameSTART", "fonts/JOKERMAN.ttf", 50);
 	phaseLabel->setPosition(designResolutionSize.width*0.7f, designResolutionSize.height*0.5f);
 	addChild(phaseLabel);
 
-	P_ONE_LABEL = Label::create("point", "fonts/arial.ttf", 30);
+	P_ONE_LABEL = Label::create("point", "fonts/JOKERMAN.ttf", 90);
 	P_ONE_LABEL->setPosition(designResolutionSize.width*0.3f, designResolutionSize.height*0.4f);
 	addChild(P_ONE_LABEL);
 
-	P_TWO_LABEL = Label::create("point", "fonts/arial.ttf", 30);
+	P_TWO_LABEL = Label::create("point", "fonts/JOKERMAN.ttf", 90);
 	P_TWO_LABEL->setPosition(designResolutionSize.width*0.3f, designResolutionSize.height*0.6f);
 	addChild(P_TWO_LABEL);
 
@@ -213,18 +213,18 @@ bool MainGameLayer::cardShuffleDesign()
 //カードを分ける演出
 bool MainGameLayer::cardDivisionDesign() 
 {
-	effectManager->phaseChange(PHASE::DROW);
 	player_one->cardDispHand(true, one_hand);
 	player_two->cardDispHand(false, two_hand);
 	if (one_hand < player_one->hand.size()-1)
-		if (player_one->effect->drowCard(player_one->hand, one_hand, dealer->deckSp->getPosition(), player_one->handPos[one_hand], 0.2f))
+		if (player_one->effect->drowCard(player_one->hand, one_hand, dealer->deckSp->getPosition(), player_one->handPos[one_hand], 0.05f))
 		{
+			effectManager->phaseChange(PHASE::DROW);
 			one_hand++;
 		}
 	if (two_hand < player_two->hand.size()-1)
-		if (player_two->effect->drowCard(player_two->hand, two_hand, dealer->deckSp->getPosition(), player_two->handPos[two_hand], 0.2f))
+		if (player_two->effect->drowCard(player_two->hand, two_hand, dealer->deckSp->getPosition(), player_two->handPos[two_hand], 0.05f))
 		{
-			//effectManager->phaseChange(PHASE::DROW);
+			effectManager->phaseChange(PHASE::DROW);
 			two_hand++;
 		}
 	if (one_hand >= player_one->hand.size()-1&&two_hand >= player_two->hand.size()-1) 
@@ -239,6 +239,7 @@ bool MainGameLayer::cardDivisionThrowDesign()
 	dealer->grave.at(dealer->grave.size()-1)->setState(STATE::GRAVE);
 	if (effectManager->drowCard(dealer->grave, dealer->grave.size()-1, dealer->deckSp->getPosition(), dealer->graveSp->getPosition(), 0.05f))
 	{
+		effectManager->phaseChange(PHASE::THROW);
 		return true;
 	}
 }
@@ -374,7 +375,7 @@ bool MainGameLayer::actionPhase()
 		}
 		else if (turn == TURN::PLAY_TWO)//プレイヤー２
 		{
-		passButton->setVisible(false);
+			passButton->setVisible(false);
 			player_two->pickState = STATE::DECK;
 			player_two->cardDrow(dealer->deck);
 			//player_two->checkRole();
@@ -386,20 +387,12 @@ bool MainGameLayer::actionPhase()
 
 		if (turn == TURN::PLAY_ONE)
 		{
-			if (player_one->brainEnd)
+			if (isKnock)
 			{
-				if (isKnock) 
-				{
-					//ここで役ができなかった一番大きい数字のカードを選ぶ
-					//それをpickNumberともする。
-					player_one->cardThrow(player_one->pickNumber, dealer->grave);
-					return true;
-				}
-				
-			}
-			else
-			{
-				isKnock = false;
+				//ここで役ができなかった一番大きい数字のカードを選ぶ
+				//それをpickNumberともする。
+				player_one->cardThrow(player_one->pickNumber, dealer->grave);
+				return true;
 			}
 			if (player_one->pickNumber >= 0&&player_one->isDeside)
 			{
@@ -457,6 +450,7 @@ void MainGameLayer::nextPhase(bool isAction)
 	switch (phase)
 	{
 	case PHASE::START:
+		passButton->setVisible(true);
 		phase = PHASE::DROW;
 		phaseLabel->setString("DROW");
 		break;
@@ -472,8 +466,9 @@ void MainGameLayer::nextPhase(bool isAction)
 		}
 		commonEffect = EFFECT::DO_DRAW;
 		player_one->checkRole();
+		player_two->checkRole();
 		name1 = String::createWithFormat("%d", player_one->point);
-		name2 = String::createWithFormat("%d", player_one->point);
+		name2 = String::createWithFormat("%d", player_two->point);
 		P_ONE_LABEL->setString(name1->getCString());
 		P_TWO_LABEL->setString(name2->getCString());
 			break;
@@ -599,9 +594,11 @@ void MainGameLayer::onTouchEnded(const Touch * touch, Event *unused_event)
 		player_one->pickState = STATE::GRAVE;
 	}
 	//ノック
-	if (knockButton->getBoundingBox().containsPoint(touch->getLocation()))
-	{
-		isKnock = true;
+	if (player_one->brainEnd) {
+		if (knockButton->getBoundingBox().containsPoint(touch->getLocation()))
+		{
+			isKnock = true;
+		}
 	}
 	else 
 	{//ノック以外の行動
