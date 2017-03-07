@@ -250,17 +250,17 @@ void Player::calcRole(Vector<Card*> cResult)
 	{
 		if (cResult.at(i)->myRole != ROLE::ROLEIN)
 		{
-			if(i!=pickNumber)
-				iPoint += (int)cResult.at(i)->myNumber;
-		}
-		else {
+			iPoint += (int)cResult.at(i)->myNumber;
 		}
 	}
+	iPoint -= (int)hand.at(pickNumber)->myNumber;
+	log("des%d", (int)hand.at(pickNumber)->myNumber);
+	log("sumPoint=%d", iPoint);
 	if (addPoint(iPoint)) 
 	{
 		cardSort(ROLE::ORDER, result);
 		setRoleColor(cResult);
-	};
+	}
 };
 
 //最後のカード確認
@@ -497,6 +497,7 @@ void Player::copyResultForHand(Player* &p)
 			p->result.at(p->brainCount)->setKind(hand.at(i));
 		}
 	}
+	cardSort(sortType, p->result);
 };
 
 //役ができなかったカードの中で一番数が大きいものを特定する
@@ -505,11 +506,13 @@ void Player::setKnockThrowCard(Vector<Card*> cResult)
 	pickNumber = 0;
 	for (int i = 0; i < hand.size(); i++)
 	{
+		log("res=[%d]", cResult.at(i)->myNumber);
 		if (cResult.at(i)->myRole != ROLE::ROLEIN)
 		{
-			if (cResult.at(pickNumber)->myNumber < cResult.at(i)->myNumber)
+			if ((int)cResult.at(pickNumber)->myNumber < (int)cResult.at(i)->myNumber)
 			{
 				pickNumber = i;
+				log("pickNumber=%d", (int)cResult.at(pickNumber)->myNumber);
 			}
 		}
 	}
