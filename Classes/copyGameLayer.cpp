@@ -22,10 +22,10 @@ bool CopyGameLayer::init(int level)
 	{
 		return false;
 	}
-	Sprite* back = Sprite::create("back3.png");
-	back->setPosition(Vec2(designResolutionSize.width * 0.5f, designResolutionSize.height * 0.5f));
-	addChild(back,-1);
-	//addChild(LayerColor::create(Color4B::GREEN));
+	//Sprite* back = Sprite::create("back3.png");
+	//back->setPosition(Vec2(designResolutionSize.width * 0.5f, designResolutionSize.height * 0.5f));
+	//addChild(back,-1);
+	addChild(LayerColor::create(Color4B::GREEN));
 
 	//É^ÉbÉ`îªíË
 	EventListenerTouchOneByOne *listener = EventListenerTouchOneByOne::create();
@@ -145,13 +145,16 @@ void CopyGameLayer::update(float delta)
 		if (cardDivisionThrowDesign())
 		{
 			commonEffect = EFFECT::DO_NOT;
-
-			for (int i = 0; i < player_two->hand.size(); i++) {
-				effectManager->drawLine(player_one->hand.at(i),true,true,false,false);
-				effectManager->drawLine(player_two->hand.at(i),true,true,false,false);
+			if (isGameStart == false) {
+				//ê¸ï`âÊ
+				for (int i = 0; i < player_two->hand.size(); i++) {
+					effectManager->drawLine(player_one->hand.at(i));
+					effectManager->drawLine(player_two->hand.at(i));
+				}
+				effectManager->drawLine(dealer->deckSp);
+				effectManager->drawLine(dealer->graveSp);
+				/////
 			}
-			effectManager->drawLine(dealer->deckSp);
-			effectManager->drawLine(dealer->graveSp);
 			isGameStart = true;
 		}
 		break;

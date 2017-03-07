@@ -139,25 +139,25 @@ void EffectManager::drawLine(Sprite* card, bool up, bool down, bool left, bool r
 
 	if (up) {
 		DrawNode *enemyline = DrawNode::create();
-		enemyline->drawSegment(Vec2(0, line.getMaxY()), Vec2(designResolutionSize.width, line.getMaxY()), 1, Color4F(1, 1, 1, 1));
+		enemyline->drawSegment(Vec2(0, line.getMaxY()), Vec2(designResolutionSize.width, line.getMaxY()), 2, Color4F(1, 1, 1, 1));
 		addChild(enemyline, 0);
 	}
 	if (down) {
 		DrawNode *enemyline2 = DrawNode::create();
-		enemyline2->drawSegment(Vec2(0, line.getMinY()), Vec2(designResolutionSize.width, line.getMinY()), 1, Color4F(1, 1, 1, 1));
+		enemyline2->drawSegment(Vec2(0, line.getMinY()), Vec2(designResolutionSize.width, line.getMinY()), 2, Color4F(1, 1, 1, 1));
 		addChild(enemyline2, 0);
 	}
 	if (left) {
 		DrawNode *enemyline3 = DrawNode::create();
-		enemyline3->drawSegment(Vec2(line.getMinX(), 0), Vec2(line.getMinX(), designResolutionSize.height), 1, Color4F(1, 1, 1, 1));
+		enemyline3->drawSegment(Vec2(line.getMinX(), line.getMinY()), Vec2(line.getMinX(), line.getMaxY()), 1, Color4F(1, 1, 1, 1));
 		addChild(enemyline3, 0);
 	}
 	if (right) {
 		DrawNode *enemyline4 = DrawNode::create();
-		enemyline4->drawSegment(Vec2(line.getMaxX(), 0), Vec2(line.getMaxX(), designResolutionSize.height), 1, Color4F(1, 1, 1, 1));
+		enemyline4->drawSegment(Vec2(line.getMaxX(), line.getMinY()), Vec2(line.getMaxX(), line.getMaxY()), 1, Color4F(1, 1, 1, 1));
 		addChild(enemyline4, 0);
-	}
 }
+	}
 
 void EffectManager::drawLine(Card* card, bool up, bool down, bool left, bool right)
 {
@@ -165,25 +165,25 @@ void EffectManager::drawLine(Card* card, bool up, bool down, bool left, bool rig
 	Rect line = card->getBoundingBox();
 		
 
-	//“G‘¤‚Ìü•`‰æ
+	//ü•`‰æ
 	if (up) {
 		DrawNode *enemyline = DrawNode::create();
-		enemyline->drawSegment(Vec2(0, line.getMaxY()), Vec2(designResolutionSize.width, line.getMaxY()), 1, Color4F(1, 1, 1, 1));
+		enemyline->drawSegment(Vec2(0, line.getMaxY()), Vec2(designResolutionSize.width, line.getMaxY()), 2, Color4F(1, 1, 1, 1));
 		addChild(enemyline, 0);
 	}
 	if (down) {
 		DrawNode *enemyline2 = DrawNode::create();
-		enemyline2->drawSegment(Vec2(0, line.getMinY()), Vec2(designResolutionSize.width, line.getMinY()), 1, Color4F(1, 1, 1, 1));
+		enemyline2->drawSegment(Vec2(0, line.getMinY()), Vec2(designResolutionSize.width, line.getMinY()), 2, Color4F(1, 1, 1, 1));
 		addChild(enemyline2, 0);
 	}
 	if (left) {
 		DrawNode *enemyline3 = DrawNode::create();
-		enemyline3->drawSegment(Vec2(line.getMinX(), 0), Vec2(line.getMinX(), designResolutionSize.height), 1, Color4F(1, 1, 1, 1));
+		enemyline3->drawSegment(Vec2(line.getMinX(), line.getMinY()), Vec2(line.getMinX(), line.getMaxY()), 1, Color4F(1, 1, 1, 1));
 		addChild(enemyline3, 0);
 	}
 	if (right) {
 		DrawNode *enemyline4 = DrawNode::create();
-		enemyline4->drawSegment(Vec2(line.getMaxX(), 0), Vec2(line.getMaxX(), designResolutionSize.height), 1, Color4F(1, 1, 1, 1));
+		enemyline4->drawSegment(Vec2(line.getMaxX(), line.getMinY()), Vec2(line.getMaxX(), line.getMaxY()), 1, Color4F(1, 1, 1, 1));
 		addChild(enemyline4, 0);
 	}
 
