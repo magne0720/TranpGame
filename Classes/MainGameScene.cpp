@@ -49,7 +49,7 @@ bool MainGameScene::onTouchBegan(const Touch * touch, Event *unused_event)
 	}
 	else
 	{
-		copyGameLayer* layer = copyGameLayer::create(0);
+		CopyGameLayer* layer = CopyGameLayer::create(0);
 		addChild(layer);
 		is = true;
 	}
