@@ -22,9 +22,9 @@ bool CopyGameLayer::init(int level)
 	{
 		return false;
 	}
-	Sprite* back = Sprite::create("back.jpg");
+	Sprite* back = Sprite::create("back3.png");
 	back->setPosition(Vec2(designResolutionSize.width * 0.5f, designResolutionSize.height * 0.5f));
-	addChild(back);
+	addChild(back,-1);
 	//addChild(LayerColor::create(Color4B::GREEN));
 
 	//ƒ^ƒbƒ`”»’è
@@ -39,7 +39,7 @@ bool CopyGameLayer::init(int level)
 		Vec2(designResolutionSize.width*0.4f, designResolutionSize.height*0.5f),
 		Vec2(designResolutionSize.width*0.6f, designResolutionSize.height*0.5f));
 
-	addChild(dealer, 0);
+	addChild(dealer, 2);
 
 	player_one = Player::create();
 	player_one->setPosition(Vec2(designResolutionSize.width*0.5f, designResolutionSize.height*0.2f));
@@ -66,7 +66,7 @@ bool CopyGameLayer::init(int level)
 	addChild(P_TWO_LABEL);
 
 	effectManager = EffectManager::create();
-	addChild(effectManager);
+	addChild(effectManager,0);
 
 	sortButton = SortButton::create(ROLE::EQUAL, Vec2(designResolutionSize.width *0.05f, designResolutionSize.height*0.5f));
 	addChild(sortButton);
@@ -145,6 +145,13 @@ void CopyGameLayer::update(float delta)
 		if (cardDivisionThrowDesign())
 		{
 			commonEffect = EFFECT::DO_NOT;
+
+			for (int i = 0; i < player_two->hand.size(); i++) {
+				effectManager->drawLine(player_one->hand.at(i),true,true,false,false);
+				effectManager->drawLine(player_two->hand.at(i),true,true,false,false);
+			}
+			effectManager->drawLine(dealer->deckSp);
+			effectManager->drawLine(dealer->graveSp);
 			isGameStart = true;
 		}
 		break;
