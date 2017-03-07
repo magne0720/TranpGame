@@ -22,7 +22,7 @@ bool HelloWorldScene::init(int level)
 	{
 		return false;
 	}
-	copyGameLayer* layer = copyGameLayer::create(0);
+	CopyGameLayer* layer = CopyGameLayer::create(0);
 	addChild(layer);
 
 	return true;

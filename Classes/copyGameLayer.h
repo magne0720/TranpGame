@@ -13,13 +13,14 @@ USING_NS_CC;
 //ジンラミーの基本手札枚数
 #define HAND_START_MAX 10
 
-class copyGameLayer :public Layer
+class CopyGameLayer :public Layer
 {
 public:
 	TURN turn;
 	PHASE phase;
+	EFFECT commonEffect;
 
-	static copyGameLayer* create(int level);
+	static CopyGameLayer* create(int level);
 	bool init(int level);
 	void update(float delta);
 	//ーーーーーーーーーーゲームの準備関数ーーーーーーーーー
@@ -46,26 +47,47 @@ public:
 
 	//ーーーーーーーーーーーーーーーーーーーーーーーーーーー
 
+	//ーーーーーーーーー演出ーーーーーーーーーーーーーー
+
+	//シャッフル
+	bool cardShuffleDesign();
+	//配る
+	bool cardDivisionDesign();
+	//最初の一枚を捨てる
+	bool cardDivisionThrowDesign();
+	//引く
+	bool cardDrowDesign();
+	//捨てる
+	bool cardThrowDesign();
+
+	//ーーーーーーーーーーーーーーーーーーーーーーーーーーー
+
 	//タッチ判定
 	bool onTouchBegan(const Touch * touch, Event *unused_event);
 	void onTouchMoved(const Touch * touch, Event *unused_event);
 	void onTouchEnded(const Touch * touch, Event *unused_event);
 
-
+	CopyGameLayer* back;
 	Player* player_one, *player_two;
 	Dealer* dealer;
-	Label* phaseLabel, *turnLabel;
+	Label* phaseLabel, *turnLabel, *P_ONE_LABEL, *P_TWO_LABEL;
 	EffectManager* effectManager;
 	SortButton* button;
-	OriginalButton* button2;//変更
+	OriginalButton* button2;
 	//ターンのカウント
 	int turnCount;
 	//ノックされたか(ゲームの終了条件)
 	bool isKnock;
 	//パスしたかどうか(先行のみ有効) 
 	bool isPass;
+	//ゲームが始まったか
+	bool isGameStart;
+	//演出のための変数
+	int one_hand, two_hand;
+	//進行スピード
+	float phaseTimer, phaseSpeed;
 
 };
 
 
-#endif // !__copyGAME_LAYER_H__
+#endif // !__MAINGAME_LAYER_H__
