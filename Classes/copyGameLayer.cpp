@@ -22,7 +22,6 @@ bool CopyGameLayer::init(int level)
 	{
 		return false;
 	}
-
 	Sprite* back = Sprite::create("back.jpg");
 	back->setPosition(Vec2(designResolutionSize.width * 0.5f, designResolutionSize.height * 0.5f));
 	addChild(back);
@@ -69,11 +68,17 @@ bool CopyGameLayer::init(int level)
 	effectManager = EffectManager::create();
 	addChild(effectManager);
 
-	button = SortButton::create(ROLE::EQUAL, Vec2(designResolutionSize.width *0.05f, designResolutionSize.height*0.5f));
-	addChild(button);
+	sortButton = SortButton::create(ROLE::EQUAL, Vec2(designResolutionSize.width *0.05f, designResolutionSize.height*0.5f));
+	addChild(sortButton);
 
-	button2 = OriginalButton::create(Vec2(designResolutionSize.width * 0, designResolutionSize.height * 0), 0);//変更
-	addChild(button2);
+	passButton = OriginalButton::create(Vec2(designResolutionSize.width * 0.95f, designResolutionSize.height * 0.35f), 0);//変更
+	addChild(passButton);
+
+	knockButton = OriginalButton::create(Vec2(designResolutionSize.width * 0.95f, designResolutionSize.height * 0.65f), 1);//変更
+	addChild(knockButton);
+
+	pauseButton = OriginalButton::create(Vec2(designResolutionSize.width * 0.95f, designResolutionSize.height * 0.85f), 2);//変更
+	addChild(pauseButton);
 
 	phaseTimer = 0;
 	phaseSpeed = 0.02f;
@@ -82,9 +87,8 @@ bool CopyGameLayer::init(int level)
 
 	//ゲームの準備
 	gameStart();
-	//effectManager->drawLine();
-	//effectManager->phaseChange(PHASE::START);
 
+	//effectManager->phaseChange(PHASE::START);
 
 	scheduleUpdate();
 
@@ -310,7 +314,7 @@ void CopyGameLayer::gameStart()
 	player_one->sortType = ROLE::ORDER;
 	player_two->sortType = ROLE::ORDER;
 	//パスボタン表示
-	button2->setVisible(true);
+	passButton->setVisible(true);
 	//デッキを再構築
 	dealer->setDeck(true);
 	//デッキをシャッフル
@@ -372,7 +376,7 @@ bool CopyGameLayer::actionPhase()
 		}
 		else if (turn == TURN::PLAY_TWO)//プレイヤー２
 		{
-			button2->setVisible(false);
+			passButton->setVisible(false);
 			player_two->pickState = STATE::DECK;
 			player_two->cardDrow(dealer->deck);
 			//player_two->checkRole();
@@ -393,6 +397,11 @@ bool CopyGameLayer::actionPhase()
 					player_one->cardThrow(player_one->pickNumber, dealer->grave);
 					return true;
 				}
+
+			}
+			else
+			{
+				isKnock = false;
 			}
 			if (player_one->pickNumber >= 0 && player_one->isDeside)
 			{
@@ -440,6 +449,8 @@ void CopyGameLayer::nextPlayerTurn()
 //フェイズごとに一度行う行動
 void CopyGameLayer::nextPhase(bool isAction)
 {
+	String* name1 = String::createWithFormat("%d", player_one->point);
+	String* name2 = String::createWithFormat("%d", player_two->point);
 	if (!isAction)
 	{
 		return;
@@ -463,6 +474,10 @@ void CopyGameLayer::nextPhase(bool isAction)
 		}
 		commonEffect = EFFECT::DO_DRAW;
 		player_one->checkRole();
+		name1 = String::createWithFormat("%d", player_one->point);
+		name2 = String::createWithFormat("%d", player_one->point);
+		P_ONE_LABEL->setString(name1->getCString());
+		P_TWO_LABEL->setString(name2->getCString());
 		break;
 	case PHASE::THROW:
 		if (isKnock || dealer->deck.size() <= 0)
@@ -534,6 +549,19 @@ void CopyGameLayer::callKnock()
 	//player_two->cardDispHand(true);
 };
 
+//ノック時に行われる役の計算
+void CopyGameLayer::callCalculation()
+{
+
+};
+
+//ゲーム終了時の計算
+void CopyGameLayer::callAddTotal()
+{
+
+};
+
+//ーーーーーーーーーーーー
 
 bool CopyGameLayer::onTouchBegan(const Touch * touch, Event *unused_event)
 {
@@ -558,11 +586,9 @@ void CopyGameLayer::onTouchMoved(const Touch * touch, Event *unused_event)
 
 void CopyGameLayer::onTouchEnded(const Touch * touch, Event *unused_event)
 {
-
-
-	if (button->getBoundingBox().containsPoint(touch->getLocation()))
+	if (sortButton->getBoundingBox().containsPoint(touch->getLocation()))
 	{
-		player_one->cardSort(button->switchRole, player_one->result);
+		player_one->cardSort(sortButton->switchRole, player_one->result);
 	}
 	//次にドローするカードをデッキからにする
 	if (dealer->deckSp->getBoundingBox().containsPoint(touch->getLocation()))
@@ -574,21 +600,25 @@ void CopyGameLayer::onTouchEnded(const Touch * touch, Event *unused_event)
 	{
 		player_one->pickState = STATE::GRAVE;
 	}
-	if (touch->getLocation().x > designResolutionSize.width*0.95f)
+	//ノック
+	if (knockButton->getBoundingBox().containsPoint(touch->getLocation()))
 	{
-		player_one->pickState = STATE::FREE;
-	};
-	for (int i = 0; i < player_one->hand.size(); i++)
-	{
-		if (player_one->hand.at(i)->getBoundingBox().containsPoint(touch->getLocation()))
+		isKnock = true;
+	}
+	else
+	{//ノック以外の行動
+		for (int i = 0; i < player_one->hand.size(); i++)
 		{
-			player_one->pickNumber = i;
-			player_one->isDeside = true;
-			break;
-		}
-		else
-		{
-			player_one->isDeside = false;
+			if (player_one->hand.at(i)->getBoundingBox().containsPoint(touch->getLocation()))
+			{
+				player_one->pickNumber = i;
+				player_one->isDeside = true;
+				break;
+			}
+			else
+			{
+				player_one->isDeside = false;
+			}
 		}
 	}
 	if (turn == TURN::WAIT)
@@ -597,10 +627,11 @@ void CopyGameLayer::onTouchEnded(const Touch * touch, Event *unused_event)
 	}
 	player_one->cardDispHand(true);
 	//パス
-	if (button2->getBoundingBox().containsPoint(touch->getLocation()))//変更
+	if (passButton->getBoundingBox().containsPoint(touch->getLocation()))//変更
 	{
 		player_one->pickState = STATE::FREE;
-		button2->setVisible(false);
+		passButton->setVisible(false);
 	};
+
 };
 
