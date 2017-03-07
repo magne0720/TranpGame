@@ -26,7 +26,7 @@ bool EffectManager::init()
 	};
 
 	effectSp = Sprite::create();
-	addChild(effectSp);
+	addChild(effectSp,1);
 
 	limitNumber = 0;
 
@@ -133,22 +133,59 @@ bool EffectManager::shuffleCard(Vec2 pos,float count,float limit, float delta)
 
 	return false;
 };
-void EffectManager::drawLine(Card* cCard)
+void EffectManager::drawLine(Sprite* card, bool up, bool down, bool left, bool right)
 {
-	Rect line = cCard->getBoundingBox();
+	Rect line = card->getBoundingBox();
+
+	if (up) {
+		DrawNode *enemyline = DrawNode::create();
+		enemyline->drawSegment(Vec2(0, line.getMaxY()), Vec2(designResolutionSize.width, line.getMaxY()), 1, Color4F(1, 1, 1, 1));
+		addChild(enemyline, 0);
+	}
+	if (down) {
+		DrawNode *enemyline2 = DrawNode::create();
+		enemyline2->drawSegment(Vec2(0, line.getMinY()), Vec2(designResolutionSize.width, line.getMinY()), 1, Color4F(1, 1, 1, 1));
+		addChild(enemyline2, 0);
+	}
+	if (left) {
+		DrawNode *enemyline3 = DrawNode::create();
+		enemyline3->drawSegment(Vec2(line.getMinX(), 0), Vec2(line.getMinX(), designResolutionSize.height), 1, Color4F(1, 1, 1, 1));
+		addChild(enemyline3, 0);
+	}
+	if (right) {
+		DrawNode *enemyline4 = DrawNode::create();
+		enemyline4->drawSegment(Vec2(line.getMaxX(), 0), Vec2(line.getMaxX(), designResolutionSize.height), 1, Color4F(1, 1, 1, 1));
+		addChild(enemyline4, 0);
+	}
+}
+
+void EffectManager::drawLine(Card* card, bool up, bool down, bool left, bool right)
+{
+
+	Rect line = card->getBoundingBox();
+		
+
 	//“G‘¤‚Ìü•`‰æ
-	DrawNode *enemyline1 = DrawNode::create();
-	enemyline1->drawSegment(Vec2(0, line.getMinY()), Vec2(designResolutionSize.width, line.getMinY()), 3, Color4F(1,1,1,1));
-	addChild(enemyline1);
-	DrawNode *enemyline2 = DrawNode::create();
-	enemyline2->drawSegment(Vec2(0, line.getMaxY()), Vec2(designResolutionSize.width, line.getMaxY()), 3, Color4F(1,1,1,1));
-	addChild(enemyline2);
-	//Ž©•ª‚Ìü•`‰æ
-	//DrawNode *playerline1 = DrawNode::create();
-	//playerline1->drawSegment(Vec2(0, designResolutionSize.height * 0.3f), Vec2(designResolutionSize.width, designResolutionSize.height* 0.3f), 3, Color4F(1, 1, 1, 1));
-	//addChild(playerline1);
-	//DrawNode *playerline2 = DrawNode::create();
-	//playerline2->drawSegment(Vec2(0, designResolutionSize.height * 0.1f), Vec2(designResolutionSize.width, designResolutionSize.height* 0.1f), 3, Color4F(1, 1, 1, 1));
-	//addChild(playerline2);
+	if (up) {
+		DrawNode *enemyline = DrawNode::create();
+		enemyline->drawSegment(Vec2(0, line.getMaxY()), Vec2(designResolutionSize.width, line.getMaxY()), 1, Color4F(1, 1, 1, 1));
+		addChild(enemyline, 0);
+	}
+	if (down) {
+		DrawNode *enemyline2 = DrawNode::create();
+		enemyline2->drawSegment(Vec2(0, line.getMinY()), Vec2(designResolutionSize.width, line.getMinY()), 1, Color4F(1, 1, 1, 1));
+		addChild(enemyline2, 0);
+	}
+	if (left) {
+		DrawNode *enemyline3 = DrawNode::create();
+		enemyline3->drawSegment(Vec2(line.getMinX(), 0), Vec2(line.getMinX(), designResolutionSize.height), 1, Color4F(1, 1, 1, 1));
+		addChild(enemyline3, 0);
+	}
+	if (right) {
+		DrawNode *enemyline4 = DrawNode::create();
+		enemyline4->drawSegment(Vec2(line.getMaxX(), 0), Vec2(line.getMaxX(), designResolutionSize.height), 1, Color4F(1, 1, 1, 1));
+		addChild(enemyline4, 0);
+	}
 
 }
+

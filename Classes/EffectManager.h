@@ -32,7 +32,8 @@ public:
 	//カードをシャッフルするアニメーション
 	bool shuffleCard(Vec2 pos,float count, float limit, float delta);
 	//線の描画
-	void drawLine(Card* cCard);
+	void drawLine(Sprite* card,bool up = true, bool down = true, bool left = true, bool right = true);
+	void drawLine(Card* card, bool up = true, bool down = true, bool left = true, bool right = true);
 
 };
 
