@@ -59,7 +59,7 @@ public:
 	//役ナンバーのカウント
 	int roleCount;
 	//手札
-	Vector<Card*>hand, result;
+	Vector<Card*>hand, result,chanceList;
 	//手札の位置
 	Vec2 handPos[11];
 	//エフェクト

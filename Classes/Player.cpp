@@ -242,10 +242,7 @@ void Player::checkRole()
 void Player::calcRole(Vector<Card*> cResult) 
 {
 	int iPoint=0;
-	log("BEFOREpick%d", pickNumber);
 	setKnockThrowCard();
-	log("AFTERpick%d", pickNumber);
-	//log("---------start------");
 	for (int i = 0; i < hand.size(); i++)
 	{
 		if (cResult.at(i)->myRole != ROLE::ROLEIN)
@@ -260,7 +257,6 @@ void Player::calcRole(Vector<Card*> cResult)
 		cardSort(ROLE::ORDER, result);
 		setRoleColor(cResult);
 	};
-	//log("---------end--------");
 };
 
 //最後のカード確認
@@ -315,7 +311,6 @@ void Player::checkRoleNew(Player* player)
 					}
 				}
 			}
-		log("brainCount=[%d]", player->brainCount);
 	//残りのカードをコピー
 	copyResultForHand(player);
 
@@ -501,7 +496,6 @@ void Player::setKnockThrowCard()
 			if (hand.at(pickNumber)->myNumber < hand.at(i)->myNumber)
 			{
 				pickNumber = i;
-				log("pick%d", hand.at(pickNumber)->myNumber);
 			}
 		}
 	}
