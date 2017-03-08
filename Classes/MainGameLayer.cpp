@@ -34,8 +34,8 @@ bool MainGameLayer::init(int level)
 
 
 	dealer = Dealer::create(
-		Vec2(designResolutionSize.width*0.4f, designResolutionSize.height*0.5f),
-		Vec2(designResolutionSize.width*0.6f, designResolutionSize.height*0.5f));
+		Vec2(designResolutionSize.width*0.3f, designResolutionSize.height*0.5f),
+		Vec2(designResolutionSize.width*0.7f, designResolutionSize.height*0.5f));
 
 	addChild(dealer,0);
 
@@ -48,19 +48,19 @@ bool MainGameLayer::init(int level)
 	addChild(player_two,1);
 
 	turnLabel = Label::create("gameSTART", "fonts/JOKERMAN.ttf", 50);
-	turnLabel->setPosition(designResolutionSize.width*0.5f, designResolutionSize.height*0.5f);
+	turnLabel->setPosition(designResolutionSize.width*0.1f, designResolutionSize.height*0.95f);
 	addChild(turnLabel);
 
 	phaseLabel = Label::create("gameSTART", "fonts/JOKERMAN.ttf", 50);
-	phaseLabel->setPosition(designResolutionSize.width*0.7f, designResolutionSize.height*0.5f);
+	phaseLabel->setPosition(designResolutionSize.width*0.5f, designResolutionSize.height*0.5f);
 	addChild(phaseLabel);
 
 	P_ONE_LABEL = Label::create("point", "fonts/JOKERMAN.ttf", 90);
-	P_ONE_LABEL->setPosition(designResolutionSize.width*0.3f, designResolutionSize.height*0.4f);
+	P_ONE_LABEL->setPosition(designResolutionSize.width*0.5f, designResolutionSize.height*0.38f);
 	addChild(P_ONE_LABEL);
 
 	P_TWO_LABEL = Label::create("point", "fonts/JOKERMAN.ttf", 90);
-	P_TWO_LABEL->setPosition(designResolutionSize.width*0.3f, designResolutionSize.height*0.6f);
+	P_TWO_LABEL->setPosition(designResolutionSize.width*0.5f, designResolutionSize.height*0.62f);
 	addChild(P_TWO_LABEL);
 
 	effectManager = EffectManager::create();
@@ -69,13 +69,13 @@ bool MainGameLayer::init(int level)
 	sortButton = SortButton::create(ROLE::EQUAL,Vec2(designResolutionSize.width *0.05f, designResolutionSize.height*0.5f));
 	addChild(sortButton);
 
-	passButton = OriginalButton::create(Vec2(designResolutionSize.width * 0.95f, designResolutionSize.height * 0.35f), 0);//変更
+	passButton = OriginalButton::create(Vec2(designResolutionSize.width * 0.95f, designResolutionSize.height * 0.45f), 0);//変更
 	addChild(passButton);
 
 	knockButton = OriginalButton::create(Vec2(designResolutionSize.width * 0.95f, designResolutionSize.height * 0.65f), 1);//変更
 	addChild(knockButton);
 
-	pauseButton = OriginalButton::create(Vec2(designResolutionSize.width * 0.95f, designResolutionSize.height * 0.85f), 2);//変更
+	pauseButton = OriginalButton::create(Vec2(designResolutionSize.width * 0.95f, designResolutionSize.height * 0.95f), 2);//変更
 	addChild(pauseButton);
 
 	phaseTimer = 0;
@@ -116,14 +116,6 @@ void MainGameLayer::update(float delta)
 		if (phaseTimer >= 0.5f)
 		{
 			nextPhase(actionPhase());
-			phaseTimer = 0;
-		}
-	}
-	else if(turn==TURN::WAIT)
-	{
-		if (phaseTimer >= 5.0f)
-		{
-			gameStart();
 			phaseTimer = 0;
 		}
 	}
@@ -180,7 +172,7 @@ void MainGameLayer::startPlayer()
 	int iRand = rand() % 2 + 1;
 	//turn = (TURN)iRand;
 	turn = TURN::PLAY_ONE;
-	String* name = String::createWithFormat("Player_%d_start", iRand);
+	String* name = String::createWithFormat("Player_%d_start", turn);
 	turnLabel->setString(name->getCString());
 };
 
@@ -580,6 +572,13 @@ void MainGameLayer::onTouchMoved(const Touch * touch, Event *unused_event)
 
 void MainGameLayer::onTouchEnded(const Touch * touch, Event *unused_event) 
 {
+	if (turn == TURN::WAIT&&isKnock)
+	{
+		gameStart();
+		phaseTimer = 0;
+	}
+
+
 	if (pauseButton->getBoundingBox().containsPoint(touch->getLocation())) //ポーズ
 	{
 

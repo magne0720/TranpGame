@@ -38,7 +38,7 @@ public:
 	//リザルトに入らなかったものを入れる
 	void copyResultForHand(Player* &p);
 	//ノック時に捨てるカード採取
-	void setKnockThrowCard(Vector<Card*> cResult);
+	void setKnockThrowCard(Vector<Card*> c);
 
 	//4枚役ができたのかどうか
 	bool isFourCard;
@@ -52,6 +52,8 @@ public:
 	ROLE sortType;
 	//ノックできるか
 	bool brainEnd;
+	//のっくしたか
+	bool isKnocked;
 	//捨てるカードが決まっているか
 	bool isDeside;
 	//カウント

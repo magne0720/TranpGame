@@ -41,7 +41,7 @@ bool Player::init()
 	effect = EffectManager::create();
 	addChild(effect);
 	point = 50000;
-	roleCount = 0;
+	roleCount =	1;
 	pickNumber = 0;
 	pickState = STATE::HAND;
 	brainCount = 10;
@@ -71,6 +71,7 @@ bool Player::init(Player* &p)
 	point = p->point;
 	pickNumber = 0;
 	roleCount = p->roleCount;
+	log("role=%d", roleCount);
 	pickState = STATE::HAND;
 	brainCount = p->brainCount;
 	brainEnd = false;
@@ -229,7 +230,7 @@ void Player::ressetRole()
 
 void Player::checkRole()
 {
-	roleCount = 0;
+	roleCount = 1;
 	cardDispHand(true);
 	point = 5000;
 	brainEnd = false;
@@ -340,9 +341,9 @@ Player* Player::check(Player* &brainPlayer, int x, int y, int z) {//3‚Ü‚¢‚»‚ë‚Á‚
 			brain->result.at(i)->setKind(brainPlayer->hand.at(x));	brain->hand.at(x)->setKind(NONE, ZERO);//0‚É‚µ‚ÄAˆ—Ï‚Ý‚ÌƒJ[ƒh‚Æ‚µ‚Äƒ}[ƒN
 			brain->result.at(i+1)->setKind(brainPlayer->hand.at(y)); brain->hand.at(y)->setKind(NONE, ZERO);
 			brain->result.at(i+2)->setKind(brainPlayer->hand.at(z));	brain->hand.at(z)->setKind(NONE, ZERO);
-			brain->result.at(i)->roleNumber		=brain->roleCount;
-			brain->result.at(i+1)->roleNumber	= brain->roleCount;
-			brain->result.at(i+2)->roleNumber	= brain->roleCount;
+			brain->result.at(i)->roleNumber		=brainPlayer->roleCount;
+			brain->result.at(i+1)->roleNumber	= brainPlayer->roleCount;
+			brain->result.at(i+2)->roleNumber	= brainPlayer->roleCount;
 			brain->result.at(i)->setRole(ROLE::ROLEIN);
 			brain->result.at(i + 1)->setRole(ROLE::ROLEIN);
 			brain->result.at(i + 2)->setRole(ROLE::ROLEIN);
@@ -351,6 +352,7 @@ Player* Player::check(Player* &brainPlayer, int x, int y, int z) {//3‚Ü‚¢‚»‚ë‚Á‚
 			brain->hand.at(z)->setRole(ROLE::ROLEIN);
 			brain->brainCount -= 3;//ˆ—‚·‚×‚«ƒJ[ƒh–‡”Œ¸ŽZ
 			brain->roleCount++;
+			log("role%d", brainPlayer->roleCount);
 			break;
 		}
 	}
@@ -383,10 +385,10 @@ Player* Player::check(Player* &brainPlayer, int x, int y, int z,int q) {//4‚Ü‚¢‚
 			brain->result.at(i + 1)->setKind(brainPlayer->hand.at(y));	brain->hand.at(y)->setKind(NONE, ZERO);
 			brain->result.at(i + 2)->setKind(brainPlayer->hand.at(z));	brain->hand.at(z)->setKind(NONE, ZERO);
 			brain->result.at(i + 3)->setKind(brainPlayer->hand.at(q));	brain->hand.at(q)->setKind(NONE, ZERO);
-			brain->result.at(i)->roleNumber = brain->roleCount;
-			brain->result.at(i + 1)->roleNumber = brain->roleCount;
-			brain->result.at(i + 2)->roleNumber = brain->roleCount;
-			brain->result.at(i + 3)->roleNumber = brain->roleCount;
+			brain->result.at(i)->roleNumber = brainPlayer->roleCount;
+			brain->result.at(i + 1)->roleNumber = brainPlayer->roleCount;
+			brain->result.at(i + 2)->roleNumber = brainPlayer->roleCount;
+			brain->result.at(i + 3)->roleNumber = brainPlayer->roleCount;
 			brain->result.at(i)->setRole(ROLE::ROLEIN);
 			brain->result.at(i + 1)->setRole(ROLE::ROLEIN);
 			brain->result.at(i + 2)->setRole(ROLE::ROLEIN);
@@ -433,18 +435,8 @@ void Player::setRoleColor(Vector<Card*>cResult)
 			if (cResult.at(i)->myMark == hand.at(j)->myMark&&cResult.at(i)->myNumber == hand.at(j)->myNumber) {
 				if (cResult.at(i)->myRole == ROLE::ROLEIN)
 				{
-					if (hand.at(j)->roleNumber % 3 == 2) {
-						hand.at(j)->setColor(Color3B::YELLOW);
-						hand.at(j)->setRole(ROLE::ROLEIN);
-					}
-					else if (hand.at(j)->roleNumber % 3 == 1) {
-						hand.at(j)->setColor(Color3B::RED);
-						hand.at(j)->setRole(ROLE::ROLEIN);
-					}
-					else if (hand.at(j)->roleNumber % 3 == 0) {
-						hand.at(j)->setColor(Color3B::GREEN);
-						hand.at(j)->setRole(ROLE::ROLEIN);
-					}
+					hand.at(j)->setColor(Color3B::YELLOW);
+					hand.at(j)->setRole(ROLE::ROLEIN);
 				}
 				else
 				{

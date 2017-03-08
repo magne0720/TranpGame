@@ -35,7 +35,7 @@ bool Dealer::init(Vec2 deckPos,Vec2 gravePos)
 
 	setDeckPosition(deckPos,gravePos);
 
-	setDeck(true);
+	setDeck();
 
 	//ƒ^ƒbƒ`”»’è
 	EventListenerTouchOneByOne *listener = EventListenerTouchOneByOne::create();
