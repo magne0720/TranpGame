@@ -30,7 +30,7 @@ public:
 	//役の初期化
 	void ressetRole();
 	//役の調査
-	void checkRole();
+	void checkRole(bool isKnock= false);
 	//役の得点を計算する
 	void calcRole(Vector<Card*> result);
 	//最後に引いたカードの確認

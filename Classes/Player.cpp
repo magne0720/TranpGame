@@ -228,7 +228,7 @@ void Player::ressetRole()
 //最後まで見たら見つけたカードを役付きで設定する
 //
 
-void Player::checkRole()
+void Player::checkRole(bool isKnock)
 {
 	roleCount = 1;
 	cardDispHand(true);
@@ -501,10 +501,10 @@ void Player::setKnockThrowCard(Vector<Card*> cResult)
 		log("res=[%d]", cResult.at(i)->myNumber);
 		if (cResult.at(i)->myRole != ROLE::ROLEIN)
 		{
-			if ((int)cResult.at(pickNumber)->myNumber < (int)cResult.at(i)->myNumber)
+			if ((int)hand.at(pickNumber)->myNumber < (int)hand.at(i)->myNumber)
 			{
 				pickNumber = i;
-				log("pickNumber=%d", (int)cResult.at(pickNumber)->myNumber);
+				log("pickNumber=%d-%d", i,pickNumber);
 			}
 		}
 	}

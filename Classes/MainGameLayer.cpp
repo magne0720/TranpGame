@@ -307,7 +307,7 @@ void MainGameLayer::gameStart()
 	//パスボタン表示
 	passButton->setVisible(true);
 	//デッキを再構築
-	dealer->setDeck(true);
+	dealer->setDeck();
 	//デッキをシャッフル
 	dealer->cardShuffle();
 	//プレイヤーに10枚ずつ交互に配る
@@ -384,6 +384,7 @@ bool MainGameLayer::actionPhase()
 				//ここで役ができなかった一番大きい数字のカードを選ぶ
 				//それをpickNumberともする。
 				player_one->cardThrow(player_one->pickNumber, dealer->grave);
+				log("thowNumber%d", player_one->pickNumber);
 				return true;
 			}
 			if (player_one->pickNumber >= 0&&player_one->isDeside)
@@ -512,8 +513,8 @@ void MainGameLayer::callKnock()
 	turn = TURN::WAIT;
 	player_one->cardDispHand(true);
 	player_two->cardDispHand(true);
-	player_one->checkRole();
-	player_two->checkRole();
+	player_one->checkRole(true);
+	player_two->checkRole(true);
 	String* name1 = String::createWithFormat("%d", player_one->point);
 	String* name2 = String::createWithFormat("%d", player_two->point);
 	P_ONE_LABEL->setString(name1->getCString());
