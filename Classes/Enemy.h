@@ -16,7 +16,11 @@ public :
 	int level;
 	//捨てるカード思考
 	int pickCardThink();
+	//引くパイル選択
+	STATE setDrawState();
 	//
+
+
 
 
 };

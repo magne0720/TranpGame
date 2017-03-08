@@ -397,6 +397,7 @@ bool MainGameLayer::actionPhase()
 			if (player_one->pickNumber >= 0&&player_one->isDeside)
 			{
 				player_one->cardThrow(player_one->pickNumber, dealer->grave);
+				player_one->isDeside = false;
 				return true;
 			}
 		}
@@ -450,7 +451,6 @@ void MainGameLayer::nextPhase(bool isAction)
 	switch (phase)
 	{
 	case PHASE::START:
-		passButton->setVisible(true);
 		phase = PHASE::DROW;
 		phaseLabel->setString("DROW");
 		break;
@@ -461,6 +461,7 @@ void MainGameLayer::nextPhase(bool isAction)
 		if (isPass)
 		{
 			isPass = false;
+			passButton->setVisible(false);
 			phase = PHASE::PASS;
 			phaseLabel->setString("PASS");
 		}
@@ -579,29 +580,35 @@ void MainGameLayer::onTouchMoved(const Touch * touch, Event *unused_event)
 
 void MainGameLayer::onTouchEnded(const Touch * touch, Event *unused_event) 
 {
+	if (pauseButton->getBoundingBox().containsPoint(touch->getLocation())) //ポーズ
+	{
+
+	}
 	if (sortButton->getBoundingBox().containsPoint(touch->getLocation()))
 	{
-		player_one->cardSort(sortButton->switchRole,player_one->result);
+		player_one->cardSort(sortButton->switchRole, player_one->result);
 	}
-	//次にドローするカードをデッキからにする
-	if (dealer->deckSp->getBoundingBox().containsPoint(touch->getLocation())) 
-	{
-		player_one->pickState = STATE::DECK;
-	}
-	//次にドローするカードを捨て札からにする
-	else if (dealer->graveSp->getBoundingBox().containsPoint(touch->getLocation()))
-	{
-		player_one->pickState = STATE::GRAVE;
-	}
-	//ノック
-	if (player_one->brainEnd) {
-		if (knockButton->getBoundingBox().containsPoint(touch->getLocation()))
+	
+	//自分の行動が制限されていなければ
+	if (turn != TURN::WAIT) {
+
+		//次にドローするカードをデッキからにする
+		if (dealer->deckSp->getBoundingBox().containsPoint(touch->getLocation()))
 		{
-			isKnock = true;
+			player_one->pickState = STATE::DECK;
 		}
-	}
-	else 
-	{//ノック以外の行動
+		//次にドローするカードを捨て札からにする
+		else if (dealer->graveSp->getBoundingBox().containsPoint(touch->getLocation()))
+		{
+			player_one->pickState = STATE::GRAVE;
+		}
+		//ノック
+		if (player_one->brainEnd) {
+			if (knockButton->getBoundingBox().containsPoint(touch->getLocation()))
+			{
+				isKnock = true;
+			}
+		}
 		for (int i = 0; i < player_one->hand.size(); i++)
 		{
 			if (player_one->hand.at(i)->getBoundingBox().containsPoint(touch->getLocation()))
@@ -615,18 +622,21 @@ void MainGameLayer::onTouchEnded(const Touch * touch, Event *unused_event)
 				player_one->isDeside = false;
 			}
 		}
+		if (turn == TURN::WAIT)
+		{
+			player_two->cardDispHand(true);
+		}
+		else
+		{
+			//パス
+			if (passButton->getBoundingBox().containsPoint(touch->getLocation()))//変更
+			{
+				player_one->pickState = STATE::FREE;
+				passButton->setVisible(false);
+			};
+		}
+		player_one->cardDispHand(true);
 	}
-	if(turn==TURN::WAIT)
-	{
-		player_two->cardDispHand(true);
-	}
-	player_one->cardDispHand(true);
-	//パス
-	if (passButton->getBoundingBox().containsPoint(touch->getLocation()))//変更
-	{
-		player_one->pickState = STATE::FREE;
-		passButton->setVisible(false);
-	};
 	
 };
 

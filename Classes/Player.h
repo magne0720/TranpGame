@@ -38,7 +38,7 @@ public:
 	//リザルトに入らなかったものを入れる
 	void copyResultForHand(Player* &p);
 	//ノック時に捨てるカード採取
-	void setKnockThrowCard();
+	void setKnockThrowCard(Vector<Card*> cResult);
 
 	//4枚役ができたのかどうか
 	bool isFourCard;
