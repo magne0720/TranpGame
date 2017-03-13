@@ -24,44 +24,10 @@ bool MainGameScene::init(int level)
 	}
 	
 
-	//ƒ^ƒbƒ`”»’è
-	EventListenerTouchOneByOne *listener = EventListenerTouchOneByOne::create();
-	listener->onTouchBegan = CC_CALLBACK_2(MainGameScene::onTouchBegan, this);
-	listener->onTouchMoved = CC_CALLBACK_2(MainGameScene::onTouchMoved, this);
-	listener->onTouchEnded = CC_CALLBACK_2(MainGameScene::onTouchEnded, this);
-	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, this);
-
-	is = false;
+	
+	MainGameLayer* layer = MainGameLayer::create(level);
+	addChild(layer);
 
 	return true;
 };
 
-
-
-bool MainGameScene::onTouchBegan(const Touch * touch, Event *unused_event) 
-{
-	if (is)return false;
-	if (touch->getLocation().x > designResolutionSize.width*0.5f) 
-	{
-		MainGameLayer* layer = MainGameLayer::create(0);
-		addChild(layer);
-		is = true;
-	}
-	else
-	{
-		CopyGameLayer* layer = CopyGameLayer::create(0);
-		addChild(layer);
-		is = true;
-	}
-	return true;
-};
-
-void MainGameScene::onTouchMoved(const Touch * touch, Event *unused_event)
-{
-
-};
-
-void MainGameScene::onTouchEnded(const Touch * touch, Event *unused_event)
-{
-
-};

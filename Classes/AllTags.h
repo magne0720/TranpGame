@@ -31,7 +31,7 @@ enum MARK
 //カードの位置情報とプレイヤーの選択状況
 enum STATE
 {
-	DECK = 0,GRAVE,HAND,FREE
+	DECK = 0,GRAVE, FREE,HAND
 };
 //役
 enum ROLE

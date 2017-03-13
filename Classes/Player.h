@@ -17,8 +17,9 @@ public:
 	static Player* create(Player* &p);
 	bool init();
 	bool init(Player* &p);
+
 	//カードの表示
-	void cardDispHand(bool isReversed,int max=11);
+	void cardDispHand(bool isReversed,int max=11,bool isKnock=false);
 	//カードの並び替え
 	void cardSort(ROLE kind,Vector<Card*> &hand);
 	//ドローする

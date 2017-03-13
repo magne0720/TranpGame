@@ -15,11 +15,6 @@ public:
 	bool init(int level);
 
 
-	bool onTouchBegan(const Touch * touch, Event *unused_event);
-	void onTouchMoved(const Touch * touch, Event *unused_event);
-	void onTouchEnded(const Touch * touch, Event *unused_event);
-
-	bool is;
 
 };
 

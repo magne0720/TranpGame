@@ -2,7 +2,7 @@
 #define __MAINGAME_LAYER_H__
 
 #include "cocos2d.h"
-#include "Player.h"
+#include "Enemy.h"
 #include "Dealer.h"
 #include "EffectManager.h"
 #include "SortButton.h"
@@ -30,6 +30,8 @@ public:
 	void cardDivision();
 	//スタート
 	void gameStart();
+	//エンド
+	void gameEnd();
 	//ーーーーーーーーーーゲーム中に行う関数ーーーーーーーー
 	//プレイヤーが行う行動
 	bool actionPhase();	
@@ -68,12 +70,14 @@ public:
 	void onTouchEnded(const Touch * touch, Event *unused_event);
 
 
-	Player* player_one, *player_two;
+	Player* player_one;
+	Enemy *player_two;
 	Dealer* dealer;
 	Label* phaseLabel,*turnLabel, *P_ONE_LABEL, *P_TWO_LABEL;
 	EffectManager* effectManager;
 	SortButton* sortButton;
 	OriginalButton *passButton,*knockButton,*pauseButton;
+	Sprite* titleLogo, *backGround;
 	//ターンのカウント
 	int turnCount;
 	//ノックされたか(ゲームの終了条件)

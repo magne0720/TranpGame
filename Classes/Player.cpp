@@ -71,7 +71,7 @@ bool Player::init(Player* &p)
 	point = p->point;
 	pickNumber = 0;
 	roleCount = p->roleCount;
-	log("role=%d", roleCount);
+	//log("role=%d", roleCount);
 	pickState = STATE::HAND;
 	brainCount = p->brainCount;
 	brainEnd = false;
@@ -93,16 +93,28 @@ bool Player::init(Player* &p)
 
 //trueF•\
 //falseF— 
-void Player::cardDispHand(bool isReversed, int max)
+void Player::cardDispHand(bool isReversed, int max,bool isKnock)
 {
-	cardSort(ROLE::ORDER, hand);
+	cardSort(sortType, hand);
 	for (int i = 0; i < hand.size(); i++)
 	{
-		hand.at(i)->setMyPosition(Vec2(150 * i + getPositionX() / 4, getPositionY()));
-		handPos[i] = hand.at(i)->getMyPosition();
-		hand.at(i)->setPosition(handPos[i]);
+		if (isKnock) {
+			if (hand.at(i)->myRole == ROLE::ROLEIN) {
+				hand.at(i)->setMyPosition(Vec2(150 * i + getPositionX() / 4, getPositionY() + 50));
+				handPos[i] = hand.at(i)->getMyPosition();
+				hand.at(i)->setPosition(handPos[i]);
+			}
+		}
+		else
+		{
+			hand.at(i)->setMyPosition(Vec2(150 * i + getPositionX() / 4, getPositionY()));
+			handPos[i] = hand.at(i)->getMyPosition();
+			hand.at(i)->setPosition(handPos[i]);
+		}
 		hand.at(i)->setState(STATE::HAND);
-		hand.at(i)->setReverse(isReversed);
+		hand.at(i)->setReverse(isReversed);		
+		hand.at(i)->setRotation(0);
+
 		if (!isReversed)
 		{
 			hand.at(i)->setColor(Color3B::WHITE);
@@ -158,20 +170,7 @@ void Player::cardSort(ROLE kind,Vector<Card*>&cardhand)
 			}
 		}
 		break;
-	case ROLE::WITHOUT:
-		//o—ˆ‚½‚â‚­‚Ì‡”Ô
-		for (int i = 0; i < cardhand.size(); i++)
-		{
-			//ˆê”Ô‰E‚ÌƒJ[ƒh‚ğŒ©‚é‚Ü‚Å
-			for (int j = 0; j + 1<cardhand.size(); j++)
-			{
-				//ƒ}[ƒN‡‚É•À‚Ñ‘Ö‚¦
-				if ((int)cardhand.at(j)->roleNumber < (int)cardhand.at(j + 1)->roleNumber)
-				{
-					cardhand.swap(j, j + 1);
-				}
-			}
-		}
+
 	default:
 		break;
 	}
@@ -254,12 +253,13 @@ void Player::calcRole(Vector<Card*> cResult)
 			iPoint += (int)cResult.at(i)->myNumber;
 		}
 	}
-	iPoint -= (int)hand.at(pickNumber)->myNumber;
-	log("des%d", (int)hand.at(pickNumber)->myNumber);
-	log("sumPoint=%d", iPoint);
+	if (hand.size()==11) 
+	{
+		iPoint -= (int)hand.at(pickNumber)->myNumber;
+	}
 	if (addPoint(iPoint)) 
 	{
-		cardSort(ROLE::ORDER, result);
+		cardSort(sortType, result);
 		setRoleColor(cResult);
 	}
 };
@@ -271,7 +271,6 @@ int Player::checkLastCard()
 	{
 		if (hand.at(i)->myMark == lastCard->myMark&&hand.at(i)->myNumber == lastCard->myNumber)
 		{
-			//log("getI=%d", i);
 			return i;
 		}
 	}
@@ -335,7 +334,7 @@ Player* Player::check(Player* &brainPlayer, int x, int y, int z) {//3‚Ü‚¢‚»‚ë‚Á‚
 	for (int i = 0; i < brain->hand.size() - 2; i++) {
 		if (brain->result.at(i)->myNumber <= NUMBER::ZERO)
 		{
-			log("%d.%d.%d", brain->hand.at(x)->myNumber, brain->hand.at(y)->myNumber, brain->hand.at(z)->myNumber);
+			//log("%d.%d.%d", brain->hand.at(x)->myNumber, brain->hand.at(y)->myNumber, brain->hand.at(z)->myNumber);
 
 			//Œ‹‰Ê‚É‚R–‡ƒRƒs[‚µ‚Ä•Û‘¶
 			brain->result.at(i)->setKind(brainPlayer->hand.at(x));	brain->hand.at(x)->setKind(NONE, ZERO);//0‚É‚µ‚ÄAˆ—Ï‚İ‚ÌƒJ[ƒh‚Æ‚µ‚Äƒ}[ƒN
@@ -352,7 +351,7 @@ Player* Player::check(Player* &brainPlayer, int x, int y, int z) {//3‚Ü‚¢‚»‚ë‚Á‚
 			brain->hand.at(z)->setRole(ROLE::ROLEIN);
 			brain->brainCount -= 3;//ˆ—‚·‚×‚«ƒJ[ƒh–‡”Œ¸Z
 			brain->roleCount++;
-			log("role%d", brainPlayer->roleCount);
+			//log("role%d", brainPlayer->roleCount);
 			break;
 		}
 	}
@@ -377,7 +376,7 @@ Player* Player::check(Player* &brainPlayer, int x, int y, int z,int q) {//4‚Ü‚¢‚
 	for (int i = 0; i < brain->hand.size() - 3; i++) {
 		if (brain->result.at(i)->myNumber <= NUMBER::ZERO)
 		{
-			log("%d.%d.%d.%d", brain->hand.at(x)->myNumber, brain->hand.at(y)->myNumber, brain->hand.at(z)->myNumber, brain->hand.at(q)->myNumber);
+			//log("%d.%d.%d.%d", brain->hand.at(x)->myNumber, brain->hand.at(y)->myNumber, brain->hand.at(z)->myNumber, brain->hand.at(q)->myNumber);
 
 			//Œ‹‰Ê‚É‚R–‡ƒRƒs[‚µ‚Ä•Û‘¶
 			//Œ‹‰Ê‚É‚R–‡ƒRƒs[‚µ‚Ä•Û‘¶
@@ -435,7 +434,7 @@ void Player::setRoleColor(Vector<Card*>cResult)
 			if (cResult.at(i)->myMark == hand.at(j)->myMark&&cResult.at(i)->myNumber == hand.at(j)->myNumber) {
 				if (cResult.at(i)->myRole == ROLE::ROLEIN)
 				{
-					hand.at(j)->setColor(Color3B::YELLOW);
+					hand.at(j)->setColor(Color3B(0x3dffff,0xff8bff,0xffff22));
 					hand.at(j)->setRole(ROLE::ROLEIN);
 				}
 				else
@@ -478,6 +477,8 @@ void Player::ressetPlayer()
 	handDeath();
 	//ƒmƒbƒN‚Å‚«‚é‚©
 	brainEnd=false;
+	//ƒmƒbƒN‚µ‚½‚©
+	isKnocked = false;
 };
 
 //c‚è‚ÌƒJ[ƒh‚ğƒŠƒUƒ‹ƒg‚É’Ç‰Á
@@ -498,13 +499,11 @@ void Player::setKnockThrowCard(Vector<Card*> cResult)
 	pickNumber = 0;
 	for (int i = 0; i < hand.size(); i++)
 	{
-		log("res=[%d]", cResult.at(i)->myNumber);
 		if (cResult.at(i)->myRole != ROLE::ROLEIN)
 		{
 			if ((int)hand.at(pickNumber)->myNumber < (int)hand.at(i)->myNumber)
 			{
 				pickNumber = i;
-				log("pickNumber=%d-%d", i,pickNumber);
 			}
 		}
 	}

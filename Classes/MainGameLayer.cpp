@@ -23,8 +23,6 @@ bool MainGameLayer::init(int level)
 		return false;
 	}
 
-	addChild(LayerColor::create(Color4B::GREEN));
-
 	//タッチ判定
 	EventListenerTouchOneByOne *listener = EventListenerTouchOneByOne::create();
 	listener->onTouchBegan = CC_CALLBACK_2(MainGameLayer::onTouchBegan, this);
@@ -32,6 +30,11 @@ bool MainGameLayer::init(int level)
 	listener->onTouchEnded = CC_CALLBACK_2(MainGameLayer::onTouchEnded, this);
 	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, this);
 
+	String* name = String::createWithFormat("back%d.png",level);
+
+	backGround = Sprite::create(name->getCString());
+	backGround->setPosition(Vec2(designResolutionSize.width*0.5f, designResolutionSize.height*0.5f));
+	addChild(backGround);
 
 	dealer = Dealer::create(
 		Vec2(designResolutionSize.width*0.3f, designResolutionSize.height*0.5f),
@@ -43,48 +46,54 @@ bool MainGameLayer::init(int level)
 	player_one->setPosition(Vec2(designResolutionSize.width*0.5f, designResolutionSize.height*0.2f));
 	addChild(player_one,1);
 
-	player_two = Player::create();
+	player_two = Enemy::create(level);
 	player_two->setPosition(Vec2(designResolutionSize.width*0.5f, designResolutionSize.height*0.8f));
 	addChild(player_two,1);
 
-	turnLabel = Label::create("gameSTART", "fonts/JOKERMAN.ttf", 50);
+	turnLabel = Label::create("", "fonts/JOKERMAN.ttf", 50);
 	turnLabel->setPosition(designResolutionSize.width*0.1f, designResolutionSize.height*0.95f);
-	addChild(turnLabel);
+	turnLabel->setTextColor(Color4B::RED);
+	addChild(turnLabel,5);
 
-	phaseLabel = Label::create("gameSTART", "fonts/JOKERMAN.ttf", 50);
+	phaseLabel = Label::create("", "fonts/JOKERMAN.ttf", 50);
 	phaseLabel->setPosition(designResolutionSize.width*0.5f, designResolutionSize.height*0.5f);
-	addChild(phaseLabel);
+	phaseLabel->setTextColor(Color4B::BLACK);
+	addChild(phaseLabel,5);
 
-	P_ONE_LABEL = Label::create("point", "fonts/JOKERMAN.ttf", 90);
+	P_ONE_LABEL = Label::create("", "fonts/JOKERMAN.ttf", 90);
 	P_ONE_LABEL->setPosition(designResolutionSize.width*0.5f, designResolutionSize.height*0.38f);
-	addChild(P_ONE_LABEL);
+	P_ONE_LABEL->setTextColor(Color4B::BLACK);
+	addChild(P_ONE_LABEL,5);
 
-	P_TWO_LABEL = Label::create("point", "fonts/JOKERMAN.ttf", 90);
+	P_TWO_LABEL = Label::create("", "fonts/JOKERMAN.ttf", 90);
 	P_TWO_LABEL->setPosition(designResolutionSize.width*0.5f, designResolutionSize.height*0.62f);
-	addChild(P_TWO_LABEL);
+	P_TWO_LABEL->setTextColor(Color4B::BLACK);
+	addChild(P_TWO_LABEL,5);
 
 	effectManager = EffectManager::create();
 	addChild(effectManager);
 
-	sortButton = SortButton::create(ROLE::EQUAL,Vec2(designResolutionSize.width *0.05f, designResolutionSize.height*0.5f));
-	addChild(sortButton);
+	sortButton = SortButton::create(player_one->sortType,Vec2(designResolutionSize.width *0.05f, designResolutionSize.height*0.5f));
+	addChild(sortButton,5);
 
 	passButton = OriginalButton::create(Vec2(designResolutionSize.width * 0.95f, designResolutionSize.height * 0.45f), 0);//変更
-	addChild(passButton);
+	addChild(passButton,5);
 
 	knockButton = OriginalButton::create(Vec2(designResolutionSize.width * 0.95f, designResolutionSize.height * 0.65f), 1);//変更
-	addChild(knockButton);
+	addChild(knockButton,5);
 
 	pauseButton = OriginalButton::create(Vec2(designResolutionSize.width * 0.95f, designResolutionSize.height * 0.95f), 2);//変更
-	addChild(pauseButton);
+	addChild(pauseButton,5);
+
+	titleLogo = Sprite::create("logo.png");
+	titleLogo->setPosition(Vec2(designResolutionSize.width*0.5f, designResolutionSize.height*0.5f));
+	addChild(titleLogo,10);
 
 	phaseTimer = 0;
 	phaseSpeed = 0.02f;
 
 	commonEffect = EFFECT::DO_NOT;
-
-	//ゲームの準備
-	gameStart();
+	turn = TURN::NUM;
 
 	//effectManager->phaseChange(PHASE::START);
 
@@ -170,8 +179,7 @@ void MainGameLayer::update(float delta)
 void MainGameLayer::startPlayer() 
 {
 	int iRand = rand() % 2 + 1;
-	//turn = (TURN)iRand;
-	turn = TURN::PLAY_ONE;
+	turn = (TURN)iRand;
 	String* name = String::createWithFormat("Player_%d_start", turn);
 	turnLabel->setString(name->getCString());
 };
@@ -210,17 +218,23 @@ bool MainGameLayer::cardDivisionDesign()
 	if (one_hand < player_one->hand.size()-1)
 		if (player_one->effect->drowCard(player_one->hand, one_hand, dealer->deckSp->getPosition(), player_one->handPos[one_hand], 0.05f))
 		{
-			effectManager->phaseChange(PHASE::DROW);
+			effectManager->phaseChange(PHASE::DROW);	
+			effectManager->drawLine(player_one->hand.at(one_hand));
+
+
 			one_hand++;
 		}
 	if (two_hand < player_two->hand.size()-1)
 		if (player_two->effect->drowCard(player_two->hand, two_hand, dealer->deckSp->getPosition(), player_two->handPos[two_hand], 0.05f))
 		{
-			effectManager->phaseChange(PHASE::DROW);
+			effectManager->phaseChange(PHASE::DROW);	
+			effectManager->drawLine(player_two->hand.at(two_hand));
 			two_hand++;
 		}
 	if (one_hand >= player_one->hand.size()-1&&two_hand >= player_two->hand.size()-1) 
 	{
+		effectManager->drawLine(player_one->hand.at(one_hand));
+		effectManager->drawLine(player_two->hand.at(two_hand));
 		return true;
 	}
 	return false;
@@ -289,9 +303,15 @@ bool MainGameLayer::cardThrowDesign()
 //スタート
 void MainGameLayer::gameStart()
 {
+	int iRand = random(0, 3);
+	String* name = String::createWithFormat("back%d.png", iRand);
+	backGround->setTexture(name->getCString());
+
 	//カウントの初期化
+	titleLogo->setVisible(false);
+	phaseLabel->setString("STANDBY");
 	commonEffect = EFFECT::DO_SHUFFLE;
-	turn = TURN::WAIT;
+	turn = TURN::NUM;
 	phase = PHASE::START;
 	turnCount = 1;
 	isGameStart = false;
@@ -304,6 +324,8 @@ void MainGameLayer::gameStart()
 	player_two->ressetPlayer();
 	player_one->sortType = ROLE::ORDER;
 	player_two->sortType = ROLE::ORDER;
+	P_ONE_LABEL->setString("");
+	P_TWO_LABEL->setString("");
 	//パスボタン表示
 	passButton->setVisible(true);
 	//デッキを再構築
@@ -316,6 +338,15 @@ void MainGameLayer::gameStart()
 	dealer->cardDeckThrow();
 	//先行を決める
 	startPlayer();
+	effectManager->drawLine(dealer->deckSp);
+	effectManager->drawLine(dealer->graveSp);
+};
+
+void MainGameLayer::gameEnd()
+{
+	turn = TURN::NUM;
+	isGameStart = false;
+	titleLogo->setVisible(true);
 };
 
 //ーーーーーーーーーーゲーム中に行う関数ーーーーーーーー
@@ -368,23 +399,36 @@ bool MainGameLayer::actionPhase()
 		else if (turn == TURN::PLAY_TWO)//プレイヤー２
 		{
 			passButton->setVisible(false);
-			player_two->pickState = STATE::DECK;
-			player_two->cardDrow(dealer->deck);
-			//player_two->checkRole();
-			return true;
+			player_two->pickState=player_two->desidePile(dealer->grave.at(dealer->grave.size() - 1), turnCount, isPass);
+			if (player_two->pickState == STATE::DECK) 
+			{
+				player_two->cardDrow(dealer->deck);
+				return true;
+			}
+			else if (player_two->pickState == STATE::GRAVE)
+			{
+				player_two->cardDrow(dealer->grave);
+				return true;
+			}
+			if (player_two->pickState == STATE::FREE)
+			{
+				isPass = true;
+				return true;
+			}
 		}
 		return false;
 	case PHASE::THROW:
-		player_two->pickNumber = random(0, (int)player_one->hand.size()-1);
-
 		if (turn == TURN::PLAY_ONE)
 		{
-			if (isKnock)
+			if (isKnock||player_one->point==0)
 			{
+				isKnock = true;
+				player_one->isKnocked = true;
 				//ここで役ができなかった一番大きい数字のカードを選ぶ
+				player_one->setKnockThrowCard(player_one->hand);
 				//それをpickNumberともする。
 				player_one->cardThrow(player_one->pickNumber, dealer->grave);
-				log("thowNumber%d", player_one->pickNumber);
+				//log("thowNumber%d-%d",player_one->pickNumber,player_one->hand.at(player_one->pickNumber)->myNumber);
 				return true;
 			}
 			if (player_one->pickNumber >= 0&&player_one->isDeside)
@@ -396,10 +440,24 @@ bool MainGameLayer::actionPhase()
 		}
 		else if (turn == TURN::PLAY_TWO)
 		{
+			player_two->pickCardThink();
+
 			if (player_two->pickNumber >= 0)
 			{
-				player_two->cardThrow(player_two->pickNumber, dealer->grave);
-				return true;
+				if (player_two->isKnocked)
+				{
+					isKnock = true;
+					//ここで役ができなかった一番大きい数字のカードを選ぶ
+					player_two->setKnockThrowCard(player_two->hand);
+					//それをpickNumberともする。
+					player_two->cardThrow(player_two->pickNumber, dealer->grave);
+					return true;
+				}
+				else 
+				{
+					player_two->cardThrow(player_two->pickNumber, dealer->grave);
+					return true;
+				}
 			}
 		}
 		return false;
@@ -451,6 +509,7 @@ void MainGameLayer::nextPhase(bool isAction)
 		phase = PHASE::THROW;
 		phaseLabel->setString("THROW");
 		player_one->lastCard->setKind(player_one->hand.at(player_one->hand.size() - 1)->myMark, player_one->hand.at(player_one->hand.size() - 1)->myNumber);
+		player_two->lastCard->setKind(player_two->hand.at(player_two->hand.size() - 1)->myMark, player_two->hand.at(player_two->hand.size() - 1)->myNumber);
 		if (isPass)
 		{
 			isPass = false;
@@ -460,11 +519,11 @@ void MainGameLayer::nextPhase(bool isAction)
 		}
 		commonEffect = EFFECT::DO_DRAW;
 		player_one->checkRole();
-		player_two->checkRole();
+		//player_two->checkRole();
 		name1 = String::createWithFormat("%d", player_one->point);
-		name2 = String::createWithFormat("%d", player_two->point);
+		//name2 = String::createWithFormat("%d", player_two->point);
 		P_ONE_LABEL->setString(name1->getCString());
-		P_TWO_LABEL->setString(name2->getCString());
+		//P_TWO_LABEL->setString(name2->getCString());
 			break;
 	case PHASE::THROW:
 			if (isKnock||dealer->deck.size()<=0)
@@ -501,8 +560,10 @@ void MainGameLayer::nextPhase(bool isAction)
 		break;
 	}
 	player_one->cardDispHand(true);
-	player_two->cardDispHand(false);
-	dealer->cardDispGrave();
+	if (!isKnock)
+	{
+		player_two->cardDispHand(false);
+	}	dealer->cardDispGrave();
 	dealer->checkDeckZero();
 };
 
@@ -511,8 +572,8 @@ void MainGameLayer::callKnock()
 {
 	isGameStart = false;
 	turn = TURN::WAIT;
-	player_one->cardDispHand(true);
-	player_two->cardDispHand(true);
+	player_one->cardDispHand(true, player_one->hand.size(), true);
+	player_two->cardDispHand(true, player_one->hand.size(), true);
 	player_one->checkRole(true);
 	player_two->checkRole(true);
 	String* name1 = String::createWithFormat("%d", player_one->point);
@@ -521,15 +582,15 @@ void MainGameLayer::callKnock()
 	P_TWO_LABEL->setString(name2->getCString());
 	if (player_one->point < player_two->point)
 	{
-		turnLabel->setString("PLAYER_ONE\nWIN");
+		phaseLabel->setString("PLAYER_ONE\nWIN");
 	}
 	else if(player_one->point>player_two->point)
 	{
-		turnLabel->setString("PLAYER_TWO\nWIN");
+		phaseLabel->setString("PLAYER_TWO\nWIN");
 	}
 	else
 	{
-		turnLabel->setString("DRAW");
+		phaseLabel->setString("DRAW");
 	}
 	player_one->sortType = ROLE::WITHOUT;
 	//player_one->cardDispHand(true);
@@ -552,15 +613,20 @@ void MainGameLayer::callAddTotal()
 
 bool MainGameLayer::onTouchBegan(const Touch * touch, Event *unused_event) 
 {
-	if (dealer->deckSp->getBoundingBox().containsPoint(touch->getLocation()))
-	{
-
-	}
-
-	if (touch->getLocation().y > designResolutionSize.height*0.9f)
+	if (!isGameStart&&turn==TURN::NUM) 
 	{
 		gameStart();
-	};
+	}
+	if (pauseButton->getBoundingBox().containsPoint(touch->getLocation()))
+	{
+		if (isGameStart)
+		{
+			if (turn != TURN::WAIT) {
+				gameEnd();
+			}else{
+			}
+		}
+	}
 	
 
 	return true;
@@ -573,6 +639,15 @@ void MainGameLayer::onTouchMoved(const Touch * touch, Event *unused_event)
 
 void MainGameLayer::onTouchEnded(const Touch * touch, Event *unused_event) 
 {
+	if (turn == TURN::WAIT)
+	{
+		if (phaseTimer >= 5.0f) {
+			gameEnd();
+			phaseTimer = 0;
+		}
+	}
+
+
 	if (turn == TURN::WAIT&&isKnock)
 	{
 		gameStart();
@@ -586,22 +661,13 @@ void MainGameLayer::onTouchEnded(const Touch * touch, Event *unused_event)
 	}
 	if (sortButton->getBoundingBox().containsPoint(touch->getLocation()))
 	{
-		player_one->cardSort(sortButton->switchRole, player_one->result);
+		player_one->cardSort(sortButton->switchRole, player_one->hand);
 	}
 	
 	//自分の行動が制限されていなければ
 	if (turn != TURN::WAIT) {
 
-		//次にドローするカードをデッキからにする
-		if (dealer->deckSp->getBoundingBox().containsPoint(touch->getLocation()))
-		{
-			player_one->pickState = STATE::DECK;
-		}
-		//次にドローするカードを捨て札からにする
-		else if (dealer->graveSp->getBoundingBox().containsPoint(touch->getLocation()))
-		{
-			player_one->pickState = STATE::GRAVE;
-		}
+
 		//ノック
 		if (player_one->brainEnd) {
 			if (knockButton->getBoundingBox().containsPoint(touch->getLocation()))
@@ -626,14 +692,23 @@ void MainGameLayer::onTouchEnded(const Touch * touch, Event *unused_event)
 		{
 			player_two->cardDispHand(true);
 		}
-		else
+		else if (phase == PHASE::DROW)
 		{
-			//パス
-			if (passButton->getBoundingBox().containsPoint(touch->getLocation()))//変更
+			//次にドローするカードをデッキからにする
+			if (dealer->deckSp->getBoundingBox().containsPoint(touch->getLocation()))
 			{
+				player_one->pickState = STATE::DECK;
+			}
+			//次にドローするカードを捨て札からにする
+			else if (dealer->graveSp->getBoundingBox().containsPoint(touch->getLocation()))
+			{
+				player_one->pickState = STATE::GRAVE;
+			}
+			else if (passButton->getBoundingBox().containsPoint(touch->getLocation()))
+			{		//パス
 				player_one->pickState = STATE::FREE;
 				passButton->setVisible(false);
-			};
+			}
 		}
 		player_one->cardDispHand(true);
 	}
